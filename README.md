@@ -68,16 +68,16 @@ Digital financial fraud in India has skyrocketed with the adoption of instant di
                               ▼
     ┌─────────────────────────────────────────────────────┐
     │  Ensemble Risk Scorer & Explainability Engine       │
-    │  (Member 3: analyze() function in scoring.py)      │
-    │  - Computes Unified Risk Score (0 - 100%)          │
-    │  - Generates Plain-Language "Why We Think This"    │
-    │  - Attaches Context-Aware Safety Recommendations   │
+    │  (Member 3: analyze() function in scoring.py)       │
+    │  - Computes Unified Risk Score (0 - 100%)           │
+    │  - Generates Plain-Language "Why We Think This"     │
+    │  - Attaches Context-Aware Safety Recommendations    │
     └─────────────────────────┬───────────────────────────┘
                               │
                               ▼
     ┌─────────────────────────────────────────────────────┐
     │  Streamlit Consumer-Facing UI                       │
-    │  (Member 3: app.py — Mobile-First, Accessible)     │
+    │  (Member 3 & 4: Mobile-First, Accessible)           │
     │  - ✅ Safe State (0 - 39% | Calm Green)             │
     │  - ⚠️ Suspicious State (40 - 69% | Amber Caution)   │
     │  - 🚨 Scam State (70 - 100% | Urgent Red)           │
@@ -92,133 +92,157 @@ Digital financial fraud in India has skyrocketed with the adoption of instant di
 LeanInHack/
 │
 ├── Data And ML/                        # [Member 1: Data & Machine Learning] ✅
-│   ├── data/                           # Raw & cleaned datasets
+│   ├── data/                           # Raw & cleaned datasets (UCI SMS, OpenPhish, Curated)
 │   ├── models/                         # text_model.joblib, url_model.joblib, predictor.py
-│   ├── evaluation/                     # Confusion matrices, benchmarks, results_summary.md
+│   ├── evaluation/                     # Confusion matrices, benchmark JSON, results_summary.md
 │   ├── src/                            # Preprocessing, 24-feature extractor, train.py
 │   ├── tests/                          # 16-case verification test suite
-│   ├── requirements.txt
-│   └── README.md
+│   ├── requirements.txt                # Python ML dependencies
+│   └── README.md                       # Deep-dive ML engineering documentation
 │
 ├── Detection Logic/                    # [Member 2: Scam Rules & Test Set] ✅
-│   ├── signals.py                      # 12 Indian scam signal types + blocklist + OCR
-│   └── eval_cases.py                   # 36 ground-truth evaluation cases
+│   ├── signals.py                      # 12 Indian scam signal types, blocklist, allowlist, OCR
+│   ├── eval_cases.py                   # 35 ground-truth evaluation cases (18 scam, 17 genuine)
+│   ├── requirements.txt                # pytesseract, Pillow, scikit-learn
+│   └── README.md                       # API docs, signal catalog, integration guide
 │
 ├── Integration App and Report/         # [Member 3: Integration, App & Report] ✅
-│   ├── app.py                          # Streamlit application UI
+│   ├── app.py                          # Streamlit application UI with one-click demo pills
 │   ├── scoring.py                      # Weighted risk-fusion engine + analyze() API
-│   ├── tune_weights.py                 # Grid-search weight tuning & benchmarks
-│   ├── requirements.txt
+│   ├── tune_weights.py                 # Grid-search weight tuning & benchmark suite
+│   ├── FINAL_PROJECT_REPORT.md         # Comprehensive project submission report
+│   ├── requirements.txt                # Streamlit & integration dependencies
 │   ├── README.md                       # Member 3 detailed documentation
 │   ├── tests/
-│   │   └── test_integration.py         # 16 end-to-end integration tests
+│   │   └── test_integration.py         # 16 end-to-end integration tests (100% pass)
 │   └── evaluation/
-│       └── benchmark_results.md        # Auto-generated benchmark report
+│       └── benchmark_results.md        # Benchmark evaluation results log
 │
 └── Design/                             # [Member 4: UI/UX & Documentation]
     ├── assets/                         # Icons, badges, wireframe designs
-    └── presentation/                   # Slide deck & final project report
+    └── presentation/                   # Slide deck & final project report diagrams
 ```
 
 ### Team Responsibilities:
 - **Member 1 (Data & ML):** Builds, trains, tunes, and evaluates the Text Scam Classifier and URL Phishing Model. Delivers `.joblib` models, confusion matrices, evaluation metrics, and the unified `ScamLensPredictor` API.
-- **Member 2 (Detection Logic & Test Set):** Builds the heuristic scam signal engine (`signals.py`) covering 12 Indian scam types, a 35-domain phishing blocklist, OCR screenshot extraction, and a 36-case ground-truth benchmark (`eval_cases.py`).
-- **Member 3 (Integration, App & Report):** Builds the Streamlit web application, integrates the ML models and rule-based signals into the `analyze()` pipeline, tunes weights, runs end-to-end tests, and compiles the final report.
+- **Member 2 (Detection Logic & Test Set):** Builds the heuristic scam signal engine (`signals.py`) covering 12 Indian scam types, a 35-domain phishing blocklist, OCR screenshot extraction, and a 35-case ground-truth benchmark (`eval_cases.py`). Provides plain-language explanations and recommendations for all scam categories, and exports `SCAM_TYPE_CATALOG` and `GENERAL_SAFETY_TIPS`.
+- **Member 3 (Integration, App & Report):** Builds the Streamlit web application, integrates the ML models and rule-based signals into the `analyze()` pipeline, tunes weights, runs end-to-end integration tests, and compiles the project report.
 - **Member 4 (UI/UX Designer):** Designs the mobile-first accessible interface (Safe/Suspicious/Scam cards, 0–100% risk meter, plain-language reason lists, error states) and creates the slide deck visuals.
 
 ---
 
-## 🔬 Model Performance Summary
+## 🔬 Member 1: Completed ML Deliverables & Performance
 
-| Model | Accuracy | Precision | Recall | F1-Score | FPR | ROC-AUC |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Text Scam Classifier** | **99.33%** | **96.30%** | **98.48%** | **0.9738** | **0.55%** | **0.9996** |
-| **URL Phishing Classifier** | **99.50%** | **99.86%** | **99.59%** | **0.9973** | **1.61%** | **0.9998** |
+| Model | Algorithm | Accuracy | Precision | Recall | F1-Score | False Positive Rate (FPR) | ROC-AUC |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Text Scam Classifier** | TF-IDF (1-2 N-grams) + Calibrated Logistic Regression | **99.33%** | **96.30%** | **98.48%** | **0.9738** | **0.55%** | **0.9996** |
+| **URL Phishing Classifier** | 24 Structural/Lexical Features + Random Forest Ensemble | **99.50%** | **99.86%** | **99.59%** | **0.9973** | **1.61%** | **0.9998** |
 
-### Integrated System (Member 3 — 36-Case Benchmark):
-
-| Metric | Value |
-| :--- | :---: |
-| Accuracy | **100.0%** |
-| Precision | **100.0%** |
-| Recall | **100.0%** |
-| False Positive Rate | **0.0%** |
-| F1-Score | **1.0** |
+### Why Low False Positive Rate (FPR) is Critical:
+In fraud intelligence, a high false positive rate destroys user trust—blocking a genuine banking OTP or a train PNR confirmation causes immediate panic. ScamLens achieves an **FPR under 1.6%**, safely filtering genuine transactional alerts while catching subtle scam patterns.
 
 ---
 
-## 💻 Quick Start
+## 🕵️ Member 2: Completed Detection Logic Deliverables
 
-### 1. Clone & Install
+### Signal Engine Coverage (`signals.py`)
+
+| Signal | Scam Type | Severity | Indian Threat Context |
+|--------|-----------|----------|----------------------|
+| `signal_fake_kyc` | Fake KYC Update | 🔴 High | Bank/SIM KYC expiry threats with APK phishing links |
+| `signal_upi_collect_request` | UPI Collect Request Fraud | 🔴 High | "Enter PIN to receive cashback" debit fraud |
+| `signal_parcel_customs_threat` | Parcel / Customs Scam | 🔴 High | FedEx/DHL impersonation, fake customs clearance fees |
+| `signal_digital_arrest` | Digital Arrest / Agency Impersonation | 🔴 High | CBI/ED/Police fake arrest via video call |
+| `signal_job_offer_scam` | Fake Job / Task Scam | 🟡 Medium | YouTube-like/Google Maps rating advance-fee trap |
+| `signal_electricity_bill_threat` | Electricity Bill Disconnection Scam | 🔴 High | Fake DISCOM officer demanding immediate payment |
+| `signal_otp_phishing` | OTP / PIN Phishing | 🔴 High | "Share OTP with agent" account takeover |
+| `signal_loan_fraud` | Fake Loan Offer | 🟡 Medium | No-document instant loan with upfront fee trap |
+| `signal_phishing_url` | Known Phishing URL / Brand Impersonation | 🔴 High | Blocklist + TLD + APK + brand checks |
+| `signal_urgency_pressure` | High-Pressure Urgency Tactic | 🟢 Low | Panic-inducing phrases to bypass rational thought |
+| `signal_prize_lottery_scam` | Lottery / Prize Scam | 🟡 Medium | KBC lottery, fake Jio/Amazon winner SMS |
+| `signal_impersonation` | Organizational Impersonation | 🟡 Medium | Fake RBI, TRAI, PM Cares, Income Tax notices |
+
+### Phishing Infrastructure
+- **35+ blocklisted domains** confirmed in Indian cybercrime campaigns
+- **40+ trusted domains** allowlisted to prevent false positives on real bank/gov SMS
+- Subdomain-aware matching (e.g., `login.sbi-kyc-verify.top` is caught)
+
+---
+
+## ⚡ Member 3: Integration, App & Tuned Benchmark
+
+### Integrated System Benchmark Results:
+
+| Metric | Value | Target Benchmark | Verdict |
+| :--- | :---: | :---: | :---: |
+| **Accuracy** | **100.0%** | > 92.0% | ✅ **Passed** |
+| **Precision** | **100.0%** | > 95.0% | ✅ **Passed** |
+| **Recall (Sensitivity)** | **100.0%** | > 90.0% | ✅ **Passed** |
+| **False Positive Rate (FPR)** | **0.0%** | < 2.0% | ✅ **Passed** |
+| **F1-Score** | **1.0000** | > 0.90 | ✅ **Passed** |
+
+---
+
+## 💻 Quick Start & Running the Platform
+
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/Murli333/LeanInHack.git
 cd LeanInHack
+```
+
+### 2. Set Up Virtual Environment & Dependencies
+```bash
+python -m venv .venv
+# On Windows:
+.venv\Scripts\activate
+# On Linux/macOS:
+source .venv/bin/activate
+
 pip install -r "Integration App and Report/requirements.txt"
 ```
 
-### 2. Run the Streamlit App
+### 3. Launch the Streamlit Consumer App
 ```bash
 cd "Integration App and Report"
 streamlit run app.py
 ```
+*Opens automatically at `http://localhost:8501`.*
 
-### 3. Run All Tests
+### 4. Run All Test Suites
 ```bash
-# Member 1 — ML model tests
-cd "Data And ML"
-python tests/test_models.py
+# Member 1 — ML model test suite (16 tests)
+python "Data And ML/tests/test_models.py"
 
-# Member 3 — Integration tests
-cd "../Integration App and Report"
-python tests/test_integration.py
+# Member 3 — Integration test suite (16 tests)
+python "Integration App and Report/tests/test_integration.py"
 
-# Member 3 — Weight tuning benchmarks
-python tune_weights.py
+# Member 3 — Weight tuning and evaluation benchmarks
+python "Integration App and Report/tune_weights.py"
 ```
 
 ---
 
 ## 🔗 Quick API Usage
 
-### From `scoring.py` (Member 3):
+### Combined Multimodal Analysis (Member 3 `scoring.py`):
 ```python
+import sys
+sys.path.insert(0, "Integration App and Report")
 from scoring import analyze
 
-result = analyze(
-    message_text="Your electricity will be disconnected tonight. Call 9876543210.",
+res = analyze(
+    message_text="Electricity power will be disconnected at 9:30 PM. Call officer at 9876543210.",
     url="http://electricity-bill-disconnection-alert.fit/pay"
 )
 
-print(result["verdict"])      # "Scam"
-print(result["risk_score"])   # 95
-print(result["icon"])         # "🚨"
-print(result["reasons"])      # ["Threatens immediate power disconnection...", ...]
-print(result["safety_tips"])  # ["⚠️ Do NOT click any links...", ...]
+print(res["verdict"])      # 'Scam'
+print(res["risk_score"])   # 95
+print(res["status_color"]) # 'red'
+print(res["icon"])         # '🚨'
+print(res["reasons"])      # Plain-language explanation bullet points
+print(res["safety_tips"])  # Actionable emergency tips
 ```
-
-### From `predictor.py` (Member 1):
-```python
-from models.predictor import ScamLensPredictor
-
-predictor = ScamLensPredictor()
-res = predictor.predict_text("Dear SBI user, update KYC immediately...")
-print(res["verdict"], res["risk_score"])
-```
-
----
-
-## 🕵️ Scam Signal Coverage
-
-| Signal | Scam Type | Severity |
-|--------|-----------|----------|
-| `fake_kyc` | Fake KYC / Account Suspension | 🔴 High |
-| `upi_collect` | UPI Collect Request Fraud | 🔴 High |
-| `parcel_customs` | Parcel / Customs Extortion | 🔴 High |
-| `digital_arrest` | Digital Arrest / Agency Impersonation | 🔴 High |
-| `job_scam` | Fake Part-Time Job / Task Scam | 🟡 Medium |
-| `electricity_bill` | Electricity Bill Disconnection Threat | 🔴 High |
-| `urgency` | High-Pressure Urgency Tactics | 🟢 Low |
-| `malicious_apk` | APK / Remote Access App Download | 🔴 High |
 
 ---
 
