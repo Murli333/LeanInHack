@@ -1,0 +1,90 @@
+{
+    "text_model": {
+        "accuracy": 0.9933,
+        "precision": 0.963,
+        "recall": 0.9848,
+        "f1_score": 0.9738,
+        "false_positive_rate": 0.0055,
+        "roc_auc": 0.9996,
+        "true_negatives": 903,
+        "false_positives": 5,
+        "false_negatives": 2,
+        "true_positives": 130
+    },
+    "url_model": {
+        "accuracy": 0.995,
+        "precision": 0.9986,
+        "recall": 0.9959,
+        "f1_score": 0.9973,
+        "false_positive_rate": 0.0161,
+        "roc_auc": 0.9998,
+        "true_negatives": 61,
+        "false_positives": 1,
+        "false_negatives": 3,
+        "true_positives": 730
+    },
+    "top_text_scam_signals": [
+        "service",
+        "claim",
+        "won",
+        "stop",
+        "from",
+        "ringtone",
+        "to",
+        "150p",
+        "mobile",
+        "your",
+        "reply",
+        "free",
+        "call",
+        "text",
+        "call phonemarker",
+        "txt",
+        "to codemarker",
+        "urlmarker",
+        "codemarker",
+        "phonemarker"
+    ],
+    "top_url_features": [
+        {
+            "feature": "is_https",
+            "importance": 0.6117
+        },
+        {
+            "feature": "domain_length",
+            "importance": 0.1137
+        },
+        {
+            "feature": "domain_entropy",
+            "importance": 0.0561
+        },
+        {
+            "feature": "url_length",
+            "importance": 0.0549
+        },
+        {
+            "feature": "url_entropy",
+            "importance": 0.0292
+        },
+        {
+            "feature": "path_length",
+            "importance": 0.0216
+        },
+        {
+            "feature": "num_hyphens_domain",
+            "importance": 0.0205
+        },
+        {
+            "feature": "num_hyphens_url",
+            "importance": 0.0175
+        },
+        {
+            "feature": "num_slashes",
+            "importance": 0.0131
+        },
+        {
+            "feature": "num_digits_url",
+            "importance": 0.0127
+        }
+    ]
+}
