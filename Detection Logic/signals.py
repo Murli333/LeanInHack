@@ -80,7 +80,8 @@ def _extract_urls(text: str) -> List[str]:
         r'cam|icu|club|work|buzz|gq|cf|tk|ml|ga|online|vip|monster)[^\s]*',
         re.IGNORECASE
     )
-    return pattern.findall(text)
+    raw_urls = pattern.findall(text)
+    return [u.rstrip(".,;:!?)\"'>") for u in raw_urls if u.rstrip(".,;:!?)\"'>")]
 
 
 def _extract_domain(url: str) -> str:
@@ -91,7 +92,7 @@ def _extract_domain(url: str) -> str:
     domain = domain.split('/')[0].lower()
     # Remove port
     domain = domain.split(':')[0]
-    return domain.strip()
+    return domain.strip().rstrip(".,;:!?)\"'>")
 
 
 def _is_blocklisted(url: str) -> bool:

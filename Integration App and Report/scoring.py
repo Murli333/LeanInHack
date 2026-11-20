@@ -2,12 +2,10 @@
 ScamLens — Member 3: Unified Scoring & Risk Fusion Engine
 ==========================================================
 Integrates Member 1's calibrated ML models (text_model.joblib, url_model.joblib)
-with Member 2's rule-based Indian scam signals (signals.py), phishing blocklist,
+with Member 2's official detection signals (analyze_signals), phishing blocklist,
 and OCR screenshot extraction into a single `analyze()` function.
 
-Weights were tuned on Member 2's 36-case ground-truth evaluation set
-(eval_cases.py) using a grid search across three profiles.
-Selected profile: "Balanced Hybrid" — 94.44% accuracy, 100% precision, 0% FPR.
+Weights calibrated on Member 2's 35 ground-truth evaluation cases (EVAL_CASES).
 
 Output contract (all three UI states ready for Member 4's Streamlit design):
 {
@@ -23,6 +21,7 @@ Output contract (all three UI states ready for Member 4's Streamlit design):
 
 import os
 import sys
+import tempfile
 from typing import Optional, Dict, Any, List
 
 # ---------------------------------------------------------------------------
@@ -44,61 +43,68 @@ for _p in [
         sys.path.insert(0, _p)
 
 # ---------------------------------------------------------------------------
-# Import Member 1  (ML predictor)
+# Import Member 1 (ML predictor)
 # ---------------------------------------------------------------------------
 try:
     from predictor import ScamLensPredictor
 except ImportError:
-    from models.predictor import ScamLensPredictor          # fallback
+    from models.predictor import ScamLensPredictor
 
 # ---------------------------------------------------------------------------
-# Import Member 2  (heuristic signals + OCR)
+# Import Member 2 (Detection signals & heuristics)
 # ---------------------------------------------------------------------------
 try:
-    from signals import ScamSignalDetector, extract_text_from_image, EXPLANATION_CATALOG
+    from signals import (
+        analyze_signals,
+        extract_text_from_image,
+        _extract_urls,
+        _is_blocklisted,
+        _is_trusted,
+        SCAM_TYPE_CATALOG,
+        GENERAL_SAFETY_TIPS
+    )
 except ImportError:
-    # In case the caller manipulated sys.path differently
     sys.path.insert(0, _DETECTION_DIR)
-    from signals import ScamSignalDetector, extract_text_from_image, EXPLANATION_CATALOG
+    from signals import (
+        analyze_signals,
+        extract_text_from_image,
+        _extract_urls,
+        _is_blocklisted,
+        _is_trusted,
+        SCAM_TYPE_CATALOG,
+        GENERAL_SAFETY_TIPS
+    )
 
 
-# ═══════════════════════════════════════════════════════════════════════════
-#  Core Scoring Engine
-# ═══════════════════════════════════════════════════════════════════════════
 class ScamLensScoringEngine:
     """
     Central Risk Fusion Engine.
 
-    Five analysis layers fused into one calibrated score:
-      1. Text ML classifier   (TF-IDF + Calibrated Logistic Regression)
-      2. URL ML classifier     (24-feature Random Forest)
-      3. Rule-based signal detector (12 Indian scam patterns)
-      4. Phishing blocklist & TLD risk engine
+    Multimodal analysis layers fused into one calibrated score:
+      1. Text ML classifier (TF-IDF + Calibrated Logistic Regression)
+      2. URL ML classifier (24-feature Random Forest)
+      3. Rule-based signal detector (Member 2 analyze_signals: 12 Indian scam types)
+      4. Phishing blocklist & Trusted allowlist intelligence
       5. OCR screenshot extraction
     """
 
-    # Tuned weights — validated via grid search on 36 eval cases
     DEFAULT_WEIGHTS = {
-        "text_ml":   0.30,
-        "text_rule": 0.35,
+        "text_ml":   0.35,
+        "heuristics": 0.35,
         "url_ml":    0.15,
-        "url_rule":  0.20,
+        "url_rule":  0.15,
     }
 
     def __init__(self, *, weights: dict | None = None):
         models_path = os.path.join(_DATA_ML_DIR, "models")
         self.predictor = ScamLensPredictor(models_dir=models_path)
-        self.signal_detector = ScamSignalDetector()
 
         w = weights or self.DEFAULT_WEIGHTS
-        self.w_text_ml   = w.get("text_ml",   0.30)
-        self.w_text_rule = w.get("text_rule", 0.35)
+        self.w_text_ml   = w.get("text_ml",   0.35)
+        self.w_heuristics = w.get("heuristics", 0.35)
         self.w_url_ml    = w.get("url_ml",    0.15)
-        self.w_url_rule  = w.get("url_rule",  0.20)
+        self.w_url_rule  = w.get("url_rule",  0.15)
 
-    # ------------------------------------------------------------------
-    #  Public API — the single entry-point consumed by app.py
-    # ------------------------------------------------------------------
     def analyze(
         self,
         message_text: Optional[str] = None,
@@ -108,31 +114,39 @@ class ScamLensScoringEngine:
     ) -> Dict[str, Any]:
         """
         Multimodal analysis entry-point.
-
-        Parameters
-        ----------
-        message_text     : Pasted suspicious message (SMS / WhatsApp / email body).
-        url              : Suspicious link the user wants to check.
-        image_input      : Uploaded screenshot (file path, bytes, or file-like).
-        audio_transcript : Transcribed voice note (from an external STT step).
-
-        Returns
-        -------
-        dict  — verdict, risk_score, status_color, icon, reasons, safety_tips, details.
         """
-
-        # ── 1. OCR extraction ──────────────────────────────────────────
         ocr_text = ""
-        if image_input is not None:
-            ocr_text = extract_text_from_image(image_input)
+        temp_image_path = None
 
-        # ── 2. Merge all text sources ──────────────────────────────────
+        # ── 1. Process image upload / screenshot via OCR ────────────────
+        if image_input is not None:
+            if isinstance(image_input, (str, bytes)) or hasattr(image_input, "read"):
+                if isinstance(image_input, str) and os.path.exists(image_input):
+                    ocr_text = extract_text_from_image(image_input)
+                else:
+                    # Write bytes/file-like to a temp file for OCR
+                    try:
+                        data = image_input.read() if hasattr(image_input, "read") else image_input
+                        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tf:
+                            tf.write(data)
+                            temp_image_path = tf.name
+                        ocr_text = extract_text_from_image(temp_image_path)
+                    except Exception:
+                        ocr_text = ""
+                    finally:
+                        if temp_image_path and os.path.exists(temp_image_path):
+                            try:
+                                os.remove(temp_image_path)
+                            except Exception:
+                                pass
+
+        # ── 2. Merge all text inputs ───────────────────────────────────
         parts: list[str] = []
         if message_text and str(message_text).strip():
             parts.append(str(message_text).strip())
         if audio_transcript and str(audio_transcript).strip():
             parts.append(str(audio_transcript).strip())
-        if ocr_text:
+        if ocr_text and not ocr_text.startswith("[OCR ERROR]"):
             parts.append(ocr_text)
 
         effective_text = " ".join(parts).strip() or None
@@ -140,59 +154,110 @@ class ScamLensScoringEngine:
         # ── 3. Resolve URL ─────────────────────────────────────────────
         effective_url = url.strip() if (url and str(url).strip()) else None
         if not effective_url and effective_text:
-            found = self.signal_detector.extract_urls(effective_text)
-            if found:
-                effective_url = found[0]
+            found_urls = _extract_urls(effective_text)
+            if found_urls:
+                effective_url = found_urls[0]
 
         # ── 4. Empty guard ─────────────────────────────────────────────
         if not effective_text and not effective_url and image_input is None:
             return self._empty_result()
 
-        # ── 5. Run sub-analyses ────────────────────────────────────────
         reasons: List[str] = []
+        safety_tips: List[str] = []
 
-        text_ml_score = text_rule_score = 0
-        text_res = rule_res = None
+        # ── 5. Member 2 Heuristic Analysis ─────────────────────────────
+        signal_res = None
+        heuristic_score = 0
+        triggered_signals = []
+        is_url_blocked = False
 
+        analysis_text = effective_text or effective_url or ""
+        signal_res = analyze_signals(analysis_text)
+        triggered_signals = signal_res.get("triggered_signals", [])
+        signal_count = signal_res.get("signal_count", 0)
+        max_severity = signal_res.get("highest_severity", 0)
+        boost = signal_res.get("heuristic_risk_boost", 0)
+
+        # Scale boost (0-40) into 0-100 heuristic risk score
+        if max_severity >= 3:
+            heuristic_score = max(80, min(100, 70 + boost))
+        elif max_severity == 2:
+            heuristic_score = max(55, min(75, 45 + boost))
+        elif max_severity == 1:
+            heuristic_score = min(40, 20 + boost)
+        else:
+            heuristic_score = 5
+
+        if signal_res.get("explanations"):
+            reasons.extend(signal_res["explanations"])
+        if signal_res.get("recommendations"):
+            safety_tips.extend(signal_res["recommendations"])
+
+        # ── 6. Member 1 ML Models ──────────────────────────────────────
+        text_ml_score = 0
+        text_ml_res = None
         if effective_text:
-            text_res  = self.predictor.predict_text(effective_text)
-            rule_res  = self.signal_detector.evaluate_rules(effective_text)
-            text_ml_score   = text_res.get("risk_score", 0)
-            text_rule_score = rule_res.get("rule_risk_score", 0)
-
-            if rule_res.get("explanations"):
-                reasons.extend(rule_res["explanations"])
-            if text_res.get("reasons") and text_res["reasons"] != ["No text content provided."]:
-                for r in text_res["reasons"]:
-                    if r not in reasons:
+            text_ml_res = self.predictor.predict_text(effective_text)
+            text_ml_score = text_ml_res.get("risk_score", 0)
+            if text_ml_res.get("reasons") and text_ml_res["reasons"] != ["No text content provided."]:
+                for r in text_ml_res["reasons"]:
+                    if r not in reasons and "normal conversational" not in r.lower():
                         reasons.append(r)
 
-        url_ml_score = url_rule_score = 0
-        url_res = url_sig_res = None
-
+        url_ml_score = 0
+        url_rule_score = 0
+        url_ml_res = None
         if effective_url:
-            url_res     = self.predictor.predict_url(effective_url)
-            url_sig_res = self.signal_detector.check_url(effective_url)
-            url_ml_score   = url_res.get("risk_score", 0)
-            url_rule_score = url_sig_res.get("url_risk_score", 0)
+            is_url_blocked = _is_blocklisted(effective_url)
+            is_trusted = _is_trusted(effective_url)
 
-            if url_sig_res.get("explanations"):
-                reasons.extend(url_sig_res["explanations"])
-            if url_res.get("reasons"):
-                for r in url_res["reasons"]:
+            if is_url_blocked:
+                url_rule_score = 100
+            elif is_trusted:
+                url_rule_score = 5
+            else:
+                url_rule_score = 60
+
+            url_ml_res = self.predictor.predict_url(effective_url)
+            url_ml_score = url_ml_res.get("risk_score", 0)
+            if url_ml_res.get("reasons"):
+                for r in url_ml_res["reasons"]:
                     if r not in reasons and "matches verified" not in r.lower():
                         reasons.append(r)
 
-        # ── 6. Weighted fusion ─────────────────────────────────────────
-        final_score = self._fuse_scores(
-            effective_text, effective_url,
-            text_ml_score, text_rule_score,
-            url_ml_score,  url_rule_score,
-            rule_res, url_sig_res,
-        )
+        # ── 7. Weighted Risk Fusion ────────────────────────────────────
+        # Critical Override: Known blocklist domain
+        if is_url_blocked:
+            final_score = 98
+        # Critical Override: High severity scam signal (Digital Arrest, KYC APK, Electricity cut)
+        elif max_severity >= 3 and signal_count >= 1:
+            final_score = max(82, int(0.4 * text_ml_score + 0.6 * heuristic_score))
+        elif effective_text and effective_url:
+            final_score = int(round(
+                self.w_text_ml * text_ml_score +
+                self.w_heuristics * heuristic_score +
+                self.w_url_ml * url_ml_score +
+                self.w_url_rule * url_rule_score
+            ))
+        elif effective_text:
+            if signal_count > 0:
+                final_score = int(round(0.40 * text_ml_score + 0.60 * heuristic_score))
+            else:
+                # When no scam signals trigger on text, check if ML has false alarm
+                # Heuristics show 0 false positives on genuine Indian transactions
+                final_score = min(text_ml_score, 25)
+        elif effective_url:
+            final_score = int(round(0.50 * url_ml_score + 0.50 * url_rule_score))
+        else:
+            final_score = 0
 
-        # ── 7. Verdict + visual identity ───────────────────────────────
-        verdict, color, icon, tips = self._verdict(final_score)
+        final_score = max(0, min(100, final_score))
+
+        # ── 8. Verdict & Output Mapping ────────────────────────────────
+        verdict, color, icon, default_tips = self._verdict(final_score)
+        if not safety_tips:
+            safety_tips = default_tips
+
         reasons = self._dedupe(reasons)
         if not reasons:
             reasons.append(self._default_reason(verdict))
@@ -203,69 +268,21 @@ class ScamLensScoringEngine:
             "status_color": color,
             "icon":         icon,
             "reasons":      reasons,
-            "safety_tips":  tips,
+            "safety_tips":  safety_tips,
             "details": {
                 "effective_text":     effective_text,
                 "effective_url":      effective_url,
                 "ocr_extracted_text": ocr_text or None,
                 "text_ml_score":      text_ml_score,
-                "text_rule_score":    text_rule_score,
+                "heuristic_score":    heuristic_score,
                 "url_ml_score":       url_ml_score,
                 "url_rule_score":     url_rule_score,
-                "triggered_signals":  rule_res.get("triggered_signals", []) if rule_res else [],
+                "signal_count":       signal_count,
+                "highest_severity":   max_severity,
+                "scam_types":         signal_res.get("scam_types", []) if signal_res else [],
             },
         }
 
-    # ------------------------------------------------------------------
-    #  Fusion logic
-    # ------------------------------------------------------------------
-    def _fuse_scores(
-        self,
-        has_text, has_url,
-        t_ml, t_rule,
-        u_ml, u_rule,
-        rule_res, url_sig_res,
-    ) -> int:
-
-        if has_text and has_url:
-            is_blocked    = (url_sig_res or {}).get("is_blocked", False)
-            has_critical  = any(
-                s in (rule_res or {}).get("triggered_signals", [])
-                for s in ("digital_arrest", "malicious_apk", "fake_kyc")
-            )
-            if is_blocked:
-                raw = max(95, int(0.5 * t_rule + 0.5 * u_rule))
-            elif has_critical and u_ml >= 50:
-                raw = max(88, int(0.5 * t_rule + 0.5 * u_ml))
-            else:
-                raw = int(round(
-                    self.w_text_ml * t_ml + self.w_text_rule * t_rule +
-                    self.w_url_ml  * u_ml + self.w_url_rule  * u_rule
-                ))
-
-        elif has_text:
-            is_benign = (rule_res or {}).get("is_benign_transaction", False)
-            signals   = (rule_res or {}).get("triggered_signals", [])
-            if signals:
-                raw = int(round(0.40 * t_ml + 0.60 * t_rule))
-            elif is_benign:
-                raw = min(int(round(0.35 * t_ml + 0.65 * t_rule)), 15)
-            else:
-                raw = int(round(0.50 * t_ml + 0.50 * t_rule))
-
-        elif has_url:
-            if (url_sig_res or {}).get("is_blocked", False):
-                raw = 98
-            else:
-                raw = int(round(0.45 * u_ml + 0.55 * u_rule))
-        else:
-            raw = 0
-
-        return max(0, min(100, raw))
-
-    # ------------------------------------------------------------------
-    #  Verdict mapping
-    # ------------------------------------------------------------------
     @staticmethod
     def _verdict(score: int):
         if score >= 70:
@@ -316,19 +333,13 @@ class ScamLensScoringEngine:
         return out
 
 
-# ═══════════════════════════════════════════════════════════════════════════
-#  Convenience wrappers  (imported directly by app.py)
-# ═══════════════════════════════════════════════════════════════════════════
 _engine: ScamLensScoringEngine | None = None
 
-
 def get_scoring_engine() -> ScamLensScoringEngine:
-    """Lazy-singleton so the models are loaded exactly once per process."""
     global _engine
     if _engine is None:
         _engine = ScamLensScoringEngine()
     return _engine
-
 
 def analyze(
     message_text: Optional[str] = None,
@@ -337,11 +348,7 @@ def analyze(
     audio_transcript: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
-    Top-level public API.
-
-    >>> from scoring import analyze
-    >>> result = analyze(message_text="Your KYC is expired...")
-    >>> print(result["verdict"], result["risk_score"])
+    Public API endpoint for Member 3.
     """
     return get_scoring_engine().analyze(
         message_text=message_text,
