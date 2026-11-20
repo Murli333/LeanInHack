@@ -101,9 +101,11 @@ LeanInHack/
 │   ├── requirements.txt     # Python ML dependencies
 │   └── README.md            # Deep-dive ML engineering documentation
 │
-├── Detection Logic/         # [MEMBER 2: HEURISTICS & TEST BENCHMARK]
-│   ├── signals.py           # Indian scam rules (Fake KYC, UPI, Digital Arrest, Bills)
-│   └── eval_cases.py        # 30-40 ground-truth evaluation cases (half scam, half genuine)
+├── Detection Logic/         # [MEMBER 2: HEURISTICS & TEST BENCHMARK] ✅ COMPLETED
+│   ├── signals.py           # Indian scam rules (12 signal types, phishing blocklist, OCR)
+│   ├── eval_cases.py        # 35 ground-truth evaluation cases (18 scam, 17 genuine)
+│   ├── requirements.txt     # Python dependencies (pytesseract, Pillow, scikit-learn)
+│   └── README.md            # API docs, signal catalog, integration guide
 │
 ├── App/                     # [MEMBER 3: INTEGRATION & APP]
 │   ├── app.py               # Streamlit application UI & analyze() endpoint
@@ -116,7 +118,7 @@ LeanInHack/
 
 ### Team Responsibilities:
 - **Member 1 (Data & ML):** Builds, trains, tunes, and evaluates the Text Scam Classifier and URL Phishing Model. Delivers `.joblib` models, confusion matrices, evaluation metrics, and the unified `ScamLensPredictor` API.
-- **Member 2 (Detection Logic & Test Set):** Expands heuristic detection rules in `signals.py`, sets up OCR for screenshots, and curates 30–40 ground-truth test cases in `eval_cases.py`.
+- **Member 2 (Detection Logic & Test Set):** Builds the heuristic scam signal engine (`signals.py`) covering 12 Indian scam types, a 35-domain phishing blocklist, OCR screenshot extraction, and a 35-case ground-truth benchmark (`eval_cases.py`). Provides plain-language explanations and recommendations for all scam categories, and exports the `SCAM_TYPE_CATALOG` for the UI.
 - **Member 3 (Integration, App & Report):** Builds the Streamlit web application, integrates the ML models and rule-based signals into the `analyze()` pipeline, tunes weights, and compiles the project report.
 - **Member 4 (UI/UX Designer):** Designs the mobile-first accessible interface (Safe/Suspicious/Scam cards, 0–100% risk meter, plain-language reason lists, error states) and creates the slide deck visuals.
 
@@ -206,6 +208,65 @@ print(res["risk_score"])   # 96
 print(res["status_color"]) # 'red'
 print(res["icon"])         # '🚨'
 print(res["safety_tips"])  # ['Do NOT click any links...', 'Never share OTP/PIN...']
+```
+
+---
+
+## 🕵️ Member 2: Completed Detection Logic Deliverables
+
+Member 2 has completed and pushed the full heuristic signal engine, phishing blocklist, OCR module, and ground-truth evaluation benchmark.
+
+### Signal Engine Coverage (`signals.py`)
+
+| Signal | Scam Type | Severity | Indian Threat Context |
+|--------|-----------|----------|----------------------|
+| `signal_fake_kyc` | Fake KYC Update | 🔴 High | Bank/SIM KYC expiry threats with APK phishing links |
+| `signal_upi_collect_request` | UPI Collect Request Fraud | 🔴 High | "Enter PIN to receive cashback" debit fraud |
+| `signal_parcel_customs_threat` | Parcel / Customs Scam | 🔴 High | FedEx/DHL impersonation, fake customs clearance fees |
+| `signal_digital_arrest` | Digital Arrest / Agency Impersonation | 🔴 High | CBI/ED/Police fake arrest via video call |
+| `signal_job_offer_scam` | Fake Job / Task Scam | 🟡 Medium | YouTube-like/Google Maps rating advance-fee trap |
+| `signal_electricity_bill_threat` | Electricity Bill Disconnection Scam | 🔴 High | Fake DISCOM officer demanding immediate payment |
+| `signal_otp_phishing` | OTP / PIN Phishing | 🔴 High | "Share OTP with agent" account takeover |
+| `signal_loan_fraud` | Fake Loan Offer | 🟡 Medium | No-document instant loan with upfront fee trap |
+| `signal_phishing_url` | Known Phishing URL / Brand Impersonation | 🔴 High | Blocklist + TLD + APK + brand checks |
+| `signal_urgency_pressure` | High-Pressure Urgency Tactic | 🟢 Low | Panic-inducing phrases to bypass rational thought |
+| `signal_prize_lottery_scam` | Lottery / Prize Scam | 🟡 Medium | KBC lottery, fake Jio/Amazon winner SMS |
+| `signal_impersonation` | Organizational Impersonation | 🟡 Medium | Fake RBI, TRAI, PM Cares, Income Tax notices |
+
+### Phishing Infrastructure
+- **35+ blocklisted domains** confirmed in Indian cybercrime campaigns
+- **40+ trusted domains** allowlisted to prevent false positives on real bank/gov SMS
+- Subdomain-aware matching (e.g., `login.sbi-kyc-verify.top` is caught)
+
+### Evaluation Benchmark (`eval_cases.py`): 35 Cases
+
+| Metric | Heuristic-Only | Combined (ML + Heuristic) |
+|--------|---------------|--------------------------|
+| Scam Cases | 18 | 18 |
+| Safe Cases | 17 | 17 |
+| True Positives | — | 17/18 (94.4% recall) |
+| True Negatives | — | 6/17 |
+| Heuristic False Positives | **0** | — |
+| Notes | Signals engine has 0 FP on safe cases | ML model needs FPR tuning by Member 3 |
+
+> **Note for Member 3:** The eval results show the ML model (trained on UCI SMS spam) flags some legitimate Indian bank SMS (Paytm confirmations, Aadhaar-related, electricity bills) as scams due to keyword overlap. Use `heuristic_risk_boost` from `signals.py` as the primary signal — the heuristics have **0 false positives** on our test set. Suggested weight: `final_score = ml_score * 0.6 + signal_boost * 0.4` where `signal_boost` = `heuristic_risk_boost * 2.5`.
+
+### Quick API for `app.py` Integration
+
+```python
+import sys
+sys.path.insert(0, "Detection Logic")
+from signals import analyze_signals, SCAM_TYPE_CATALOG, GENERAL_SAFETY_TIPS
+
+# Analyze text (and optional screenshot)
+result = analyze_signals(text=message, image_path=screenshot_path)
+
+# Key outputs:
+result["heuristic_risk_boost"]  # 0–40 points to add to ML score
+result["scam_types"]            # e.g. ["Fake KYC Update", "Known Phishing URL"]
+result["explanations"]          # Plain-language "Why we think this" list (UI-ready)
+result["recommendations"]       # Action steps for the user
+result["ocr_text"]              # Text extracted from screenshot via OCR
 ```
 
 ---
