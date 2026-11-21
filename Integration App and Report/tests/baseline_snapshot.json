@@ -1,0 +1,212 @@
+{
+  "SCAM_001": {
+    "id": "SCAM_001",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 98
+  },
+  "SCAM_002": {
+    "id": "SCAM_002",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 83
+  },
+  "SCAM_003": {
+    "id": "SCAM_003",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 96
+  },
+  "SCAM_004": {
+    "id": "SCAM_004",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 87
+  },
+  "SCAM_005": {
+    "id": "SCAM_005",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 71
+  },
+  "SCAM_006": {
+    "id": "SCAM_006",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 98
+  },
+  "SCAM_007": {
+    "id": "SCAM_007",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 98
+  },
+  "SCAM_008": {
+    "id": "SCAM_008",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 85
+  },
+  "SCAM_009": {
+    "id": "SCAM_009",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 73
+  },
+  "SCAM_010": {
+    "id": "SCAM_010",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 78
+  },
+  "SCAM_011": {
+    "id": "SCAM_011",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 71
+  },
+  "SCAM_012": {
+    "id": "SCAM_012",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 98
+  },
+  "SCAM_013": {
+    "id": "SCAM_013",
+    "expected_verdict": "Scam",
+    "verdict": "Suspicious",
+    "risk_score": 66
+  },
+  "SCAM_014": {
+    "id": "SCAM_014",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 94
+  },
+  "SCAM_015": {
+    "id": "SCAM_015",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 92
+  },
+  "SCAM_016": {
+    "id": "SCAM_016",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 75
+  },
+  "SCAM_017": {
+    "id": "SCAM_017",
+    "expected_verdict": "Scam",
+    "verdict": "Suspicious",
+    "risk_score": 68
+  },
+  "SCAM_018": {
+    "id": "SCAM_018",
+    "expected_verdict": "Scam",
+    "verdict": "Scam",
+    "risk_score": 86
+  },
+  "SAFE_001": {
+    "id": "SAFE_001",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 15
+  },
+  "SAFE_002": {
+    "id": "SAFE_002",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 25
+  },
+  "SAFE_003": {
+    "id": "SAFE_003",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 15
+  },
+  "SAFE_004": {
+    "id": "SAFE_004",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 8
+  },
+  "SAFE_005": {
+    "id": "SAFE_005",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 2
+  },
+  "SAFE_006": {
+    "id": "SAFE_006",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 15
+  },
+  "SAFE_007": {
+    "id": "SAFE_007",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 25
+  },
+  "SAFE_008": {
+    "id": "SAFE_008",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 25
+  },
+  "SAFE_009": {
+    "id": "SAFE_009",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 25
+  },
+  "SAFE_010": {
+    "id": "SAFE_010",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 25
+  },
+  "SAFE_011": {
+    "id": "SAFE_011",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 25
+  },
+  "SAFE_012": {
+    "id": "SAFE_012",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 15
+  },
+  "SAFE_013": {
+    "id": "SAFE_013",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 25
+  },
+  "SAFE_014": {
+    "id": "SAFE_014",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 25
+  },
+  "SAFE_015": {
+    "id": "SAFE_015",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 25
+  },
+  "SAFE_016": {
+    "id": "SAFE_016",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 25
+  },
+  "SAFE_017": {
+    "id": "SAFE_017",
+    "expected_verdict": "Safe",
+    "verdict": "Safe",
+    "risk_score": 25
+  }
+}
