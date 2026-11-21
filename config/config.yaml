@@ -1,0 +1,25 @@
+# ScamLens Central Configuration YAML
+system:
+  name: "ScamLens"
+  version: "2.1.0"
+  environment: "development"
+
+thresholds:
+  scam: 70
+  suspicious: 40
+  safe: 0
+
+weights:
+  text_ml: 0.35
+  heuristics: 0.35
+  url_ml: 0.15
+  url_rule: 0.15
+
+models:
+  text_model: "Data And ML/models/text_model.joblib"
+  url_model: "Data And ML/models/url_model.joblib"
+
+feeds:
+  openphish: "https://openphish.com/feed.txt"
+  cybercrime_portal: "https://cybercrime.gov.in"
+  helpline: "1930"
