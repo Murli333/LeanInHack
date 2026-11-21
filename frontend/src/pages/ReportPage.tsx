@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useScan, useRetryStep } from '../hooks/useScans';
 import { RiskVerdictCard } from '../components/RiskVerdictCard';
@@ -29,10 +29,20 @@ export const ReportPage: React.FC = () => {
   const { data: scan, isLoading, isError, refetch } = useScan(id || '', Boolean(id));
   const retryStepMutation = useRetryStep();
 
-  // If scan is still running, route to progress stepper
+  // If scan is still running, smoothly redirect to progress stepper inside useEffect
+  useEffect(() => {
+    if (scan && (scan.status === 'running' || scan.status === 'queued')) {
+      navigate(`/scan/${scan.id}/progress`, { replace: true });
+    }
+  }, [scan?.status, scan?.id, navigate]);
+
   if (scan && (scan.status === 'running' || scan.status === 'queued')) {
-    navigate(`/scan/${scan.id}/progress`, { replace: true });
-    return null;
+    return (
+      <div className="py-8 max-w-md mx-auto space-y-4 text-center">
+        <Skeleton className="h-48 w-full rounded-card-lg" />
+        <p className="text-sm text-text-muted">Analysis is in progress. Redirecting to live progress tracker...</p>
+      </div>
+    );
   }
 
   if (isLoading) {

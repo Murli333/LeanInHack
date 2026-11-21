@@ -1,33 +1,44 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useScan } from '../hooks/useScans';
 import { ProgressStepper } from '../components/ProgressStepper';
 import { ErrorState } from '../components/ErrorState';
 import { Skeleton } from '../components/Skeleton';
 import { Button } from '../components/Button';
-import { AlertCircle, RotateCcw } from 'lucide-react';
+import { AlertCircle, RotateCcw, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export const ProgressPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const navigatedRef = useRef(false);
 
   const { data: scan, isLoading, isError, error, refetch } = useScan(id || '', Boolean(id));
 
   const status = scan?.status;
+  const isComplete = status === 'completed' || status === 'partial';
 
-  // Terminal state transition: Once completed or partial, navigate directly to report
+  // 1. Guaranteed active polling while the scan is running
   useEffect(() => {
-    if (!scan || navigatedRef.current) return;
+    if (!id || isComplete || status === 'failed') return;
 
-    if (status === 'completed' || status === 'partial') {
-      navigatedRef.current = true;
-      const timer = setTimeout(() => {
-        navigate(`/report/${scan.id}`, { replace: true });
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [status, scan?.id, navigate]);
+    // Actively poll every 400ms while running
+    const pollTimer = setInterval(() => {
+      refetch();
+    }, 400);
+
+    return () => clearInterval(pollTimer);
+  }, [id, isComplete, status, refetch]);
+
+  // 2. Smooth auto-navigation once completed
+  useEffect(() => {
+    if (!scan || !isComplete) return;
+
+    // Redirect after brief visual confirmation (500ms)
+    const timer = setTimeout(() => {
+      navigate(`/report/${scan.id}`, { replace: true });
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [isComplete, scan?.id, navigate]);
 
   // Terminal state: Analysis failed
   if (status === 'failed') {
@@ -71,7 +82,7 @@ export const ProgressPage: React.FC = () => {
     );
   }
 
-  const defaultSteps = [
+  const defaultRunningSteps = [
     { key: 'extract', label: 'Extract content', status: 'completed' as const },
     { key: 'patterns', label: 'Check patterns', status: 'running' as const },
     { key: 'reputation', label: 'Check URL reputation', status: 'waiting' as const },
@@ -79,22 +90,32 @@ export const ProgressPage: React.FC = () => {
     { key: 'report', label: 'Prepare report', status: 'waiting' as const },
   ];
 
-  const steps = scan?.steps && scan.steps.length > 0 ? scan.steps : defaultSteps;
+  const defaultCompletedSteps = [
+    { key: 'extract', label: 'Extract content', status: 'completed' as const },
+    { key: 'patterns', label: 'Check patterns', status: 'completed' as const },
+    { key: 'reputation', label: 'Check URL reputation', status: 'completed' as const },
+    { key: 'evidence', label: 'Combine evidence', status: 'completed' as const },
+    { key: 'report', label: 'Prepare report', status: 'completed' as const },
+  ];
+
+  const steps = isComplete
+    ? (scan?.steps && scan.steps.length > 0 ? scan.steps.map(s => ({ ...s, status: 'completed' as const })) : defaultCompletedSteps)
+    : (scan?.steps && scan.steps.length > 0 ? scan.steps : defaultRunningSteps);
 
   return (
     <div className="py-4 sm:py-8 max-w-md mx-auto space-y-8">
       {/* Header */}
       <div className="space-y-1.5 text-left">
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
-          Analyzing your submission
+          {isComplete ? 'Analysis complete' : 'Analyzing your submission'}
         </h1>
         <p className="text-sm text-text-muted">
-          This may take a few moments.
+          {isComplete ? 'Verification finished. Preparing your security report...' : 'This may take a few moments.'}
         </p>
       </div>
 
       {/* Stepper Card */}
-      <div className="p-6 rounded-card-lg bg-surface border border-border shadow-card-soft">
+      <div className="p-6 rounded-card-lg bg-surface border border-border shadow-card-soft space-y-6">
         {isLoading && !scan ? (
           <div className="space-y-6">
             <Skeleton className="h-10 w-full" />
@@ -106,11 +127,28 @@ export const ProgressPage: React.FC = () => {
         ) : (
           <ProgressStepper steps={steps} />
         )}
+
+        {/* Immediate navigation action when scan is completed */}
+        {isComplete && scan && (
+          <div className="pt-2 animate-in fade-in duration-300">
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              icon={<ArrowRight className="w-5 h-5" />}
+              onClick={() => navigate(`/report/${scan.id}`, { replace: true })}
+            >
+              View Full Report
+            </Button>
+          </div>
+        )}
       </div>
 
-      <p className="text-center text-xs text-text-muted">
-        Evaluating across calibrated models, URL structure, and fraud signals...
-      </p>
+      {!isComplete && (
+        <p className="text-center text-xs text-text-muted">
+          Evaluating across calibrated models, URL structure, and fraud signals...
+        </p>
+      )}
     </div>
   );
 };
