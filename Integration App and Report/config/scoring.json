@@ -1,0 +1,30 @@
+{
+  "weights": {
+    "text_ml": 0.35,
+    "heuristics": 0.35,
+    "url_ml": 0.15,
+    "url_rule": 0.15,
+    "unknown_url": 0.2,
+    "unknown_url_score": 60
+  },
+  "thresholds": {
+    "scam": 70,
+    "suspicious": 40
+  },
+  "floors": {
+    "blocklist": 98,
+    "strong_rule": 70,
+    "ip_url": 75,
+    "strong_text_ml": 70
+  },
+  "ceilings": {
+    "weak_signals_only": 65
+  },
+  "dampening": {
+    "conflicting_evidence_factor": 0.3
+  },
+  "baseline": {
+    "min_safe_score": 2,
+    "default_safe_score": 10
+  }
+}
