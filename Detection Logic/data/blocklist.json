@@ -1,0 +1,385 @@
+{
+  "_metadata": {
+    "schema_version": "1.1",
+    "description": "Phishing and scam domain blocklist for ScamLens — Indian cybercrime campaigns",
+    "last_updated": "2024-11-22",
+    "maintainer": "Member 2 — Detection Logic",
+    "sources": [
+      "CERT-In advisories (https://www.cert-in.org.in/)",
+      "I4C / Cybercrime.gov.in reported domains",
+      "MHA Digital Arrest scam advisories (Oct-Nov 2024)",
+      "OpenPhish community feed (Indian-targeted subset)",
+      "PhishTank (https://phishtank.org/)",
+      "Synthetic test domains created for hackathon evaluation (marked with source: synthetic)"
+    ],
+    "notes": [
+      "All phone numbers and domain names in this list are either confirmed neutralised scam records,",
+      "published in public CERT-In / MHA advisories, or synthetically created for testing.",
+      "They must NOT be used to contact any real individual."
+    ]
+  },
+  "domains": [
+    {
+      "domain": "sbi-kyc-verify.top",
+      "category": "fake_kyc",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake SBI KYC portal with APK payload"
+    },
+    {
+      "domain": "sbikyc-update.xyz",
+      "category": "fake_kyc",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake SBI KYC update page"
+    },
+    {
+      "domain": "sbi-netbanking.site",
+      "category": "fake_kyc",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Credential-harvesting clone of SBI Net Banking"
+    },
+    {
+      "domain": "hdfc-kyc-verify.com",
+      "category": "fake_kyc",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake HDFC KYC verification portal"
+    },
+    {
+      "domain": "hdfc-netbanking.site",
+      "category": "fake_kyc",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "HDFC credential phishing site"
+    },
+    {
+      "domain": "icici-verify.top",
+      "category": "fake_kyc",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "ICICI bank impersonation"
+    },
+    {
+      "domain": "paytm-kyc-update.xyz",
+      "category": "fake_kyc",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake Paytm KYC with APK"
+    },
+    {
+      "domain": "upi-reward-claim.top",
+      "category": "upi_fraud",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake UPI cashback reward portal"
+    },
+    {
+      "domain": "phonepe-cashback.xyz",
+      "category": "upi_fraud",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "PhonePe impersonation cashback scam"
+    },
+    {
+      "domain": "aadhaar-link-verify.site",
+      "category": "fake_kyc",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Aadhaar linking phishing"
+    },
+    {
+      "domain": "pancard-link.top",
+      "category": "fake_kyc",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "PAN card phishing portal"
+    },
+    {
+      "domain": "kyc-verified-india.top",
+      "category": "fake_kyc",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Generic KYC phishing"
+    },
+    {
+      "domain": "electricity-bill-pay.xyz",
+      "category": "electricity_scam",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake electricity bill payment portal"
+    },
+    {
+      "domain": "bses-bill-update.top",
+      "category": "electricity_scam",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "BSES electricity scam impersonation"
+    },
+    {
+      "domain": "tatapower-pay.site",
+      "category": "electricity_scam",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Tata Power impersonation payment scam"
+    },
+    {
+      "domain": "discom-pay-portal.top",
+      "category": "electricity_scam",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Generic DISCOM electricity scam"
+    },
+    {
+      "domain": "electric-officer-portal.xyz",
+      "category": "electricity_scam",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake electricity officer portal"
+    },
+    {
+      "domain": "customs-clearance-india.top",
+      "category": "parcel_scam",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake customs clearance fee portal"
+    },
+    {
+      "domain": "fedex-india-customs.xyz",
+      "category": "parcel_scam",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "FedEx impersonation customs scam"
+    },
+    {
+      "domain": "dhl-parcel-verify.top",
+      "category": "parcel_scam",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "DHL parcel verification scam"
+    },
+    {
+      "domain": "india-post-parcel.xyz",
+      "category": "parcel_scam",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "India Post impersonation"
+    },
+    {
+      "domain": "parcel-track-india.site",
+      "category": "parcel_scam",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Generic parcel tracking phishing"
+    },
+    {
+      "domain": "work-from-home-tasks.xyz",
+      "category": "job_scam",
+      "severity": 2,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Task-based job scam recruitment"
+    },
+    {
+      "domain": "youtube-like-earn.top",
+      "category": "job_scam",
+      "severity": 2,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "YouTube liking task advance-fee scam"
+    },
+    {
+      "domain": "daily-task-earn.site",
+      "category": "job_scam",
+      "severity": 2,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Generic daily task advance-fee scam"
+    },
+    {
+      "domain": "telegram-task-earn.xyz",
+      "category": "job_scam",
+      "severity": 2,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Telegram-based task scam recruitment"
+    },
+    {
+      "domain": "parttime-job-india.top",
+      "category": "job_scam",
+      "severity": 2,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Part-time job scam"
+    },
+    {
+      "domain": "cbi-cybercell.xyz",
+      "category": "digital_arrest",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "CBI impersonation portal"
+    },
+    {
+      "domain": "cyber-police-india.top",
+      "category": "digital_arrest",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake cyber police portal"
+    },
+    {
+      "domain": "ed-enforcement.site",
+      "category": "digital_arrest",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "ED enforcement impersonation"
+    },
+    {
+      "domain": "delhi-police-cybercrime.xyz",
+      "category": "digital_arrest",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Delhi Police impersonation"
+    },
+    {
+      "domain": "narcotics-control-india.top",
+      "category": "digital_arrest",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "NCB impersonation portal"
+    },
+    {
+      "domain": "secure-login-india.xyz",
+      "category": "generic_phishing",
+      "severity": 2,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Generic phishing login page"
+    },
+    {
+      "domain": "account-verify-now.top",
+      "category": "generic_phishing",
+      "severity": 2,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Generic account verification phishing"
+    },
+    {
+      "domain": "otp-verify.site",
+      "category": "otp_phishing",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "OTP phishing portal"
+    },
+    {
+      "domain": "india-gov-portal.xyz",
+      "category": "generic_phishing",
+      "severity": 2,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake government portal"
+    },
+    {
+      "domain": "india-kyc-portal.top",
+      "category": "fake_kyc",
+      "severity": 3,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Generic KYC phishing portal"
+    },
+    {
+      "domain": "jio-free-recharge.xyz",
+      "category": "lottery_scam",
+      "severity": 2,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake Jio free recharge data harvest"
+    },
+    {
+      "domain": "instant-loan-india.top",
+      "category": "loan_fraud",
+      "severity": 2,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "Fake instant loan portal"
+    },
+    {
+      "domain": "trai-sim-verify.xyz",
+      "category": "impersonation",
+      "severity": 2,
+      "source": "synthetic",
+      "last_verified": "2024-11-22",
+      "notes": "TRAI impersonation SIM verification scam"
+    }
+  ],
+  "url_shorteners": [
+    {
+      "domain": "bit.ly",
+      "notes": "Legitimate but commonly abused — requires expansion"
+    },
+    {
+      "domain": "tinyurl.com",
+      "notes": "Legitimate but commonly abused — requires expansion"
+    },
+    {
+      "domain": "t.me",
+      "notes": "Telegram short link — often used in scam recruitment"
+    },
+    {
+      "domain": "wa.me",
+      "notes": "WhatsApp short link — sometimes used in scam contact"
+    },
+    {
+      "domain": "cutt.ly",
+      "notes": "URL shortener — requires expansion"
+    },
+    {
+      "domain": "rb.gy",
+      "notes": "URL shortener — requires expansion"
+    },
+    {
+      "domain": "is.gd",
+      "notes": "URL shortener — requires expansion"
+    },
+    {
+      "domain": "shorturl.at",
+      "notes": "URL shortener — requires expansion"
+    },
+    {
+      "domain": "tiny.cc",
+      "notes": "URL shortener — requires expansion"
+    },
+    {
+      "domain": "ow.ly",
+      "notes": "URL shortener — requires expansion"
+    }
+  ]
+}

@@ -1,0 +1,304 @@
+{
+  "_metadata": {
+    "schema_version": "1.1",
+    "description": "Trusted domain allowlist for ScamLens — verified Indian banks, government portals, and e-commerce",
+    "last_updated": "2024-11-22",
+    "maintainer": "Member 2 — Detection Logic",
+    "notes": [
+      "Allowlisting a domain means outgoing links TO that domain are considered safe.",
+      "It does NOT mean that any message ABOUT that domain is safe.",
+      "Example: 'Your HDFC account is blocked, click here' is still suspicious even if",
+      "the link is hdfcbank.com — the CONTENT triggers a signal regardless."
+    ]
+  },
+  "trusted_domains": [
+    {
+      "domain": "sbi.co.in",
+      "category": "bank",
+      "org": "State Bank of India",
+      "verified": true
+    },
+    {
+      "domain": "onlinesbi.sbi",
+      "category": "bank",
+      "org": "State Bank of India — Net Banking",
+      "verified": true
+    },
+    {
+      "domain": "onlinesbi.com",
+      "category": "bank",
+      "org": "State Bank of India — Online Banking",
+      "verified": true
+    },
+    {
+      "domain": "hdfcbank.com",
+      "category": "bank",
+      "org": "HDFC Bank",
+      "verified": true
+    },
+    {
+      "domain": "icicibank.com",
+      "category": "bank",
+      "org": "ICICI Bank",
+      "verified": true
+    },
+    {
+      "domain": "axisbank.com",
+      "category": "bank",
+      "org": "Axis Bank",
+      "verified": true
+    },
+    {
+      "domain": "kotak.com",
+      "category": "bank",
+      "org": "Kotak Mahindra Bank",
+      "verified": true
+    },
+    {
+      "domain": "kotakbank.com",
+      "category": "bank",
+      "org": "Kotak Mahindra Bank",
+      "verified": true
+    },
+    {
+      "domain": "pnbindia.in",
+      "category": "bank",
+      "org": "Punjab National Bank",
+      "verified": true
+    },
+    {
+      "domain": "canarabank.com",
+      "category": "bank",
+      "org": "Canara Bank",
+      "verified": true
+    },
+    {
+      "domain": "unionbankofindia.co.in",
+      "category": "bank",
+      "org": "Union Bank of India",
+      "verified": true
+    },
+    {
+      "domain": "paytm.com",
+      "category": "fintech",
+      "org": "Paytm (One97 Communications)",
+      "verified": true
+    },
+    {
+      "domain": "phonepe.com",
+      "category": "fintech",
+      "org": "PhonePe Pvt Ltd",
+      "verified": true
+    },
+    {
+      "domain": "gpay.com",
+      "category": "fintech",
+      "org": "Google Pay",
+      "verified": true
+    },
+    {
+      "domain": "bhimupi.org.in",
+      "category": "fintech",
+      "org": "BHIM UPI — NPCI",
+      "verified": true
+    },
+    {
+      "domain": "npci.org.in",
+      "category": "fintech",
+      "org": "National Payments Corporation of India",
+      "verified": true
+    },
+    {
+      "domain": "nach.co.in",
+      "category": "fintech",
+      "org": "NPCI — NACH",
+      "verified": true
+    },
+    {
+      "domain": "rbi.org.in",
+      "category": "government",
+      "org": "Reserve Bank of India",
+      "verified": true
+    },
+    {
+      "domain": "uidai.gov.in",
+      "category": "government",
+      "org": "UIDAI — Aadhaar",
+      "verified": true
+    },
+    {
+      "domain": "incometax.gov.in",
+      "category": "government",
+      "org": "Income Tax Department",
+      "verified": true
+    },
+    {
+      "domain": "mca.gov.in",
+      "category": "government",
+      "org": "Ministry of Corporate Affairs",
+      "verified": true
+    },
+    {
+      "domain": "cybercrime.gov.in",
+      "category": "government",
+      "org": "National Cyber Crime Reporting Portal",
+      "verified": true
+    },
+    {
+      "domain": "digilocker.gov.in",
+      "category": "government",
+      "org": "DigiLocker — MeitY",
+      "verified": true
+    },
+    {
+      "domain": "parivahan.gov.in",
+      "category": "government",
+      "org": "Parivahan Sewa — MoRTH",
+      "verified": true
+    },
+    {
+      "domain": "indianrailways.gov.in",
+      "category": "government",
+      "org": "Indian Railways",
+      "verified": true
+    },
+    {
+      "domain": "irctc.co.in",
+      "category": "government",
+      "org": "Indian Railway Catering and Tourism Corporation",
+      "verified": true
+    },
+    {
+      "domain": "tatapower.com",
+      "category": "utility",
+      "org": "Tata Power Company",
+      "verified": true
+    },
+    {
+      "domain": "bsesdelhi.com",
+      "category": "utility",
+      "org": "BSES Delhi",
+      "verified": true
+    },
+    {
+      "domain": "bsesdl.co.in",
+      "category": "utility",
+      "org": "BSES Dvijing Limited",
+      "verified": true
+    },
+    {
+      "domain": "cesc.co.in",
+      "category": "utility",
+      "org": "CESC Limited",
+      "verified": true
+    },
+    {
+      "domain": "google.com",
+      "category": "tech",
+      "org": "Google LLC",
+      "verified": true
+    },
+    {
+      "domain": "google.co.in",
+      "category": "tech",
+      "org": "Google India",
+      "verified": true
+    },
+    {
+      "domain": "gmail.com",
+      "category": "tech",
+      "org": "Google Gmail",
+      "verified": true
+    },
+    {
+      "domain": "microsoft.com",
+      "category": "tech",
+      "org": "Microsoft Corporation",
+      "verified": true
+    },
+    {
+      "domain": "apple.com",
+      "category": "tech",
+      "org": "Apple Inc.",
+      "verified": true
+    },
+    {
+      "domain": "amazon.in",
+      "category": "ecommerce",
+      "org": "Amazon India",
+      "verified": true
+    },
+    {
+      "domain": "amazon.com",
+      "category": "ecommerce",
+      "org": "Amazon.com Inc.",
+      "verified": true
+    },
+    {
+      "domain": "flipkart.com",
+      "category": "ecommerce",
+      "org": "Flipkart Internet Pvt Ltd",
+      "verified": true
+    },
+    {
+      "domain": "myntra.com",
+      "category": "ecommerce",
+      "org": "Myntra Designs Pvt Ltd",
+      "verified": true
+    },
+    {
+      "domain": "nykaa.com",
+      "category": "ecommerce",
+      "org": "Nykaa E-Retail Ltd",
+      "verified": true
+    },
+    {
+      "domain": "swiggy.com",
+      "category": "food",
+      "org": "Bundl Technologies Pvt Ltd (Swiggy)",
+      "verified": true
+    },
+    {
+      "domain": "zomato.com",
+      "category": "food",
+      "org": "Zomato Ltd",
+      "verified": true
+    },
+    {
+      "domain": "ola.in",
+      "category": "transport",
+      "org": "ANI Technologies (Ola Cabs)",
+      "verified": true
+    },
+    {
+      "domain": "olacabs.com",
+      "category": "transport",
+      "org": "ANI Technologies (Ola Cabs)",
+      "verified": true
+    },
+    {
+      "domain": "uber.com",
+      "category": "transport",
+      "org": "Uber Technologies Inc.",
+      "verified": true
+    },
+    {
+      "domain": "naukri.com",
+      "category": "jobs",
+      "org": "Info Edge (India) Ltd",
+      "verified": true
+    },
+    {
+      "domain": "linkedin.com",
+      "category": "jobs",
+      "org": "LinkedIn Corporation",
+      "verified": true
+    },
+    {
+      "domain": "indeed.com",
+      "category": "jobs",
+      "org": "Indeed Inc.",
+      "verified": true
+    }
+  ]
+}

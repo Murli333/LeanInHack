@@ -129,10 +129,12 @@ LeanInHack/
 │   └── README.md                       # Deep-dive ML engineering documentation
 │
 ├── Detection Logic/                    # [Member 2: Scam Rules & Test Set] ✅
-│   ├── signals.py                      # 12 Indian scam signal types, blocklist, allowlist, OCR
-│   ├── eval_cases.py                   # 35 ground-truth evaluation cases (18 scam, 17 genuine)
+│   ├── data/                           # Versioned JSON blocklist (40+ domains) & allowlist (48 domains)
+│   ├── tests/                          # 47 unit tests (signals, URLs, allowlist, OCR, scenarios)
+│   ├── signals.py                      # 16 Indian scam signal types, blocklist, allowlist, OCR
+│   ├── eval_cases.py                   # 61 ground-truth evaluation cases (Tune vs Final splits)
 │   ├── requirements.txt                # pytesseract, Pillow, scikit-learn
-│   └── README.md                       # API docs, signal catalog, integration guide
+│   └── README.md                       # Complete API docs, signal catalog, integration guide
 │
 ├── Integration App and Report/         # [Member 3: Integration, App & Report] ✅
 │   ├── app.py                          # Streamlit application UI with one-click demo pills
@@ -157,7 +159,7 @@ LeanInHack/
 
 ### Team Responsibilities:
 - **Member 1 (Data & ML):** Builds, trains, tunes, and evaluates the Text Scam Classifier and URL Phishing Model. Delivers `.joblib` models, confusion matrices, evaluation metrics, and the unified `ScamLensPredictor` API.
-- **Member 2 (Detection Logic & Test Set):** Builds the heuristic scam signal engine (`signals.py`) covering 12 Indian scam types, a 35-domain phishing blocklist, OCR screenshot extraction, and a 35-case ground-truth benchmark (`eval_cases.py`). Provides plain-language explanations and recommendations for all scam categories, and exports `SCAM_TYPE_CATALOG` and `GENERAL_SAFETY_TIPS`.
+- **Member 2 (Detection Logic & Test Set):** Builds the heuristic scam signal engine (`signals.py`) covering 16 Indian scam types, versioned JSON data files (40+ blocklisted domains, 48 trusted domains), OCR screenshot extraction with quality pre-processing, and a 61-case ground-truth benchmark (`eval_cases.py`) separated into Tune and Held-out Final splits. Delivers a 47-test unit test suite (`tests/`). Provides plain-language explanations and recommendations for all scam categories, and exports `SCAM_TYPE_CATALOG` and `GENERAL_SAFETY_TIPS`.
 - **Member 3 (Integration, App & Report):** Builds the Streamlit web application, integrates the ML models and rule-based signals into the `analyze()` pipeline, tunes weights, runs end-to-end integration tests, and compiles the project report.
 - **Member 4 (UI/UX Designer):** Designs the mobile-first accessible interface (Safe/Suspicious/Scam cards, 0–100% risk meter, plain-language reason lists, error states) and creates the slide deck visuals.
 
@@ -245,6 +247,10 @@ streamlit run app.py
 ```bash
 # Member 1 — ML model test suite (16 tests)
 python "Data And ML/tests/test_models.py"
+
+# Member 2 — Detection Logic unit tests (47 tests) & benchmark (61 cases)
+python -m unittest discover -s "Detection Logic/tests" -p "test_*.py" -v
+python "Detection Logic/eval_cases.py"
 
 # Member 3 — Integration test suite (16 tests)
 python "Integration App and Report/tests/test_integration.py"

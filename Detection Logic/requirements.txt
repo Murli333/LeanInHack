@@ -1,17 +1,19 @@
-# ScamLens - Member 2: Detection Logic & Test Set
-# Dependencies for signals.py (OCR) and eval_cases.py
+# ScamLens — Member 2: Detection Logic & Heuristics Dependencies
+# Python >= 3.10 required
 
-# Core ML (from Member 1 — required to load predictor for eval)
+# Core data processing & ML runtime compatibility (Member 1 integration)
 scikit-learn>=1.4.0
 pandas>=2.0.0
 numpy>=1.24.0
 joblib>=1.3.0
 
-# OCR for screenshot analysis
+# OCR processing (Screenshot & image extraction)
 pytesseract>=0.3.10
 Pillow>=10.0.0
 
-# Note: Tesseract-OCR binary must be installed separately.
-# Windows: https://github.com/UB-Mannheim/tesseract/wiki
-# Linux:   sudo apt-get install tesseract-ocr
-# macOS:   brew install tesseract
+# System OCR Engine (Required for image text extraction):
+# Tesseract-OCR must be installed at the OS level:
+#   Windows: https://github.com/UB-Mannheim/tesseract/wiki (add to PATH or install to default C:\Program Files\Tesseract-OCR)
+#            Optional Hindi language pack: download tessdata 'hin.traineddata'
+#   Ubuntu/Debian: sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-hin
+#   macOS:         brew install tesseract tesseract-lang
