@@ -2,8 +2,13 @@ import { Scan, ScanFilter, ScanStats, ScanType, ScanStep, ScanResult } from '../
 import { INITIAL_MOCK_SCANS } from '../mocks/scanMocks';
 
 const STORAGE_KEY = 'scamlens-local-scans';
-// Prefer real backend by default. Only force mock if VITE_USE_MOCK is explicitly set to 'true'.
+// Remote backend URL if configured (e.g., https://your-backend.onrender.com). Empty string uses relative /api.
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+// Prefer real backend by default unless VITE_USE_MOCK is explicitly 'true'
 const FORCE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
+
+// Flag to track whether the current host is a static host (like Netlify without a colocated Python backend)
+let isStaticHostDetected = false;
 
 // Helper to deep clone to prevent referential mutation bugs in React Query
 function deepClone<T>(obj: T): T {
@@ -56,32 +61,44 @@ export const apiClient = {
       throw new Error('Scan content cannot be empty.');
     }
 
-    if (!FORCE_MOCK) {
+    if (!FORCE_MOCK && !isStaticHostDetected) {
       try {
-        const res = await fetch('/api/scans', {
+        const res = await fetch(`${API_BASE}/api/scans`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: params.type, content }),
         });
 
-        if (res.ok) {
+        const contentType = res.headers.get('content-type') || '';
+
+        // If backend returned HTML (e.g. Netlify/Vercel SPA rewrite on missing /api route),
+        // or 404/405, this host is a static deployment. Activate client detection engine!
+        if (res.status === 404 || res.status === 405 || (!contentType.includes('application/json') && !res.ok)) {
+          isStaticHostDetected = true;
+          console.info('[ScamLens] Static host detected. Seamlessly activating standalone client detection engine.');
+        } else if (res.ok) {
           const data = await res.json();
           return { id: data.id };
+        } else if (res.status === 400) {
+          // Explicit validation error from backend
+          const errData = await res.json().catch(() => ({ detail: 'Invalid request' }));
+          throw new Error(errData.detail || 'Validation failed');
         } else {
-          const errData = await res.json().catch(() => ({ detail: `Server error (${res.status})` }));
-          throw new Error(errData.detail || `Server error (${res.status})`);
+          // Server 500 error: fall back to client detection engine so user is never blocked
+          console.warn(`[ScamLens] Backend status ${res.status}. Falling back to client detection engine.`);
         }
       } catch (err: any) {
-        // If it's a real server rejection (400 validation, 500 error), rethrow immediately
-        if (err?.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError') && !err.message.includes('ECONNREFUSED')) {
+        // If it's a genuine 400 validation rejection, rethrow
+        if (err?.message && (err.message.includes('Validation failed') || err.message.includes('cannot be empty'))) {
           throw err;
         }
-        // If network is offline, continue to local fallback
-        console.warn('[ScamLens API] Backend unreachable, falling back to local client processing.');
+        // Network failure or static host
+        isStaticHostDetected = true;
+        console.warn('[ScamLens] Backend unreachable. Operating with standalone client detection engine.');
       }
     }
 
-    // Local Mock / Offline implementation
+    // Standalone Client Detection Engine (Offline / Static Host / Netlify)
     const id = 'scan-' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
     const isUrl = params.type === 'url' || content.startsWith('http://') || content.startsWith('https://');
 
@@ -117,20 +134,21 @@ export const apiClient = {
    * Retrieve scan details and real-time step status
    */
   async getScan(id: string): Promise<Scan> {
-    if (!FORCE_MOCK) {
+    if (!FORCE_MOCK && !isStaticHostDetected) {
       try {
-        const res = await fetch(`/api/scans/${id}`);
+        const res = await fetch(`${API_BASE}/api/scans/${id}`);
         if (res.ok) {
           const data = await res.json();
           return data;
         } else if (res.status === 404) {
-          throw new Error(`Scan not found: ${id}`);
-        } else {
-          const errData = await res.json().catch(() => ({ detail: `Server error (${res.status})` }));
-          throw new Error(errData.detail || `Server error (${res.status})`);
+          // If 404 from remote/backend, check if it was created locally
+          const localMatch = runtimeScans.find((s) => s.id === id);
+          if (!localMatch) {
+            throw new Error(`Scan not found: ${id}`);
+          }
         }
       } catch (err: any) {
-        if (err?.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError') && !err.message.includes('ECONNREFUSED')) {
+        if (err?.message && err.message.includes('Scan not found')) {
           throw err;
         }
         // Fall back to local mock
@@ -289,14 +307,14 @@ export const apiClient = {
    * List recent scans with filtering
    */
   async listScans(filter?: ScanFilter): Promise<Scan[]> {
-    if (!FORCE_MOCK) {
+    if (!FORCE_MOCK && !isStaticHostDetected) {
       try {
         const queryParams = new URLSearchParams();
         if (filter?.query) queryParams.set('query', filter.query);
         if (filter?.type && filter.type !== 'all') queryParams.set('type', filter.type);
         if (filter?.risk && filter.risk !== 'all') queryParams.set('risk', filter.risk);
 
-        const res = await fetch(`/api/scans?${queryParams.toString()}`);
+        const res = await fetch(`${API_BASE}/api/scans?${queryParams.toString()}`);
         if (res.ok) {
           const data = await res.json();
           return data;
@@ -330,9 +348,9 @@ export const apiClient = {
    * Delete a single scan by id
    */
   async deleteScan(id: string): Promise<void> {
-    if (!FORCE_MOCK) {
+    if (!FORCE_MOCK && !isStaticHostDetected) {
       try {
-        const res = await fetch(`/api/scans/${id}`, { method: 'DELETE' });
+        const res = await fetch(`${API_BASE}/api/scans/${id}`, { method: 'DELETE' });
         if (res.ok) {
           return;
         }
@@ -349,9 +367,9 @@ export const apiClient = {
    * Delete all scans (for testing empty states)
    */
   async deleteAllScans(): Promise<void> {
-    if (!FORCE_MOCK) {
+    if (!FORCE_MOCK && !isStaticHostDetected) {
       try {
-        const res = await fetch('/api/scans', { method: 'DELETE' });
+        const res = await fetch(`${API_BASE}/api/scans`, { method: 'DELETE' });
         if (res.ok) {
           return;
         }
@@ -376,9 +394,9 @@ export const apiClient = {
    * Get stats (Honesty Rule 5: from real stored data only!)
    */
   async getStats(): Promise<ScanStats> {
-    if (!FORCE_MOCK) {
+    if (!FORCE_MOCK && !isStaticHostDetected) {
       try {
-        const res = await fetch('/api/stats');
+        const res = await fetch(`${API_BASE}/api/stats`);
         if (res.ok) {
           const data = await res.json();
           return data;
