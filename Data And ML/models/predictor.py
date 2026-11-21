@@ -1,16 +1,25 @@
 """
-ScamLens Predictor API (Inference Engine)
+ScamLens Predictor API (Inference Engine) - Member 1: Data & ML
 Provides high-level, human-explainable inference for:
 - Member 2 (Detection logic in signals.py & eval_cases.py)
-- Member 3 (Integration in app.py & analyze() function)
+- Member 3 (Integration in app.py & analyze() / scoring.py)
 - Member 4 (UI/UX states, risk meters, and plain-language explanations)
+
+Upgrades in v2.1.0:
+- [P0] Fixed empty/missing input handling: returns verdict='Unknown', is_empty=True (never defaults to Safe)
+- [P1] Distinct raw_ml_score vs calibrated risk_score
+- [P1] Model versioning and metadata inspection
+- [P1] Explicit confidence and uncertainty quantification (ambiguity bands)
+- [P1] Local explainability: token-level and structural feature attribution
+- [P2] Graceful heuristic fallback mode when model files are missing
 """
 import os
 import re
 import joblib
 import numpy as np
+from typing import Dict, Any, List, Optional
 
-# Import preprocessing helpers
+# Import preprocessing & feature extraction helpers
 import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC_DIR = os.path.join(BASE_DIR, "src")
@@ -18,28 +27,43 @@ if SRC_DIR not in sys.path:
     sys.path.insert(0, SRC_DIR)
 
 from text_preprocessor import TextPreprocessor
-from feature_extraction import URLFeatureExtractor, SUSPICIOUS_TLDS, SENSITIVE_KEYWORDS, OFFICIAL_TRUSTED_DOMAINS
+from feature_extraction import (
+    URLFeatureExtractor, SUSPICIOUS_TLDS, SENSITIVE_KEYWORDS,
+    OFFICIAL_TRUSTED_DOMAINS, SHORTENER_DOMAINS
+)
 
 
-# Standard legitimate transaction patterns
+# Standard legitimate transaction patterns (verified Indian transactional SMS headers)
 BENIGN_TRANSACTION_PATTERNS = [
     re.compile(r'\b(?:debited|credited)\b.*\b(?:bal|balance)\b', re.IGNORECASE),
     re.compile(r'\bpnr\s*\d+\b', re.IGNORECASE),
     re.compile(r'\bout for delivery\b', re.IGNORECASE),
     re.compile(r'\bnever share (?:your )?otp\b', re.IGNORECASE),
     re.compile(r'\bdo not (?:disclose|share) (?:to anyone|with anyone)\b', re.IGNORECASE),
-    re.compile(r'\bdelivered\. thank you for shopping\b', re.IGNORECASE)
+    re.compile(r'\bdelivered\. thank you for shopping\b', re.IGNORECASE),
+    re.compile(r'\bacct?\s*(?:ending|xx|\.\.\.)\s*\d+\b', re.IGNORECASE),
+    re.compile(r'\bbill\s*(?:of|amount)\s*(?:rs|inr|₹)\s*\d+.*due\s*(?:on|date)\b', re.IGNORECASE)
+]
+
+# High-threat Indian fraud patterns
+FRAUD_THREAT_PATTERNS = [
+    "disconnected", "power will be disconnected", "arrest warrant", 
+    "digital arrest", "narcotics", "cbi", "part-time work", "earn rs",
+    "telegram @", "upi collect", "unlock your card", "pending kyc",
+    "freeze", "suspended", "customs fee", "unpaid bill call",
+    "redelivery fee", "sim upgrade", "lucky draw", "claim prize",
+    "kbc", "aapka account band"
 ]
 
 
 class ScamLensPredictor:
     """
     Unified ML Predictor for ScamLens.
-    Loads trained text and URL models, computes risk scores (0-100%),
+    Loads trained text and URL models, computes calibrated risk scores (0-100%),
     and generates plain-language explainability summaries.
     """
     
-    def __init__(self, models_dir: str = None):
+    def __init__(self, models_dir: Optional[str] = None):
         if models_dir is None:
             models_dir = os.path.join(BASE_DIR, "models")
             
@@ -51,103 +75,196 @@ class ScamLensPredictor:
         self.url_extractor = URLFeatureExtractor()
         
         self.text_model = None
+        self.text_metadata = {}
         self.url_model = None
+        self.url_metadata = {}
+        self.url_feature_names = self.url_extractor.feature_names
+        self.url_feature_importances = []
+        
         self._load_models()
 
     def _load_models(self):
-        """Loads serialized models from disk."""
+        """Loads serialized models from disk with fallback protection."""
         if os.path.exists(self.text_model_path):
-            self.text_model = joblib.load(self.text_model_path)
+            try:
+                loaded = joblib.load(self.text_model_path)
+                if isinstance(loaded, dict):
+                    self.text_model = loaded.get("pipeline", loaded.get("model", loaded))
+                    self.text_metadata = loaded.get("metadata", {})
+                else:
+                    self.text_model = loaded
+                    self.text_metadata = {"model_type": "Pipeline", "version": "2.1.0"}
+            except Exception as e:
+                print(f"[!] Warning: Failed loading text model ({e}). Using heuristic fallback.")
+                self.text_model = None
         else:
-            print(f"[!] Warning: Text model not found at {self.text_model_path}. Run train.py first.")
+            print(f"[!] Notice: Text model not found at {self.text_model_path}. Fallback active.")
+            self.text_model = None
             
         if os.path.exists(self.url_model_path):
-            bundle = joblib.load(self.url_model_path)
-            self.url_model = bundle.get("model", bundle)
+            try:
+                bundle = joblib.load(self.url_model_path)
+                if isinstance(bundle, dict):
+                    self.url_model = bundle.get("model", bundle)
+                    self.url_metadata = bundle.get("metadata", {})
+                    self.url_feature_names = bundle.get("feature_names", self.url_extractor.feature_names)
+                    self.url_feature_importances = bundle.get("feature_importances", [])
+                else:
+                    self.url_model = bundle
+                    self.url_metadata = {"model_type": "Model", "version": "2.1.0"}
+            except Exception as e:
+                print(f"[!] Warning: Failed loading URL model ({e}). Using heuristic fallback.")
+                self.url_model = None
         else:
-            print(f"[!] Warning: URL model not found at {self.url_model_path}. Run train.py first.")
+            print(f"[!] Notice: URL model not found at {self.url_model_path}. Fallback active.")
+            self.url_model = None
 
-    def predict_text(self, text: str) -> dict:
+    def get_model_metadata(self) -> Dict[str, Any]:
+        """Returns version and configuration metadata of loaded models."""
+        return {
+            "text_model_loaded": self.text_model is not None,
+            "text_model_version": self.text_metadata.get("version", "unknown"),
+            "url_model_loaded": self.url_model is not None,
+            "url_model_version": self.url_metadata.get("version", "unknown"),
+            "engine_version": "2.1.0"
+        }
+
+    # =================================================================
+    # 1. TEXT SCAM PREDICTION
+    # =================================================================
+    def predict_text(self, text: Optional[str]) -> Dict[str, Any]:
         """
         Analyzes message text and returns risk assessment, probability,
         and human-interpretable signals.
         """
-        if not text or not str(text).strip():
+        # [P0] Fix: Handle empty or whitespace-only inputs without defaulting to Safe
+        if text is None or not str(text).strip():
             return {
                 "input_type": "text",
-                "verdict": "Safe",
-                "status_color": "green",
-                "icon": "✅",
+                "verdict": "Unknown",
+                "status_color": "gray",
+                "icon": "❓",
                 "risk_score": 0,
-                "confidence": 1.0,
-                "reasons": ["No text content provided."],
-                "detected_keywords": []
+                "raw_ml_score": 0.0,
+                "confidence": 0.0,
+                "is_empty": True,
+                "uncertainty": "High - No text provided for analysis",
+                "reasons": ["No text content provided for analysis."],
+                "detected_keywords": [],
+                "contributing_signals": []
             }
             
-        cleaned = self.preprocessor.clean_text(text)
-        metadata = self.preprocessor.extract_metadata_features(text)
-        lower_raw = text.lower()
+        raw_text = str(text).strip()
+        cleaned = self.preprocessor.clean_text(raw_text)
+        metadata = self.preprocessor.extract_metadata_features(raw_text)
+        lower_raw = raw_text.lower()
         
         # Check benign transaction patterns
-        is_known_benign_transaction = any(p.search(lower_raw) for p in BENIGN_TRANSACTION_PATTERNS)
+        is_known_benign = any(p.search(lower_raw) for p in BENIGN_TRANSACTION_PATTERNS)
         
-        # Check high-risk fraud trigger terms
-        has_fraud_threat = any(term in lower_raw for term in [
-            "disconnected", "power will be disconnected", "arrest warrant", 
-            "digital arrest", "narcotics", "cbi", "part-time work", "earn rs",
-            "telegram @", "upi collect", "unlock your card", "pending kyc",
-            "freeze", "suspended", "customs fee", "unpaid bill call"
-        ])
-
-        # ML Model Probability
+        # Check high-risk fraud triggers
+        has_fraud_threat = any(term in lower_raw for term in FRAUD_THREAT_PATTERNS)
+        
+        is_fallback = False
+        # ML Inference or Heuristic Fallback
         if self.text_model is not None:
-            probs = self.text_model.predict_proba([cleaned])[0]
-            scam_prob = float(probs[1])
+            try:
+                probs = self.text_model.predict_proba([cleaned])[0]
+                raw_ml_prob = float(probs[1])
+            except Exception:
+                raw_ml_prob = 0.5
+                is_fallback = True
         else:
-            scam_prob = 0.5
+            is_fallback = True
+            # Heuristic calculation if model is unavailable
+            raw_ml_prob = 0.85 if has_fraud_threat else (0.05 if is_known_benign else 0.30)
             
-        # Calibrate: If genuine transaction markers are present and NO fraud threat phrases exist
-        if is_known_benign_transaction and not has_fraud_threat:
-            scam_prob = min(scam_prob, 0.15)
+        scam_prob = raw_ml_prob
+        
+        # Benign transaction calibration: If verified transactional pattern with no threats
+        if is_known_benign and not has_fraud_threat:
+            scam_prob = min(scam_prob, 0.12)
+        elif has_fraud_threat and scam_prob < 0.65:
+            scam_prob = max(scam_prob, 0.75)
+            
+        # Check if text contains only markers or numbers without semantic scam context
+        raw_words = [w for w in cleaned.split() if w not in [
+            'phonemarker', 'codemarker', 'currencymarker', 'urlmarker', 
+            'exclmarker', 'qmarkmarker', 'hindimarker'
+        ]]
+        if not raw_words and not has_fraud_threat:
+            # Only phone numbers or numeric codes with no fraud language
+            scam_prob = min(scam_prob, 0.45)
             
         risk_score = int(round(scam_prob * 100))
         
-        # Plain-language reasons & keyword detection
+        # Quantify confidence and uncertainty
+        confidence = round(float(max(scam_prob, 1.0 - scam_prob)), 3)
+        if 0.40 <= scam_prob <= 0.60:
+            uncertainty = "High - Ambiguous semantic indicators"
+        elif 0.30 <= scam_prob <= 0.70:
+            uncertainty = "Medium - Moderate semantic indicators"
+        else:
+            uncertainty = "Low - High confidence classification"
+
+        # Local Explainability: Identify triggering words & phrases
         reasons = []
         found_keywords = [kw for kw in SENSITIVE_KEYWORDS if kw in lower_raw]
+        contributing_signals = []
         
         if has_fraud_threat:
-            if "otp" in lower_raw or "pin" in lower_raw or "upi" in lower_raw:
+            if any(k in lower_raw for k in ["otp", "pin", "upi", "enter upi pin"]):
                 reasons.append("Requests or mentions sensitive authentication credentials (OTP / PIN / UPI).")
-            if "kyc" in lower_raw or "pan card" in lower_raw or "aadhaar" in lower_raw:
-                reasons.append("Claims pending KYC, PAN, or Aadhaar verification.")
-            if "power" in lower_raw or "electricity" in lower_raw or "disconnected" in lower_raw:
+                contributing_signals.append("credential_request")
+            if any(k in lower_raw for k in ["kyc", "pan card", "aadhaar", "pan"]):
+                reasons.append("Claims pending KYC, PAN, or Aadhaar deactivation.")
+                contributing_signals.append("kyc_threat")
+            if any(k in lower_raw for k in ["power", "electricity", "disconnected", "bill unpaid"]):
                 reasons.append("Pressures you with immediate electricity disconnection threats.")
-            if "cbi" in lower_raw or "police" in lower_raw or "arrest" in lower_raw or "customs" in lower_raw:
-                reasons.append("Uses impersonation of law enforcement, customs, or court arrest warrants (Digital Arrest).")
-            if "part-time" in lower_raw or "part time" in lower_raw or "telegram" in lower_raw or "earn rs" in lower_raw:
+                contributing_signals.append("utility_disconnection")
+            if any(k in lower_raw for k in ["cbi", "police", "arrest", "customs", "narcotics"]):
+                reasons.append("Uses impersonation of law enforcement or fake arrest warrants (Digital Arrest).")
+                contributing_signals.append("law_enforcement_impersonation")
+            if any(k in lower_raw for k in ["part-time", "part time", "telegram", "earn rs", "liking youtube"]):
                 reasons.append("Promotes unrealistic work-from-home or social media task earnings.")
-        
+                contributing_signals.append("task_job_scam")
+            if any(k in lower_raw for k in ["lucky draw", "lottery", "kbc", "won rs"]):
+                reasons.append("Unsolicited lottery or prize winnings claim.")
+                contributing_signals.append("lottery_fraud")
+                
         if metadata.get("caps_ratio", 0) > 0.35:
             reasons.append("Excessive uppercase lettering used to convey artificial panic.")
+            contributing_signals.append("panic_typography")
             
+        if metadata.get("emoji_scam_count", 0) >= 2:
+            reasons.append("Uses deceptive celebratory/urgent emojis common in fraud campaigns.")
+            contributing_signals.append("emoji_bait")
+            
+        if metadata.get("has_obfuscated_terms"):
+            reasons.append("Contains intentionally obfuscated or spaced scam keywords to evade filters.")
+            contributing_signals.append("obfuscation_evasion")
+
+        if is_fallback:
+            reasons.append("[Note: Running in rule-based heuristic fallback mode]")
+
+        # Determine Verdict
         if risk_score >= 70:
             verdict = "Scam"
             status_color = "red"
             icon = "🚨"
             if not reasons:
-                reasons.append("Text structure and vocabulary closely match known fraud campaigns.")
+                reasons.append("Text structure and vocabulary match known cybercrime fraud campaigns.")
         elif risk_score >= 40:
             verdict = "Suspicious"
             status_color = "amber"
             icon = "⚠️"
             if not reasons:
-                reasons.append("Message contains unsolicited promotional urgency or unusual formatting.")
+                reasons.append("Message contains unsolicited urgency or unfamiliar sender patterns.")
         else:
             verdict = "Safe"
             status_color = "green"
             icon = "✅"
-            if is_known_benign_transaction:
+            if is_known_benign:
                 reasons = ["Legitimate transactional or service communication pattern verified."]
             else:
                 reasons = ["Message shows normal conversational or standard service notification patterns."]
@@ -158,75 +275,119 @@ class ScamLensPredictor:
             "status_color": status_color,
             "icon": icon,
             "risk_score": risk_score,
-            "confidence": round(float(max(scam_prob, 1.0 - scam_prob)), 3),
+            "raw_ml_score": round(raw_ml_prob, 4),
+            "confidence": confidence,
+            "uncertainty": uncertainty,
+            "is_empty": False,
+            "is_fallback": is_fallback,
             "reasons": reasons,
             "detected_keywords": found_keywords,
+            "contributing_signals": contributing_signals,
             "metadata": metadata
         }
 
-    def predict_url(self, url: str) -> dict:
+    # =================================================================
+    # 2. URL PHISHING PREDICTION
+    # =================================================================
+    def predict_url(self, url: Optional[str]) -> Dict[str, Any]:
         """
         Analyzes a URL and returns phishing probability, verdict,
         and structural explanations.
         """
-        if not url or not str(url).strip():
+        # [P0] Fix: Handle empty or whitespace-only inputs without defaulting to Safe
+        if url is None or not str(url).strip():
             return {
                 "input_type": "url",
-                "verdict": "Safe",
-                "status_color": "green",
-                "icon": "✅",
+                "verdict": "Unknown",
+                "status_color": "gray",
+                "icon": "❓",
                 "risk_score": 0,
-                "confidence": 1.0,
-                "reasons": ["No URL provided."],
+                "raw_ml_score": 0.0,
+                "confidence": 0.0,
+                "is_empty": True,
+                "uncertainty": "High - No URL provided for analysis",
+                "reasons": ["No URL provided for analysis."],
                 "flags": {}
             }
             
         clean_url = str(url).strip()
         features_dict = self.url_extractor.extract_dict(clean_url)
-        vector = [features_dict[name] for name in self.url_extractor.feature_names]
+        vector = [features_dict[name] for name in self.url_feature_names]
         
         # Check if officially verified domain
         domain = clean_url.replace("http://", "").replace("https://", "").split("/")[0].split(":")[0].lower()
         is_official = self.url_extractor.is_official_trusted_domain(domain)
-
-        # ML Model Probability
+        
+        is_fallback = False
         if is_official and not features_dict.get("has_sensitive_extension"):
             phish_prob = 0.02
         elif self.url_model is not None:
-            probs = self.url_model.predict_proba([vector])[0]
-            phish_prob = float(probs[1])
+            try:
+                probs = self.url_model.predict_proba([vector])[0]
+                phish_prob = float(probs[1])
+            except Exception:
+                phish_prob = 0.5
+                is_fallback = True
         else:
-            phish_prob = 0.5
-            
+            is_fallback = True
+            # Heuristic calculation if model file is missing
+            score = 0.10
+            if features_dict.get("is_ip_address"): score += 0.40
+            if features_dict.get("has_suspicious_tld"): score += 0.35
+            if features_dict.get("has_sensitive_extension"): score += 0.40
+            if features_dict.get("brand_in_subdomain_or_path"): score += 0.35
+            if features_dict.get("is_shortened_url"): score += 0.25
+            phish_prob = min(0.98, score)
+
         risk_score = int(round(phish_prob * 100))
+        confidence = round(float(max(phish_prob, 1.0 - phish_prob)), 3)
         
-        # Explanations from extracted features
+        if 0.40 <= phish_prob <= 0.60:
+            uncertainty = "High - Ambiguous structural indicators"
+        elif 0.30 <= phish_prob <= 0.70:
+            uncertainty = "Medium - Moderate structural indicators"
+        else:
+            uncertainty = "Low - High confidence classification"
+
+        # Structural Explainability
         reasons = []
         if features_dict.get("is_ip_address"):
-            reasons.append("Uses a numeric IP address directly instead of a verified domain name.")
+            reasons.append("Uses a raw numeric IP address instead of a registered domain name.")
         if features_dict.get("has_suspicious_tld"):
-            reasons.append("Registered under an untrusted, high-risk top-level domain (TLD).")
+            reasons.append("Registered under a high-risk, untrusted top-level domain (TLD).")
         if features_dict.get("has_sensitive_extension"):
-            reasons.append("Links directly to an untrusted executable or package (.apk/.exe).")
+            reasons.append("Directly downloads an executable or package (.apk/.exe) bypassing app stores.")
         if features_dict.get("brand_in_subdomain_or_path"):
-            reasons.append("Spoofs a trusted banking or government brand inside an unofficial domain.")
+            reasons.append("Spoofs a trusted banking, government, or retail brand inside an unofficial domain.")
+        if features_dict.get("is_shortened_url"):
+            reasons.append("Uses a link-shortening service (bit.ly/tinyurl) to obscure the true destination.")
+        if features_dict.get("has_non_standard_port"):
+            reasons.append("Connects via a non-standard TCP port commonly used by rogue web servers.")
+        if features_dict.get("has_double_slash_path"):
+            reasons.append("Contains path redirection characters (//) intended to bypass URL validation.")
+        if features_dict.get("is_punycode"):
+            reasons.append("Uses Punycode (IDN homograph) encoding to visually mimic legitimate domains.")
         if features_dict.get("sensitive_keyword_count", 0) >= 2:
-            reasons.append("URL contains multiple security/credential collection keywords.")
+            reasons.append("URL contains multiple credential harvesting keywords.")
         if not features_dict.get("is_https"):
             reasons.append("Unencrypted connection (HTTP instead of secure HTTPS).")
-            
+
+        if is_fallback:
+            reasons.append("[Note: Running in rule-based heuristic fallback mode]")
+
+        # Determine Verdict
         if risk_score >= 70:
             verdict = "Scam"
             status_color = "red"
             icon = "🚨"
             if not reasons:
-                reasons.append("URL structure matches known phishing kit patterns.")
+                reasons.append("URL structure matches verified phishing kit fingerprints.")
         elif risk_score >= 40:
             verdict = "Suspicious"
             status_color = "amber"
             icon = "⚠️"
             if not reasons:
-                reasons.append("Uncommon domain structure; proceed with caution.")
+                reasons.append("Unusual domain structure; verify sender before proceeding.")
         else:
             verdict = "Safe"
             status_color = "green"
@@ -240,24 +401,51 @@ class ScamLensPredictor:
             "status_color": status_color,
             "icon": icon,
             "risk_score": risk_score,
-            "confidence": round(float(max(phish_prob, 1.0 - phish_prob)), 3),
+            "raw_ml_score": round(phish_prob, 4),
+            "confidence": confidence,
+            "uncertainty": uncertainty,
+            "is_empty": False,
+            "is_fallback": is_fallback,
             "reasons": reasons,
             "features": features_dict
         }
 
-    def predict_combined(self, text: str = None, url: str = None) -> dict:
+    # =================================================================
+    # 3. COMBINED MULTIMODAL INFERENCE
+    # =================================================================
+    def predict_combined(self, text: Optional[str] = None, url: Optional[str] = None) -> Dict[str, Any]:
         """
         Combines text and URL inputs into a unified risk assessment.
-        Directly powers Member 3's app.py analyze() endpoint.
+        Directly powers Member 3's app.py analyze() endpoint and scoring.py.
         """
-        text_res = self.predict_text(text) if text else None
-        url_res = self.predict_url(url) if url else None
+        has_text = text is not None and bool(str(text).strip())
+        has_url = url is not None and bool(str(url).strip())
         
-        # If text contains a URL that wasn't separately entered, extract it
-        if text and not url:
+        # [P0] Fix: Handle empty inputs properly
+        if not has_text and not has_url:
+            return {
+                "verdict": "Unknown",
+                "status_color": "gray",
+                "icon": "❓",
+                "risk_score": 0,
+                "is_empty": True,
+                "uncertainty": "High - No input provided for analysis",
+                "reasons": ["No message text or URL provided for analysis."],
+                "safety_tips": [
+                    "Paste a suspicious message, phone number, or URL to begin investigation."
+                ]
+            }
+
+        text_res = self.predict_text(text) if has_text else None
+        url_res = self.predict_url(url) if has_url else None
+        
+        # Auto-extract embedded URLs from message text if no separate URL was supplied
+        if has_text and not has_url:
             extracted_urls = self.preprocessor.url_pattern.findall(text)
             if extracted_urls:
-                url_res = self.predict_url(extracted_urls[0])
+                # Evaluate all embedded links and surface the most malicious URL
+                url_evals = [self.predict_url(u) for u in extracted_urls]
+                url_res = max(url_evals, key=lambda r: r.get("risk_score", 0))
                 
         if text_res and url_res:
             combined_score = int(round(0.45 * text_res["risk_score"] + 0.55 * url_res["risk_score"]))
@@ -269,14 +457,8 @@ class ScamLensPredictor:
             combined_score = url_res["risk_score"]
             combined_reasons = url_res["reasons"]
         else:
-            return {
-                "verdict": "Safe",
-                "risk_score": 0,
-                "status_color": "green",
-                "icon": "✅",
-                "reasons": ["No input provided."],
-                "safety_tips": []
-            }
+            combined_score = 0
+            combined_reasons = ["No valid input detected."]
 
         # Determine overall verdict
         if combined_score >= 70:
@@ -311,6 +493,7 @@ class ScamLensPredictor:
             "status_color": status_color,
             "icon": icon,
             "risk_score": combined_score,
+            "is_empty": False,
             "reasons": combined_reasons,
             "safety_tips": safety_tips,
             "text_analysis": text_res,

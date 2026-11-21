@@ -1,30 +1,47 @@
 """
 URL Feature Extractor for ScamLens
 Extracts lexical, structural, and behavioral features from raw URLs.
+Includes defense against modern phishing evasion techniques:
+- Shortened URLs (bit.ly, tinyurl, etc.)
+- Punycode / IDN homograph attacks (xn--)
+- Non-standard TCP ports
+- Path redirection tricks (double slashes, @ credentials)
+- Brand impersonation on untrusted subdomains
+- High-risk TLDs and entropy analysis
 """
 import re
 import math
 from urllib.parse import urlparse
 import numpy as np
+from typing import Dict, List, Any
 
 # High-risk TLDs frequently abused in phishing & scam campaigns
 SUSPICIOUS_TLDS = {
     'top', 'xyz', 'click', 'site', 'fit', 'link', 'club', 'work', 
     'buzz', 'gq', 'cf', 'tk', 'ml', 'ga', 'online', 'vip', 'monster',
-    'rest', 'stream', 'support', 'cam', 'icu', 'fun', 'win', 'bid'
+    'rest', 'stream', 'support', 'cam', 'icu', 'fun', 'win', 'bid',
+    'download', 'racing', 'kim', 'party', 'pro', 'cc'
 }
 
-# Scam / Phishing trigger keywords
+# Known URL shortener services commonly used to obscure scam links
+SHORTENER_DOMAINS = {
+    'bit.ly', 'tinyurl.com', 'is.gd', 't.co', 'cutt.ly', 'rb.gy', 
+    'ow.ly', 'buff.ly', 'rebrand.ly', 'goo.gl', 'bl.ink', 'shorturl.at',
+    'tiny.cc', 'bc.vc', 'qr.ae', 'adf.ly'
+}
+
+# Scam / Phishing trigger keywords commonly found in fraudulent paths & subdomains
 SENSITIVE_KEYWORDS = [
     'login', 'signin', 'verify', 'verification', 'kyc', 'pan', 'aadhaar', 
     'bank', 'sbi', 'hdfc', 'icici', 'pnb', 'paytm', 'phonepe', 'gpay',
     'upi', 'update', 'security', 'secure', 'account', 'blocked', 'suspend',
     'reward', 'points', 'gift', 'bonus', 'claim', 'wallet', 'refund',
     'electricity', 'bill', 'disconnection', 'challan', 'customs', 'parcel',
-    'apk', 'download', 'otp', 'pin', 'free', 'lottery', 'winner', 'loan'
+    'apk', 'download', 'otp', 'pin', 'free', 'lottery', 'winner', 'loan',
+    'support', 'custody', 'police', 'court', 'ebill', 'recharge'
 ]
 
-# Trusted official domains mapping
+# Official trusted domains mapping (whitelist to protect genuine services from false positives)
 OFFICIAL_TRUSTED_DOMAINS = {
     'sbi.co.in', 'onlinesbi.sbi', 'onlinesbi.com', 'hdfcbank.com', 
     'icicibank.com', 'axisbank.com', 'paytm.com', 'phonepe.com', 
@@ -32,12 +49,15 @@ OFFICIAL_TRUSTED_DOMAINS = {
     'apple.com', 'amazon.in', 'amazon.com', 'flipkart.com', 
     'netflix.com', 'incometax.gov.in', 'uidai.gov.in', 
     'cybercrime.gov.in', 'digilocker.gov.in', 'irctc.co.in',
-    'parivahan.gov.in', 'tatapower.com', 'bsesdelhi.com', 'rbi.org.in'
+    'parivahan.gov.in', 'tatapower.com', 'bsesdelhi.com', 'rbi.org.in',
+    'swiggy.com', 'zomato.com', 'airtel.in', 'jio.com', 'delhipolice.nic.in',
+    'github.com', 'wikipedia.org', 'stackoverflow.com', 'example.com', 'example.org', 'example.net'
 }
 
 MAJOR_BRANDS = [
     'sbi', 'hdfc', 'icici', 'axisbank', 'paytm', 'phonepe', 
-    'incometax', 'uidai', 'cybercrime', 'irctc', 'netflix'
+    'incometax', 'uidai', 'cybercrime', 'irctc', 'netflix', 'amazon',
+    'flipkart', 'airtel', 'tatapower', 'bses'
 ]
 
 IP_REGEX = re.compile(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$')
@@ -53,7 +73,7 @@ def calculate_entropy(text: str) -> float:
 
 class URLFeatureExtractor:
     """
-    Extracts numerical features from a URL string for ML classification.
+    Extracts 28 numerical features from a URL string for ML classification.
     """
     
     def __init__(self):
@@ -81,15 +101,21 @@ class URLFeatureExtractor:
             'sensitive_keyword_count',
             'brand_in_subdomain_or_path',
             'domain_entropy',
-            'url_entropy'
+            'url_entropy',
+            'is_shortened_url',
+            'is_punycode',
+            'has_non_standard_port',
+            'has_double_slash_path'
         ]
 
     def is_official_trusted_domain(self, domain: str) -> bool:
         """Checks if the domain is an authentic trusted domain."""
-        domain = domain.lower()
+        domain = domain.lower().strip()
+        if ':' in domain:
+            domain = domain.split(':')[0]
         return any(domain == trusted or domain.endswith('.' + trusted) for trusted in OFFICIAL_TRUSTED_DOMAINS)
 
-    def extract_dict(self, url: str) -> dict:
+    def extract_dict(self, url: str) -> Dict[str, Any]:
         """
         Extracts features as a dictionary.
         """
@@ -101,9 +127,12 @@ class URLFeatureExtractor:
         else:
             parse_target = raw_url
             
+        has_non_standard_port = 0
         try:
             parsed = urlparse(parse_target)
             domain = parsed.netloc.lower()
+            if parsed.port and parsed.port not in (80, 443):
+                has_non_standard_port = 1
             if ':' in domain:
                 domain = domain.split(':')[0]
             path = parsed.path.lower()
@@ -142,7 +171,7 @@ class URLFeatureExtractor:
 
         has_sensitive_extension = 1 if any(
             path.endswith(ext) or ext in query 
-            for ext in ['.apk', '.exe', '.bat', '.scr', '.vbs', '.zip']
+            for ext in ['.apk', '.exe', '.bat', '.scr', '.vbs', '.zip', '.dmg', '.iso']
         ) else 0
 
         combined_text = (domain + ' ' + path + ' ' + query).lower()
@@ -162,6 +191,16 @@ class URLFeatureExtractor:
 
         domain_entropy = round(calculate_entropy(domain), 3)
         url_entropy = round(calculate_entropy(raw_url), 3)
+
+        # Modern anti-phishing features:
+        # 1. URL shortener detection
+        is_shortened_url = 1 if (domain in SHORTENER_DOMAINS or any(domain.endswith('.' + s) for s in SHORTENER_DOMAINS)) else 0
+
+        # 2. Punycode / IDN homograph attack detection
+        is_punycode = 1 if 'xn--' in domain.lower() else 0
+
+        # 3. Double slash redirection tricks in path
+        has_double_slash_path = 1 if '//' in path else 0
 
         return {
             'url_length': url_length,
@@ -187,14 +226,18 @@ class URLFeatureExtractor:
             'sensitive_keyword_count': sensitive_keyword_count,
             'brand_in_subdomain_or_path': brand_in_subdomain_or_path,
             'domain_entropy': domain_entropy,
-            'url_entropy': url_entropy
+            'url_entropy': url_entropy,
+            'is_shortened_url': is_shortened_url,
+            'is_punycode': is_punycode,
+            'has_non_standard_port': has_non_standard_port,
+            'has_double_slash_path': has_double_slash_path
         }
 
-    def extract_vector(self, url: str) -> list:
+    def extract_vector(self, url: str) -> List[float]:
         """Extracts feature vector in defined order."""
         features = self.extract_dict(url)
-        return [features[name] for name in self.feature_names]
+        return [float(features[name]) for name in self.feature_names]
 
-    def extract_matrix(self, urls: list) -> np.ndarray:
+    def extract_matrix(self, urls: List[str]) -> np.ndarray:
         """Extracts 2D feature matrix for list of URLs."""
         return np.array([self.extract_vector(u) for u in urls], dtype=float)

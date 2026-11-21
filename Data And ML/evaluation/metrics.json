@@ -1,90 +1,315 @@
 {
+    "evaluation_timestamp": "2026-11-21T18:02:45.215850+00:00",
     "text_model": {
-        "accuracy": 0.9933,
-        "precision": 0.963,
-        "recall": 0.9848,
-        "f1_score": 0.9738,
-        "false_positive_rate": 0.0055,
-        "roc_auc": 0.9996,
-        "true_negatives": 903,
-        "false_positives": 5,
-        "false_negatives": 2,
-        "true_positives": 130
+        "test_metrics": {
+            "accuracy": 0.9904,
+            "precision": 0.9632,
+            "recall": 0.9632,
+            "f1_score": 0.9632,
+            "false_positive_rate": 0.0055,
+            "false_negative_rate": 0.0368,
+            "roc_auc": 0.9989,
+            "average_precision": 0.9931,
+            "true_negatives": 904,
+            "false_positives": 5,
+            "false_negatives": 5,
+            "true_positives": 131,
+            "cross_validation_5fold": {
+                "accuracy_mean": 0.9842,
+                "accuracy_std": 0.0043,
+                "precision_mean": 0.9437,
+                "precision_std": 0.0323,
+                "recall_mean": 0.9354,
+                "recall_std": 0.0157,
+                "f1_mean": 0.9391,
+                "f1_std": 0.0159,
+                "roc_auc_mean": 0.9914,
+                "roc_auc_std": 0.0029
+            }
+        },
+        "holdout_metrics": {
+            "accuracy": 0.7,
+            "precision": 0.65,
+            "recall": 0.8667,
+            "f1_score": 0.7429,
+            "false_positive_rate": 0.4667,
+            "false_negative_rate": 0.1333,
+            "roc_auc": 0.8311,
+            "average_precision": 0.8435,
+            "true_negatives": 8,
+            "false_positives": 7,
+            "false_negatives": 2,
+            "true_positives": 13
+        },
+        "category_performance": {
+            "sim_disconnect": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "customs_parcel": {
+                "total": 2,
+                "accuracy": 0.5
+            },
+            "digital_arrest": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "reward_points": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "electricity_threat": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "job_scam": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "tax_refund": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "fake_kyc": {
+                "total": 2,
+                "accuracy": 1.0
+            },
+            "hinglish_scam": {
+                "total": 1,
+                "accuracy": 0.0
+            },
+            "lottery_scam": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "loan_scam": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "challan_scam": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "crypto_scam": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "grocery_delivery": {
+                "total": 1,
+                "accuracy": 0.0
+            },
+            "food_delivery": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "gov_otp": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "bank_debit": {
+                "total": 1,
+                "accuracy": 0.0
+            },
+            "bank_otp": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "travel_train": {
+                "total": 1,
+                "accuracy": 0.0
+            },
+            "travel_flight": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "utility_paid": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "utility_meter": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "ecommerce_delivered": {
+                "total": 1,
+                "accuracy": 0.0
+            },
+            "delivery_rate": {
+                "total": 1,
+                "accuracy": 0.0
+            },
+            "healthcare": {
+                "total": 1,
+                "accuracy": 0.0
+            },
+            "education": {
+                "total": 1,
+                "accuracy": 1.0
+            },
+            "utility_telecom": {
+                "total": 1,
+                "accuracy": 0.0
+            },
+            "personal_work": {
+                "total": 1,
+                "accuracy": 1.0
+            }
+        },
+        "metadata": {
+            "model_type": "TF-IDF + Calibrated Logistic Regression",
+            "version": "2.1.0",
+            "calibrated": true,
+            "calibration_method": "sigmoid (Platt scaling, 3-fold)",
+            "training_timestamp": "2026-11-21T18:02:31.879937+00:00",
+            "ngram_range": [
+                1,
+                2
+            ],
+            "max_features": 15000,
+            "test_sample_size": 1045,
+            "class_distribution_test": {
+                "genuine": 909,
+                "scam": 136
+            },
+            "holdout_sample_size": 30
+        }
     },
     "url_model": {
-        "accuracy": 0.995,
-        "precision": 0.9986,
-        "recall": 0.9959,
-        "f1_score": 0.9973,
-        "false_positive_rate": 0.0161,
-        "roc_auc": 0.9998,
-        "true_negatives": 61,
-        "false_positives": 1,
-        "false_negatives": 3,
-        "true_positives": 730
+        "test_metrics": {
+            "accuracy": 0.9926,
+            "precision": 0.9959,
+            "recall": 0.9959,
+            "f1_score": 0.9959,
+            "false_positive_rate": 0.0448,
+            "false_negative_rate": 0.0041,
+            "roc_auc": 0.9993,
+            "average_precision": 0.9999,
+            "true_negatives": 64,
+            "false_positives": 3,
+            "false_negatives": 3,
+            "true_positives": 737,
+            "model_comparison": {
+                "RandomForest": {
+                    "accuracy": 0.9919,
+                    "precision": 0.9953,
+                    "recall": 0.9959,
+                    "f1_score": 0.9956,
+                    "roc_auc": 0.9993
+                },
+                "HistGradientBoosting": {
+                    "accuracy": 0.9938,
+                    "precision": 0.9973,
+                    "recall": 0.9959,
+                    "f1_score": 0.9966,
+                    "roc_auc": 0.9987
+                },
+                "LogisticRegression": {
+                    "accuracy": 0.9873,
+                    "precision": 0.998,
+                    "recall": 0.9882,
+                    "f1_score": 0.993,
+                    "roc_auc": 0.9954
+                }
+            }
+        },
+        "holdout_metrics": {
+            "accuracy": 0.8333,
+            "precision": 0.8333,
+            "recall": 0.8333,
+            "f1_score": 0.8333,
+            "false_positive_rate": 0.1667,
+            "false_negative_rate": 0.1667,
+            "roc_auc": 0.9583,
+            "average_precision": 0.9629,
+            "true_negatives": 10,
+            "false_positives": 2,
+            "false_negatives": 2,
+            "true_positives": 10
+        },
+        "metadata": {
+            "model_type": "Calibrated Random Forest (Ensemble)",
+            "version": "2.1.0",
+            "calibrated": true,
+            "calibration_method": "sigmoid (Platt scaling, 3-fold)",
+            "training_timestamp": "2026-11-21T18:02:45.010948+00:00",
+            "n_estimators": 180,
+            "max_depth": 16,
+            "num_features": 28,
+            "test_sample_size": 807,
+            "class_distribution_test": {
+                "legitimate": 67,
+                "phishing": 740
+            },
+            "holdout_sample_size": 24
+        },
+        "top_features": [
+            {
+                "feature": "is_https",
+                "importance": 0.5761
+            },
+            {
+                "feature": "domain_length",
+                "importance": 0.1335
+            },
+            {
+                "feature": "domain_entropy",
+                "importance": 0.0758
+            },
+            {
+                "feature": "url_length",
+                "importance": 0.042
+            },
+            {
+                "feature": "url_entropy",
+                "importance": 0.0273
+            },
+            {
+                "feature": "num_hyphens_domain",
+                "importance": 0.0269
+            },
+            {
+                "feature": "path_length",
+                "importance": 0.0256
+            },
+            {
+                "feature": "num_slashes",
+                "importance": 0.0246
+            },
+            {
+                "feature": "num_hyphens_url",
+                "importance": 0.0196
+            },
+            {
+                "feature": "num_digits_url",
+                "importance": 0.0084
+            }
+        ]
     },
     "top_text_scam_signals": [
-        "service",
-        "claim",
-        "won",
+        "or",
+        "for",
+        "new",
         "stop",
-        "from",
-        "ringtone",
-        "to",
+        "sexy",
+        "tones",
         "150p",
-        "mobile",
-        "your",
-        "reply",
-        "free",
-        "call",
         "text",
-        "call phonemarker",
+        "service",
+        "won",
+        "ringtone",
+        "claim",
+        "mobile",
+        "to",
+        "your",
+        "from",
+        "reply",
         "txt",
+        "free",
         "to codemarker",
+        "call",
+        "call phonemarker",
         "urlmarker",
         "codemarker",
         "phonemarker"
-    ],
-    "top_url_features": [
-        {
-            "feature": "is_https",
-            "importance": 0.6117
-        },
-        {
-            "feature": "domain_length",
-            "importance": 0.1137
-        },
-        {
-            "feature": "domain_entropy",
-            "importance": 0.0561
-        },
-        {
-            "feature": "url_length",
-            "importance": 0.0549
-        },
-        {
-            "feature": "url_entropy",
-            "importance": 0.0292
-        },
-        {
-            "feature": "path_length",
-            "importance": 0.0216
-        },
-        {
-            "feature": "num_hyphens_domain",
-            "importance": 0.0205
-        },
-        {
-            "feature": "num_hyphens_url",
-            "importance": 0.0175
-        },
-        {
-            "feature": "num_slashes",
-            "importance": 0.0131
-        },
-        {
-            "feature": "num_digits_url",
-            "importance": 0.0127
-        }
     ]
 }

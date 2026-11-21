@@ -1,18 +1,21 @@
 """
-ScamLens Autonomous Cybersecurity Investigation Agent
+ScamLens Autonomous Cybersecurity Investigation Agent (Member 1: Data & ML)
 Implements Agentic AI for digital scam intelligence:
-- Autonomous Multi-Tool Orchestration (NLP Model, URL Model, Heuristic Signatures, Reputation)
+- Autonomous Multi-Tool Orchestration (NLP Model, URL Model, Heuristic Signatures, IOC Extraction)
+- Tool-Result Schema Validation and Provenance Tracking
 - Step-by-Step Investigation Trace (ReAct / Chain-of-Thought)
 - Multi-Source Evidence Synthesis & Cross-Corroboration
+- Grounded Evidence-Based Scoring (Probabilistic Fusion)
 - Context-Aware Remediation Advisory
 """
 import os
 import re
+import sys
 import json
+import datetime
 from typing import Dict, Any, List, Optional
 
 # Adjust system path to import local modules
-import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC_DIR = os.path.join(BASE_DIR, "src")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
@@ -23,64 +26,101 @@ for p in [SRC_DIR, MODELS_DIR]:
 from predictor import ScamLensPredictor
 
 
+class ToolExecutionError(Exception):
+    """Raised when a sub-tool returns invalid or malformed output."""
+    pass
+
+
 class ScamInvestigatorAgent:
     """
     Autonomous Cybersecurity Agent for Fraud Investigation.
     Orchestrates specialized tools, reasons over multimodal evidence,
-    and produces an actionable threat intelligence report.
+    validates tool provenance, and produces an actionable threat intelligence report.
     """
 
     def __init__(self, models_dir: Optional[str] = None):
         self.predictor = ScamLensPredictor(models_dir=models_dir)
-        self.agent_name = "ScamLens Cyber-Investigation Agent v1.0"
+        self.agent_name = "ScamLens Cyber-Investigation Agent v2.1"
+        self.version = "2.1.0"
         
-        # Indian Cyber Crime Modus Operandi Signatures
+        # Indian Cyber Crime Modus Operandi Threat Signatures
         self.threat_signatures = {
             "digital_arrest": {
-                "name": "Digital Arrest / Agency Impersonation",
-                "keywords": ["cbi", "police", "customs", "narcotics", "digital arrest", "skype", "warrant", "illegal parcel", "mumbai airport"],
+                "name": "Digital Arrest / Law Enforcement Impersonation",
+                "keywords": ["cbi", "police", "customs", "narcotics", "digital arrest", "skype", "warrant", "illegal parcel", "mumbai airport", "court", "remand"],
                 "modus_operandi": "Threatens victim with fake arrest warrants or seized contraband parcels and demands video interrogation on Skype/WhatsApp to extort money.",
-                "legal_fact": "Law enforcement agencies (Police, CBI, ED, Customs) NEVER conduct trials, arrest warrants, or interrogations via Skype or WhatsApp."
+                "legal_fact": "Law enforcement agencies (Police, CBI, ED, Customs) NEVER conduct trials, arrest warrants, or interrogations via Skype or WhatsApp.",
+                "evidence_weight": 0.90
             },
             "electricity_disconnection": {
                 "name": "Urgent Electricity Disconnection Threat",
-                "keywords": ["electricity", "power", "disconnected", "power office", "bill unpaid", "officer at", "previous month bill"],
+                "keywords": ["electricity", "power", "disconnected", "power office", "bill unpaid", "officer at", "previous month bill", "bijli"],
                 "modus_operandi": "Pressures consumers with immediate nighttime power disconnection to induce panic and force calls to fraudulent personal mobile numbers.",
-                "legal_fact": "Power discoms never send disconnection SMS with personal 10-digit mobile numbers for bill clearance."
+                "legal_fact": "Power discoms never send disconnection SMS with personal 10-digit mobile numbers for bill clearance.",
+                "evidence_weight": 0.85
             },
             "fake_kyc": {
                 "name": "Fake Banking / KYC Block Threat",
-                "keywords": ["kyc", "yono", "pan card", "card blocked", "debit card", "unblock", "suspended", "aadhaar mismatch"],
+                "keywords": ["kyc", "yono", "pan card", "card blocked", "debit card", "unblock", "suspended", "aadhaar mismatch", "re-kyc"],
                 "modus_operandi": "Tricks victims into downloading rogue APKs or entering netbanking credentials on lookalike domains to bypass 2FA.",
-                "legal_fact": "Banks never require customers to update KYC via third-party APK downloads or unofficial websites."
+                "legal_fact": "Banks never require customers to update KYC via third-party APK downloads or unofficial websites.",
+                "evidence_weight": 0.88
             },
             "upi_collect_fraud": {
                 "name": "UPI Collect Request / PIN Phishing",
-                "keywords": ["upi collect", "enter upi pin", "receive money", "refund of rs", "cashback", "lottery"],
+                "keywords": ["upi collect", "enter upi pin", "receive money", "refund of rs", "cashback", "lottery", "scratch card"],
                 "modus_operandi": "Deceptively sends a UPI Collect Request claiming the victim is receiving money, whereas entering the UPI PIN deducts money from their account.",
-                "legal_fact": "You NEVER need to enter your UPI PIN to receive money in your bank account."
+                "legal_fact": "You NEVER need to enter your UPI PIN to receive money in your bank account.",
+                "evidence_weight": 0.92
             },
             "part_time_task_scam": {
                 "name": "Part-Time Task & Job Investment Fraud",
-                "keywords": ["part-time work", "work from home", "earn rs", "liking youtube", "telegram @", "daily income", "part time"],
+                "keywords": ["part-time work", "work from home", "earn rs", "liking youtube", "telegram @", "daily income", "part time", "review task"],
                 "modus_operandi": "Offers easy money for small tasks (YouTube likes, Google ratings), builds trust with small payouts, then freezes deposits in high-yield investment traps.",
-                "legal_fact": "Legitimate employers never recruit for daily payouts via Telegram or demand deposit money for task unlocking."
+                "legal_fact": "Legitimate employers never recruit for daily payouts via Telegram or demand deposit money for task unlocking.",
+                "evidence_weight": 0.80
+            },
+            "customs_parcel_scam": {
+                "name": "Overseas Parcel Customs Clearance Scam",
+                "keywords": ["customs", "parcel", "fedex", "dhl", "clearance fee", "consignment", "airport hub", "unpaid duty"],
+                "modus_operandi": "Claims a valuable foreign parcel is stuck at airport customs and demands online clearance duty transfers.",
+                "legal_fact": "Customs duties are never collected via personal bank accounts or instant UPI links.",
+                "evidence_weight": 0.82
             }
         }
 
-    # ==========================================
-    # TOOL CAPABILITIES AVAILABLE TO THE AGENT
-    # ==========================================
+    # =================================================================
+    # TOOL CAPABILITIES WITH PROVENANCE AND SCHEMA VALIDATION
+    # =================================================================
 
     def tool_inspect_nlp_semantics(self, text: str) -> Dict[str, Any]:
-        """Tool: Evaluates semantic patterns using text_model.joblib."""
-        return self.predictor.predict_text(text)
+        """Tool: Evaluates semantic patterns using calibrated text model."""
+        res = self.predictor.predict_text(text)
+        # Schema validation
+        required_keys = {"verdict", "risk_score", "raw_ml_score", "confidence", "reasons"}
+        if not required_keys.issubset(res.keys()):
+            raise ToolExecutionError(f"NLP tool returned incomplete schema. Missing: {required_keys - set(res.keys())}")
+        return {
+            "tool_name": "tool_inspect_nlp_semantics",
+            "provenance": "Calibrated TF-IDF + Logistic Regression Model v2.1",
+            "execution_status": "SUCCESS",
+            "output": res
+        }
 
     def tool_inspect_url_infrastructure(self, url: str) -> Dict[str, Any]:
-        """Tool: Inspects URL structural features using url_model.joblib."""
-        return self.predictor.predict_url(url)
+        """Tool: Inspects URL structural features using calibrated URL model."""
+        res = self.predictor.predict_url(url)
+        required_keys = {"verdict", "risk_score", "raw_ml_score", "confidence", "reasons", "features"}
+        if not required_keys.issubset(res.keys()):
+            raise ToolExecutionError(f"URL tool returned incomplete schema. Missing: {required_keys - set(res.keys())}")
+        return {
+            "tool_name": "tool_inspect_url_infrastructure",
+            "provenance": "Calibrated Random Forest Ensemble (28 features) v2.1",
+            "execution_status": "SUCCESS",
+            "output": res
+        }
 
-    def tool_match_cybercrime_signatures(self, text: str) -> List[Dict[str, str]]:
+    def tool_match_cybercrime_signatures(self, text: str) -> Dict[str, Any]:
         """Tool: Identifies known Indian cybercrime modus operandi."""
         lower = text.lower()
         matched = []
@@ -92,64 +132,112 @@ class ScamInvestigatorAgent:
                     "name": sig["name"],
                     "hits": hit_count,
                     "modus_operandi": sig["modus_operandi"],
-                    "legal_fact": sig["legal_fact"]
+                    "legal_fact": sig["legal_fact"],
+                    "evidence_weight": sig["evidence_weight"]
                 })
-        return matched
+        return {
+            "tool_name": "tool_match_cybercrime_signatures",
+            "provenance": "Indian Cybercrime Modus Operandi Knowledge Base",
+            "execution_status": "SUCCESS",
+            "output": matched
+        }
 
-    def tool_extract_embedded_indicators(self, text: str) -> Dict[str, List[str]]:
-        """Tool: Extracts actionable IOCs (URLs, phone numbers, UPI references)."""
+    def tool_extract_embedded_indicators(self, text: str) -> Dict[str, Any]:
+        """Tool: Extracts actionable IOCs (URLs, phone numbers, UPI references, amounts)."""
         urls = self.predictor.preprocessor.url_pattern.findall(text)
         phones = self.predictor.preprocessor.phone_pattern.findall(text)
         currencies = self.predictor.preprocessor.currency_pattern.findall(text)
         return {
-            "extracted_urls": urls,
-            "extracted_phones": phones,
-            "extracted_currencies": currencies
+            "tool_name": "tool_extract_embedded_indicators",
+            "provenance": "Regex-Based Lexical Entity Extractor",
+            "execution_status": "SUCCESS",
+            "output": {
+                "extracted_urls": urls,
+                "extracted_phones": phones,
+                "extracted_currencies": currencies
+            }
         }
 
-    # ==========================================
-    # AUTONOMOUS AGENT INVESTIGATION ENGINE
-    # ==========================================
+    # =================================================================
+    # AUTONOMOUS AGENT INVESTIGATION ENGINE (ReAct Orchestration)
+    # =================================================================
 
     def investigate(self, text: Optional[str] = None, url: Optional[str] = None) -> Dict[str, Any]:
         """
         Executes an autonomous, multi-step investigation loop:
-        1. Observation -> Collect inputs and extract Indicators of Compromise (IOCs).
-        2. Tool Invocation -> Run ML text model, URL inspector, and signature matcher.
-        3. Deliberation -> Chain-of-thought evidence synthesis.
-        4. Threat Verdict -> Calibrated risk scoring.
-        5. Action Plan -> Prescriptive remediation and emergency contact generation.
+        1. Observation -> Collect inputs, check emptiness, extract IOCs.
+        2. Tool Invocation -> Run NLP semantics, URL inspector, signature matcher with provenance.
+        3. Deliberation -> Chain-of-thought evidence cross-corroboration.
+        4. Threat Verdict -> Grounded probabilistic evidence fusion.
+        5. Action Plan -> Context-aware remediation and reporting guidance.
         """
-        investigation_log = []
+        investigation_log: List[str] = []
+        structured_trace: List[Dict[str, Any]] = []
+
+        # Step 0: Input validation
+        has_text = text is not None and bool(str(text).strip())
+        has_url = url is not None and bool(str(url).strip())
+
+        if not has_text and not has_url:
+            return {
+                "agent_name": self.agent_name,
+                "verdict": "Unknown",
+                "status_color": "gray",
+                "icon": "❓",
+                "risk_score": 0,
+                "is_empty": True,
+                "investigation_trace": ["🔍 [AGENT OBSERVATION] No input provided. Standing by."],
+                "structured_trace": [],
+                "deliberation_summary": ["No actionable text or URL was submitted."],
+                "reasons": ["No content provided for analysis."],
+                "safety_tips": ["Paste a suspicious message, link, or phone number to start an investigation."]
+            }
+
         investigation_log.append("🔍 [AGENT OBSERVATION] Initializing threat investigation on incoming input.")
         
         # Step 1: IOC Extraction
         extracted_iocs = {"extracted_urls": [], "extracted_phones": [], "extracted_currencies": []}
-        if text:
-            extracted_iocs = self.tool_extract_embedded_indicators(text)
-            if extracted_iocs["extracted_urls"] and not url:
+        if has_text:
+            ioc_result = self.tool_extract_embedded_indicators(text)
+            extracted_iocs = ioc_result["output"]
+            structured_trace.append(ioc_result)
+            
+            if extracted_iocs["extracted_urls"] and not has_url:
                 url = extracted_iocs["extracted_urls"][0]
+                has_url = True
                 investigation_log.append(f"🔗 [IOC EXTRACTION] Extracted embedded URL from text: '{url}'")
             if extracted_iocs["extracted_phones"]:
-                investigation_log.append(f"📞 [IOC EXTRACTION] Extracted contact phone/number: {extracted_iocs['extracted_phones']}")
+                investigation_log.append(f"📞 [IOC EXTRACTION] Extracted phone numbers: {extracted_iocs['extracted_phones']}")
 
-        # Step 2: Tool Calls
+        # Step 2: Tool Invocations
         text_findings = None
-        if text:
+        if has_text:
             investigation_log.append("🧠 [TOOL CALL] Invoking 'tool_inspect_nlp_semantics' on message text...")
-            text_findings = self.tool_inspect_nlp_semantics(text)
-            investigation_log.append(f"   -> Result: Semantic Scam Probability: {text_findings['risk_score']}% | Initial Verdict: {text_findings['verdict']}")
+            nlp_result = self.tool_inspect_nlp_semantics(text)
+            text_findings = nlp_result["output"]
+            structured_trace.append(nlp_result)
+            investigation_log.append(
+                f"   -> Result: Semantic Scam Probability: {text_findings['risk_score']}% | "
+                f"Verdict: {text_findings['verdict']} | Confidence: {text_findings['confidence']}"
+            )
 
         url_findings = None
-        if url:
+        if has_url:
             investigation_log.append(f"🌐 [TOOL CALL] Invoking 'tool_inspect_url_infrastructure' on target URL: '{url}'...")
-            url_findings = self.tool_inspect_url_infrastructure(url)
-            investigation_log.append(f"   -> Result: Infrastructure Phishing Score: {url_findings['risk_score']}% | Initial Verdict: {url_findings['verdict']}")
+            url_result = self.tool_inspect_url_infrastructure(url)
+            url_findings = url_result["output"]
+            structured_trace.append(url_result)
+            investigation_log.append(
+                f"   -> Result: Infrastructure Phishing Score: {url_findings['risk_score']}% | "
+                f"Verdict: {url_findings['verdict']} | Confidence: {url_findings['confidence']}"
+            )
 
         signature_matches = []
-        if text:
-            investigation_log.append("📑 [TOOL CALL] Invoking 'tool_match_cybercrime_signatures' against known Indian fraud patterns...")
-            signature_matches = self.tool_match_cybercrime_signatures(text)
+        if has_text:
+            investigation_log.append("📑 [TOOL CALL] Invoking 'tool_match_cybercrime_signatures' against known fraud patterns...")
+            sig_result = self.tool_match_cybercrime_signatures(text)
+            signature_matches = sig_result["output"]
+            structured_trace.append(sig_result)
             if signature_matches:
                 names = [s["name"] for s in signature_matches]
                 investigation_log.append(f"   -> Confirmed Threat Signatures: {', '.join(names)}")
@@ -158,9 +246,9 @@ class ScamInvestigatorAgent:
 
         # Step 3: Agent Deliberation & Chain of Thought
         investigation_log.append("⚖️ [AGENT DELIBERATION] Synthesizing cross-evidence from NLP, URL infrastructure, and signatures...")
-        deliberation_notes = []
+        deliberation_notes: List[str] = []
         
-        # Case A: Signature Match
+        # Case A: Signature Match Corroboration
         if signature_matches:
             top_sig = signature_matches[0]
             deliberation_notes.append(
@@ -171,7 +259,7 @@ class ScamInvestigatorAgent:
         if text_findings and url_findings:
             if url_findings["risk_score"] >= 70:
                 deliberation_notes.append(
-                    f"High-threat malicious link detected. The infrastructure uses abnormal attributes: {', '.join(url_findings['reasons'][:2])}."
+                    f"Malicious link detected. Attributes: {', '.join(url_findings['reasons'][:2])}."
                 )
             if text_findings["risk_score"] >= 70 and url_findings["risk_score"] >= 70:
                 deliberation_notes.append(
@@ -184,36 +272,84 @@ class ScamInvestigatorAgent:
                 "Cross-evaluation shows legitimate service or personal communication indicators without credential harvesting pressure."
             )
 
-        # Step 4: Final Risk Assessment & Scoring
-        combined_result = self.predictor.predict_combined(text=text, url=url)
-        final_score = combined_result["risk_score"]
+        # Step 4: Grounded Threat Verdict Calculation (Evidence-Weighted Fusion)
+        evidence_scores = []
+        weights = []
         
-        # Elevate risk if high-severity signatures are confirmed
-        if signature_matches and final_score < 75:
-            final_score = max(final_score, 85)
-            combined_result["verdict"] = "Scam"
-            combined_result["status_color"] = "red"
-            combined_result["icon"] = "🚨"
+        if text_findings:
+            evidence_scores.append(text_findings["risk_score"])
+            weights.append(0.40)
+            
+        if url_findings:
+            evidence_scores.append(url_findings["risk_score"])
+            weights.append(0.45)
+            
+        if signature_matches:
+            top_weight = max(s["evidence_weight"] for s in signature_matches)
+            evidence_scores.append(int(top_weight * 100))
+            weights.append(0.35)
+            
+        if weights:
+            normalized_weights = [w / sum(weights) for w in weights]
+            final_score = int(round(sum(s * w for s, w in zip(evidence_scores, normalized_weights))))
+        else:
+            final_score = 0
 
-        combined_result["risk_score"] = final_score
+        # Verdict assignment based on grounded threshold
+        if final_score >= 70:
+            verdict = "Scam"
+            status_color = "red"
+            icon = "🚨"
+            safety_tips = [
+                "Do NOT click any links, open APKs, or reply to this message.",
+                "Never share your OTP, UPI PIN, or bank passwords with anyone.",
+                "Report this immediately on the National Cyber Crime Reporting Portal at https://cybercrime.gov.in or call helpline 1930."
+            ]
+        elif final_score >= 40:
+            verdict = "Suspicious"
+            status_color = "amber"
+            icon = "⚠️"
+            safety_tips = [
+                "Verify independently via the official bank or service provider app before taking any action.",
+                "Do not approve any UPI collect requests or transfer token booking amounts.",
+                "Check sender identity carefully."
+            ]
+        else:
+            verdict = "Safe"
+            status_color = "green"
+            icon = "✅"
+            safety_tips = [
+                "Message looks typical of normal communications.",
+                "Always remember that genuine organizations will never ask for your PIN or password."
+            ]
 
-        # Step 5: Synthesize Final Dossier
-        all_reasons = list(dict.fromkeys(
-            [d for d in deliberation_notes] + combined_result["reasons"]
-        ))
-        
-        investigation_log.append(f"🎯 [DECISION] Final Consolidated Verdict: {combined_result['verdict']} ({combined_result['risk_score']}%)")
+        # Combine all unique reasons
+        candidate_reasons = deliberation_notes
+        if text_findings:
+            candidate_reasons.extend(text_findings["reasons"])
+        if url_findings:
+            candidate_reasons.extend(url_findings["reasons"])
+            
+        all_reasons = list(dict.fromkeys([
+            r for r in candidate_reasons 
+            if "normal conversational" not in r.lower() or verdict == "Safe"
+        ]))
+
+        investigation_log.append(f"🎯 [DECISION] Final Consolidated Verdict: {verdict} ({final_score}%)")
 
         return {
             "agent_name": self.agent_name,
-            "verdict": combined_result["verdict"],
-            "status_color": combined_result["status_color"],
-            "icon": combined_result["icon"],
+            "version": self.version,
+            "verdict": verdict,
+            "status_color": status_color,
+            "icon": icon,
             "risk_score": final_score,
+            "is_empty": False,
             "investigation_trace": investigation_log,
+            "structured_trace": structured_trace,
             "deliberation_summary": deliberation_notes,
             "reasons": all_reasons,
-            "safety_tips": combined_result["safety_tips"],
+            "safety_tips": safety_tips,
             "matched_signatures": signature_matches,
             "iocs_extracted": extracted_iocs,
             "nlp_analysis": text_findings,
@@ -221,17 +357,17 @@ class ScamInvestigatorAgent:
         }
 
 
-# Convenience factory
 def get_agent() -> ScamInvestigatorAgent:
+    """Convenience factory function."""
     return ScamInvestigatorAgent()
 
 
 if __name__ == "__main__":
-    print("=== Testing ScamLens Autonomous Cyber-Investigation Agent ===")
+    print("=== Testing ScamLens Autonomous Cyber-Investigation Agent v2.1 ===")
     agent = ScamInvestigatorAgent()
     sample = (
         "Delhi Police Cyber Cell: A parcel in your name containing illegal narcotics has been seized "
-        "at Mumbai airport. Digital arrest warrant issued. Contact CBI Officer on Skype: http://cbi-investigation.top/court"
+        "at Mumbai airport. Digital arrest warrant issued. Contact CBI Officer on Skype: https://cbi-investigation.top/court"
     )
     report = agent.investigate(text=sample)
     print("\n--- INVESTIGATION TRACE ---")
@@ -239,9 +375,9 @@ if __name__ == "__main__":
         print(step)
     print("\n--- AGENT VERDICT ---")
     print(f"Verdict: {report['verdict']} {report['icon']} ({report['risk_score']}%)")
-    print("\n--- WHY WE THINK THIS (EXPLAINABLE REASONS) ---")
+    print("\n--- EXPLAINABLE REASONS ---")
     for r in report["reasons"]:
         print(f"• {r}")
-    print("\n--- SAFETY RECOMMENDATIONS ---")
+    print("\n--- SAFETY TIPS ---")
     for tip in report["safety_tips"]:
         print(f"-> {tip}")

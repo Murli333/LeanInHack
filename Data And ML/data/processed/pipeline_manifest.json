@@ -1,0 +1,39 @@
+{
+    "dataset_version": "2.1.0",
+    "generated_timestamp": "2026-11-21T18:02:23.062786+00:00",
+    "random_seed": 42,
+    "text_dataset": {
+        "total_records": 5225,
+        "scam_records": 678,
+        "ham_records": 4547,
+        "scam_ratio": 0.1298,
+        "sources_breakdown": {
+            "uci_sms": 5160,
+            "indian_scam_curated": 36,
+            "indian_ham_curated": 29
+        }
+    },
+    "url_dataset": {
+        "total_records": 4031,
+        "phishing_records": 3697,
+        "legitimate_records": 334,
+        "phishing_ratio": 0.9171,
+        "sources_breakdown": {
+            "shreya_benchmark": 3556,
+            "openphish": 300,
+            "synthetic_legitimate": 56,
+            "synthetic_phishing": 50,
+            "curated_phishing": 37,
+            "curated_legitimate": 32
+        }
+    },
+    "preprocessing_pipeline": [
+        "Unicode normalization (NFKD) and Cyrillic homoglyph replacement",
+        "Zero-width character stripping (U+200B..U+FEFF)",
+        "Deobfuscation of spaced & masked fraud keywords",
+        "Hinglish & Hindi scam pattern identification",
+        "Entity marker replacement (urlmarker, phonemarker, currencymarker, codemarker)",
+        "Holdout dataset strict isolation to prevent train/test leakage",
+        "28-feature structural URL extraction with shortener & Punycode defense"
+    ]
+}

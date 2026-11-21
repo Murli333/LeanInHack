@@ -40,21 +40,22 @@ Digital financial fraud in India has skyrocketed with the adoption of instant di
                               ▼
     ┌─────────────────────────────────────────────────────┐
     │  Multimodal Extraction & Input Preprocessing         │
-    │  - Text Normalization (<CURRENCY>, <PHONE>, <CODE>) │
+    │  - Unicode Homoglyphs & Hinglish Deobfuscation      │
+    │  - Text Normalization (markers, entities, emojis)   │
     │  - OCR Text Extraction (for uploaded screenshots)   │
-    │  - URL Lexical & Structural Parser (24 features)    │
+    │  - URL Lexical & Structural Parser (28 features)    │
     └─────────────────────────┬───────────────────────────┘
                               │
                               ▼
     ┌─────────────────────────────────────────────────────┐
-    │  ScamLens Dual-Core ML Inference Engine             │
+    │  ScamLens Dual-Core ML Inference Engine (v2.1)      │
     │                                                     │
     │  ┌───────────────────────┐ ┌──────────────────────┐ │
     │  │ Text Scam Classifier  │ │ URL Phishing Engine  │ │
-    │  │ (TF-IDF + Calibrated  │ │ (24-Feature Ensemble │ │
+    │  │ (TF-IDF + Calibrated  │ │ (28-Feature Ensemble │ │
     │  │  Logistic Regression) │ │  Random Forest)      │ │
-    │  │ Accuracy: 99.33%      │ │ Accuracy: 99.50%     │ │
-    │  │ FPR: 0.55%            │ │ FPR: 1.61%           │ │
+    │  │ Accuracy: 99.04%      │ │ Accuracy: 99.26%     │ │
+    │  │ FPR: 0.55%            │ │ FPR: 4.48%           │ │
     │  └───────────┬───────────┘ └──────────┬───────────┘ │
     │              │                        │             │
     └──────────────┼────────────────────────┼─────────────┘

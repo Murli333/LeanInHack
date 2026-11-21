@@ -1,5 +1,6 @@
 """
-Direct export for ScamInvestigatorAgent from models package.
+ScamLens Investigator Export Wrapper
+Provides convenient import access to ScamInvestigatorAgent from the models directory.
 """
 import os
 import sys
@@ -9,6 +10,6 @@ SRC_DIR = os.path.join(BASE_DIR, "src")
 if SRC_DIR not in sys.path:
     sys.path.insert(0, SRC_DIR)
 
-from agent import ScamInvestigatorAgent, get_agent
+from agent import ScamInvestigatorAgent, get_agent, ToolExecutionError
 
-__all__ = ["ScamInvestigatorAgent", "get_agent"]
+__all__ = ["ScamInvestigatorAgent", "get_agent", "ToolExecutionError"]

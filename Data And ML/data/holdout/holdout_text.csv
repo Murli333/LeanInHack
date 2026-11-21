@@ -1,0 +1,31 @@
+label,text,is_scam,category,split
+spam,Airtel Service Alert: Your outgoing calls will be blocked by midnight due to Aadhaar non-submission. Verify immediately at http://airtel-aadhaar-link.top,1,sim_disconnect,holdout
+spam,"Mumbai Customs Notice: Consignment containing expensive electronic gadgets seized. Transfer Rs 2,500 clearance duty to release: http://customs-hub-clearance.xyz",1,customs_parcel,holdout
+spam,Digital Arrest Warrant: Delhi High Court has registered case #CR-8819 under NDPS Act. Appear online on WhatsApp or face immediate arrest.,1,digital_arrest,holdout
+spam,"SBI YONO alert: 50,000 reward points credited. Redeem into your bank account before 12 AM: http://sbi-reward-points.site/redeem",1,reward_points,holdout
+spam,Electricity alert: Power supply disconnected tonight at 10 PM. Call Power Board SDM Sharma at 9811998877 immediately to clear dues.,1,electricity_threat,holdout
+spam,"Work From Home part time: Review 5 apps on Play Store and get Rs 1,500 instantly. WhatsApp recruiter now: 9822334455",1,job_scam,holdout
+spam,"Income Tax refund notification: Order for tax refund of Rs 22,400 ready. Validate bank account details at http://it-refund-validate.link",1,tax_refund,holdout
+spam,Paytm wallet KYC expired: Account locked permanently in 4 hours. Update KYC at http://paytm-kyc-officer.work,1,fake_kyc,holdout
+spam,Aapka PNB account freeze kar diya gaya hai. Turant OTP aur card number bataye unfreeze karne ke liye.,1,hinglish_scam,holdout
+spam,"Dear User, won Rs 50,00,000 in Jio Diwali Kaun Banega Crorepati Lucky Draw. Call Manager Rana at 7788990011 to claim.",1,lottery_scam,holdout
+spam,Pre-approved loan of Rs 10 Lakh approved at 0.5% interest. Install app now to disburse: http://instant-dhan-loan.top/dhan.apk,1,loan_scam,holdout
+spam,"Traffic Police e-Challan: Vehicle DL5CAB1234 has pending fine of Rs 2,000. Pay within 12 hours: http://traffic-challan-pay.xyz",1,challan_scam,holdout
+spam,HDFC Netbanking: Unrecognized login from Russia detected. Click https://hdfc-security-check.xyz to lock your account.,1,fake_kyc,holdout
+spam,India Post: Consignment arrived at terminal but postal index number is wrong. Update: http://indiapost-address.top,1,customs_parcel,holdout
+spam,Crypto VIP trading: Double your Bitcoin in 48 hours guaranteed. Join our private Telegram channel @vip_crypto_signals,1,crypto_scam,holdout
+ham,"Dear Customer, your Swiggy Instamart order of groceries has been placed successfully and will be delivered in 12 mins.",0,grocery_delivery,holdout
+ham,Zomato: Delivery partner Suresh is on the way with your lunch order. Track live in the Zomato app.,0,food_delivery,holdout
+ham,Your OTP for Aadhaar online service verification is 654321. Valid for 10 minutes. Do not share with anyone. - UIDAI,0,gov_otp,holdout
+ham,"Dear Customer, INR 2,400.00 debited from SBI A/C 9812 on 20-Nov-26 via UPI to ZOMATO. Avail Bal: INR 31,450.00.",0,bank_debit,holdout
+ham,"Dear ICICI Bank customer, 451290 is the OTP for card transaction of INR 1,899.00 at AMAZON. Never disclose OTP to anyone.",0,bank_otp,holdout
+ham,Indian Railways: PNR 2819283918 train 12952 MUMBAI RAJDHANI coach A1 berth 18 confirmed. Charting prepared.,0,travel_train,holdout
+ham,IndiGo flight 6E-512 departs from Terminal 3 Delhi at 09:15 AM. Web check-in closes 60 minutes before departure.,0,travel_flight,holdout
+ham,"Tata Power DDL: Payment of Rs 1,840 received successfully against CA No 6001928374 on 19-Nov-26. Thank you for timely payment.",0,utility_paid,holdout
+ham,BSES Delhi: Meter reading for your connection CA 100928374 scheduled for 23-Nov-26. Please allow access to authorized staff.,0,utility_meter,holdout
+ham,Amazon: Package with order #402-9182371 has been delivered to your front door. How was your delivery experience?,0,ecommerce_delivered,holdout
+ham,Blinkit: Your order has been delivered by partner Amit. Please rate your delivery experience in app.,0,delivery_rate,holdout
+ham,Dr. Batra Clinic: Reminder for your regular consultation on Friday at 4 PM. Call clinic to reschedule if needed.,0,healthcare,holdout
+ham,DPS R.K. Puram: Winter uniform instructions have been uploaded to parent portal. Kindly review guidelines.,0,education,holdout
+ham,Airtel: Your bill for landline broadband 011-28192834 is Rs 943 due on 28-Nov. Pay on Airtel Thanks app.,0,utility_telecom,holdout
+ham,"Hi Rahul, sharing the project presentation slides on email. Let's do a quick sync call at 3 PM today.",0,personal_work,holdout
