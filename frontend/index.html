@@ -1,321 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ScamLens — AI-Powered Digital Scam Intelligence</title>
-  <meta name="description" content="Instant multimodal scam and phishing detector. Detects fake KYC, UPI fraud, Digital Arrest, and malicious links.">
-  <meta name="theme-color" content="#1A237E">
-  <link rel="manifest" href="manifest.json">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body class="desktop-view">
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#05080F" id="theme-color-meta" />
+    <meta name="description" content="ScamLens — Detect the scam. Understand the risk. Stay protected." />
+    <title>ScamLens — AI Scam & Threat Detection</title>
 
-  <!-- Desktop Outer Wrapper -->
-  <div class="app-viewport-container">
+    <!-- Preconnect to Google Fonts for Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-    <!-- View Mode Switcher Header (For Desktop Demo) -->
-    <header class="desktop-topbar">
-      <div class="topbar-brand">
-        <span class="brand-shield">🛡️</span>
-        <span class="brand-title">ScamLens</span>
-        <span class="brand-badge">v2.1 AI Engine</span>
-      </div>
-      <div class="topbar-controls">
-        <button id="toggleViewModeBtn" class="view-toggle-btn" title="Toggle Mobile Phone Mockup vs Full Desktop View">
-          <span class="toggle-icon">📱</span>
-          <span class="toggle-label">Mobile Shell View</span>
-        </button>
-        <button id="historyDrawerBtn" class="history-toggle-btn" title="Recent Scan History">
-          <span>🕒 History</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- Main Mobile Shell / Device Frame -->
-    <div id="deviceFrame" class="device-frame">
-      
-      <!-- Mobile Phone Status Bar -->
-      <div class="phone-status-bar">
-        <span class="status-time" id="statusTime">09:41</span>
-        <div class="status-icons">
-          <span>📶</span>
-          <span>5G</span>
-          <span>🔋 98%</span>
-        </div>
-      </div>
-
-      <!-- In-App Header -->
-      <header class="mobile-app-header">
-        <div class="app-header-left">
-          <div class="logo-circle">🛡️</div>
-          <div>
-            <h1 class="app-name">ScamLens</h1>
-            <p class="app-tagline">AI Digital Fraud Shield</p>
-          </div>
-        </div>
-        <div class="app-status-indicator" title="Connected to Local ML Inference Engine">
-          <span class="status-dot online"></span>
-          <span class="status-text">AI Ready</span>
-        </div>
-      </header>
-
-      <!-- App Main Scrollable Container -->
-      <main class="app-content-scroll">
-
-        <!-- SCREEN 1: INPUT & SCANNER -->
-        <section id="inputScreen" class="screen-section active">
-          
-          <div class="scanner-card">
-            <div class="card-header">
-              <span class="header-icon">🔍</span>
-              <h2>Analyze Suspicious Content</h2>
-            </div>
-            <p class="helper-subtitle">Paste a message, link, or upload a screenshot to assess fraud risk.</p>
-
-            <!-- Input Tabs -->
-            <div class="input-tabs">
-              <button class="tab-btn active" data-tab="tabText">💬 Message</button>
-              <button class="tab-btn" data-tab="tabUrl">🔗 Link / URL</button>
-              <button class="tab-btn" data-tab="tabImage">📸 Screenshot</button>
-            </div>
-
-            <!-- Tab 1: Text Input -->
-            <div id="tabText" class="tab-content active">
-              <label for="messageTextInput" class="field-label">Suspicious Message Text</label>
-              <textarea 
-                id="messageTextInput" 
-                class="form-textarea" 
-                rows="4" 
-                placeholder="Paste SMS, WhatsApp message, or notice here... (e.g. 'Your SBI YONO is blocked. Update KYC immediately at http://...')"
-              ></textarea>
-            </div>
-
-            <!-- Tab 2: URL Input -->
-            <div id="tabUrl" class="tab-content">
-              <label for="urlInput" class="field-label">Target Web Address (URL)</label>
-              <div class="input-with-icon">
-                <span class="input-icon">🌐</span>
-                <input 
-                  type="url" 
-                  id="urlInput" 
-                  class="form-input" 
-                  placeholder="https://sbi-kyc-verify.top/login..."
-                />
-              </div>
-            </div>
-
-            <!-- Tab 3: Screenshot Upload -->
-            <div id="tabImage" class="tab-content">
-              <label class="field-label">Upload Screenshot for OCR</label>
-              <div class="file-dropzone" id="dropzone">
-                <input type="file" id="imageFileInput" accept="image/*" class="file-input-hidden" />
-                <div class="dropzone-content" id="dropzonePrompt">
-                  <span class="upload-icon">📷</span>
-                  <p class="dropzone-text">Tap or drag screenshot here</p>
-                  <span class="dropzone-subtext">PNG, JPG, WebP supported</span>
-                </div>
-                <!-- Image Preview Container -->
-                <div id="imagePreviewContainer" class="image-preview-box hidden">
-                  <img id="imagePreview" src="" alt="Screenshot Preview" class="preview-img" />
-                  <button id="removeImageBtn" class="remove-img-btn" type="button">✕ Remove</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Primary Action Button -->
-            <button id="analyzeBtn" class="primary-action-btn">
-              <span class="btn-icon">⚡</span>
-              <span class="btn-text">Check For Scams</span>
-            </button>
-          </div>
-
-          <!-- Quick Test Demo Chips (1-Click Real Indian Scam Examples) -->
-          <div class="demo-chips-section">
-            <p class="chips-title">💡 Try 1-Click Test Scenarios:</p>
-            <div class="chips-container">
-              <button class="chip-btn scam-chip" data-sample="kyc">
-                <span class="chip-badge">🚨 Scam</span> Fake SBI KYC APK
-              </button>
-              <button class="chip-btn scam-chip" data-sample="electricity">
-                <span class="chip-badge">🚨 Scam</span> Electricity Disconnect
-              </button>
-              <button class="chip-btn scam-chip" data-sample="digital_arrest">
-                <span class="chip-badge">🚨 Scam</span> CBI Digital Arrest
-              </button>
-              <button class="chip-btn scam-chip" data-sample="upi_pin">
-                <span class="chip-badge">🚨 Scam</span> UPI PIN Collect Fraud
-              </button>
-              <button class="chip-btn safe-chip" data-sample="sbi_otp">
-                <span class="chip-badge">✅ Safe</span> Authentic SBI OTP
-              </button>
-              <button class="chip-btn safe-chip" data-sample="swiggy">
-                <span class="chip-badge">✅ Safe</span> Swiggy Delivery
-              </button>
-            </div>
-          </div>
-
-          <!-- Trust & Privacy Banner -->
-          <div class="privacy-note">
-            <span class="lock-icon">🔒</span>
-            <span>Local privacy-conscious analysis. We never store personal OTPs or passwords.</span>
-          </div>
-
-        </section>
-
-        <!-- SCREEN 2: LOADING STATE -->
-        <section id="loadingScreen" class="screen-section hidden">
-          <div class="loading-card">
-            <div class="radar-spinner">
-              <div class="radar-circle circle-1"></div>
-              <div class="radar-circle circle-2"></div>
-              <div class="radar-core">🛡️</div>
-            </div>
-            <h2 class="loading-title">Analyzing Security Signals...</h2>
-            <p id="loadingStatusText" class="loading-subtitle">Inspecting NLP semantics and threat patterns...</p>
-            
-            <div class="loading-steps-list">
-              <div class="loading-step active" id="step1">
-                <span class="step-bullet">●</span> Normalizing entity markers and Unicode
-              </div>
-              <div class="loading-step" id="step2">
-                <span class="step-bullet">○</span> Scanning 28 structural URL features
-              </div>
-              <div class="loading-step" id="step3">
-                <span class="step-bullet">○</span> Matching Indian cybercrime threat signatures
-              </div>
-              <div class="loading-step" id="step4">
-                <span class="step-bullet">○</span> Computing calibrated Bayesian risk score
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- SCREEN 3: RESULT SCREEN (Dynamic Safe / Suspicious / Scam) -->
-        <section id="resultScreen" class="screen-section hidden">
-          
-          <!-- Verdict Header Card -->
-          <div id="verdictBanner" class="verdict-card scam-theme">
-            
-            <div class="verdict-top-row">
-              <div class="verdict-badge-box">
-                <span id="verdictIcon" class="verdict-icon">🚨</span>
-                <span id="verdictText" class="verdict-title">Scam Alert</span>
-              </div>
-              <div class="risk-score-pill">
-                <span class="risk-label">Risk Level</span>
-                <span id="riskScoreNum" class="risk-number">94%</span>
-              </div>
-            </div>
-
-            <!-- Risk Gauge Meter Bar -->
-            <div class="risk-meter-container">
-              <div class="risk-meter-track">
-                <div id="riskMeterFill" class="risk-meter-fill scam-fill" style="width: 94%;"></div>
-              </div>
-              <div class="risk-meter-scale">
-                <span>0% Safe</span>
-                <span>40% Suspicious</span>
-                <span>70% Scam</span>
-                <span>100% Danger</span>
-              </div>
-            </div>
-
-            <!-- Summary Verdict Description -->
-            <p id="verdictSummaryMsg" class="verdict-summary">
-              This message strongly matches verified cybercrime campaigns. Do not click links, send money, or share credentials.
-            </p>
-          </div>
-
-          <!-- OCR Preview Box (If image was uploaded) -->
-          <div id="ocrPreviewCard" class="ocr-preview-card hidden">
-            <div class="ocr-card-header">
-              <span class="ocr-icon">📝</span>
-              <h3>Extracted Screenshot Text (OCR)</h3>
-            </div>
-            <p id="ocrExtractedContent" class="ocr-text-content"></p>
-          </div>
-
-          <!-- Why We Think This (Explainability Card) -->
-          <div class="explainability-card">
-            <div class="card-header">
-              <span class="header-icon">💡</span>
-              <h3>Why We Think This (Explainable AI)</h3>
-            </div>
-            <ul id="reasonsList" class="reasons-bullet-list">
-              <li>Demands sensitive authentication credentials under false pretenses.</li>
-              <li>Pressures you with immediate nighttime disconnection threats.</li>
-            </ul>
-          </div>
-
-          <!-- What You Should Do (Safety Recommendations) -->
-          <div class="safety-tips-card">
-            <div class="card-header">
-              <span class="header-icon">🛡️</span>
-              <h3>Recommended Safety Steps</h3>
-            </div>
-            <ul id="safetyTipsList" class="safety-bullet-list">
-              <li>Never share your OTP, UPI PIN, or bank passwords with anyone.</li>
-              <li>Do NOT click any links, open APKs, or reply to this message.</li>
-            </ul>
-          </div>
-
-          <!-- Emergency Action Box (For Scam / Suspicious States) -->
-          <div id="emergencyActionCard" class="emergency-action-card">
-            <div class="emergency-badge">🚨 Immediate Action Required</div>
-            <p class="emergency-desc">If money has been deducted or you suspect fraud, report immediately to the authorities:</p>
-            <div class="emergency-buttons-row">
-              <a href="tel:1930" class="emergency-btn call-btn">
-                <span>📞 Call 1930 Helpline</span>
-              </a>
-              <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="emergency-btn portal-btn">
-                <span>🌐 CyberCrime.gov.in</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Check Another Button -->
-          <button id="checkAnotherBtn" class="secondary-action-btn">
-            <span>🔄 Check Another Message or Link</span>
-          </button>
-        </section>
-
-      </main>
-
-      <!-- Mobile Bottom Navigation Bar -->
-      <nav class="mobile-bottom-nav">
-        <button class="nav-item active" id="navScanBtn">
-          <span class="nav-icon">🔍</span>
-          <span class="nav-label">Scanner</span>
-        </button>
-        <button class="nav-item" id="navThreatsBtn">
-          <span class="nav-icon">⚠️</span>
-          <span class="nav-label">Threats</span>
-        </button>
-        <button class="nav-item" id="navSafetyBtn">
-          <span class="nav-icon">🛡️</span>
-          <span class="nav-label">Safety</span>
-        </button>
-      </nav>
-
-    </div><!-- End Device Frame -->
-
-    <!-- Recent Scans History Drawer (Slide-out Modal) -->
-    <div id="historyDrawer" class="history-drawer hidden">
-      <div class="drawer-header">
-        <h3>🕒 Recent Scan History</h3>
-        <button id="closeDrawerBtn" class="close-btn">✕</button>
-      </div>
-      <div id="historyListContainer" class="history-list">
-        <p class="empty-history-text">No scans saved yet. Run your first check!</p>
-      </div>
-    </div>
-
-  </div><!-- End Viewport Container -->
-
-  <script src="app.js"></script>
-</body>
+    <!-- Inline pre-paint script to prevent theme flash -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('scamlens-theme');
+          var theme = 'dark';
+          if (saved === 'light' || saved === 'dark') {
+            theme = saved;
+          } else {
+            // 'system' or default
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            theme = prefersDark ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.colorScheme = theme;
+          var meta = document.getElementById('theme-color-meta');
+          if (meta) {
+            meta.setAttribute('content', theme === 'dark' ? '#05080F' : '#F5F7FB');
+          }
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-bg text-text antialiased min-h-screen selection:bg-primary/20 selection:text-text">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
