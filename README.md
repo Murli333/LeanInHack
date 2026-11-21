@@ -92,13 +92,40 @@ Digital financial fraud in India has skyrocketed with the adoption of instant di
 ```
 LeanInHack/
 │
+├── frontend/                           # [Standalone Mobile & Desktop Web App] ✅
+│   ├── index.html                      # Mobile-shell & responsive desktop application
+│   ├── styles.css                      # Modern dark/light design system with smooth animations
+│   ├── app.js                          # Multimodal input handling, OCR preview, offline/online engine
+│   ├── manifest.json                   # Progressive Web App (PWA) manifest
+│   └── README.md                       # Mobile installation & web deployment instructions
+│
+├── backend/                            # [FastAPI Service Layer] ✅
+│   ├── main.py                         # REST API with CORS (/api/analyze, /api/analyze-image, /api/health)
+│   ├── schemas.py                      # Pydantic request & response validation schemas
+│   └── requirements.txt                # FastAPI, Uvicorn, Python-Multipart
+│
+├── config/                             # [Centralized Configuration] ✅
+│   ├── settings.py                     # Environment-driven settings loader
+│   └── config.yaml                     # Model thresholds, threat feeds, and safety tip registry
+│
+├── docs/                               # [Technical Documentation] ✅
+│   ├── architecture.md                 # 4-tier multimodal defense architecture specification
+│   ├── api_spec.md                     # REST API OpenAPI & Swagger documentation
+│   └── threat_models.md                # 12 Indian cybercrime threat vectors & evasion countermeasures
+│
+├── scripts/                            # [Automation & Ops Scripts] ✅
+│   ├── run_train.py                    # End-to-end retraining & calibration pipeline
+│   ├── run_tests.py                    # Comprehensive test runner across all member modules
+│   └── start_backend.py                # Launch script for backend FastAPI service
+│
 ├── Data And ML/                        # [Member 1: Data & Machine Learning] ✅
-│   ├── data/                           # Raw & cleaned datasets (UCI SMS, OpenPhish, Curated)
-│   ├── models/                         # text_model.joblib, url_model.joblib, predictor.py
-│   ├── evaluation/                     # Confusion matrices, benchmark JSON, results_summary.md
-│   ├── src/                            # Preprocessing, 24-feature extractor, train.py
-│   ├── tests/                          # 16-case verification test suite
+│   ├── data/                           # Raw & cleaned datasets (UCI SMS, OpenPhish, Curated, Holdout)
+│   ├── models/                         # text_model.joblib, url_model.joblib, predictor.py, agent.py
+│   ├── evaluation/                     # Confusion matrices, benchmark JSON, PR curves, results_summary.md
+│   ├── src/                            # Preprocessing, 28-feature extractor, train.py, data_loader.py
+│   ├── tests/                          # 12-suite automated verification test suite
 │   ├── requirements.txt                # Python ML dependencies
+│   ├── ScamLens_Data_and_ML_Report.pdf # Publication-ready 6-page comprehensive technical report
 │   └── README.md                       # Deep-dive ML engineering documentation
 │
 ├── Detection Logic/                    # [Member 2: Scam Rules & Test Set] ✅
@@ -115,13 +142,17 @@ LeanInHack/
 │   ├── requirements.txt                # Streamlit & integration dependencies
 │   ├── README.md                       # Member 3 detailed documentation
 │   ├── tests/
-│   │   └── test_integration.py         # 16 end-to-end integration tests (100% pass)
+│   │   ├── test_integration.py         # 16 end-to-end integration tests (100% pass)
+│   │   └── test_p0_correctness.py      # Automated P0 correctness & baseline snapshot tests
 │   └── evaluation/
 │       └── benchmark_results.md        # Benchmark evaluation results log
 │
-└── Design/                             # [Member 4: UI/UX & Documentation]
+└── Design/                             # [Member 4: UI/UX & Documentation] ✅
+    ├── design_system.md                # Color tokens, typography, component states, and accessibility standards
+    ├── wireframes.md                   # Mobile-first screen blueprints, interaction states, and user journeys
+    ├── README.md                       # UI/UX package overview
     ├── assets/                         # Icons, badges, wireframe designs
-    └── presentation/                   # Slide deck & final project report diagrams
+    └── presentation/                   # Slide deck outline & presentation diagrams
 ```
 
 ### Team Responsibilities:
