@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B132B" />
+      <stop offset="100%" stop-color="#05080F" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#2563EB" flood-opacity="0.45" />
+    </filter>
+  </defs>
+
+  <!-- Background rounded card -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+
+  <!-- Shield Shape with subtle outer glow -->
+  <g filter="url(#glow)">
+    <path d="M 256 70 
+             C 330 70, 400 95, 412 110 
+             C 412 250, 360 380, 256 442 
+             C 152 380, 100 250, 100 110 
+             C 112 95, 182 70, 256 70 Z" 
+          fill="url(#shieldGrad)" />
+  </g>
+
+  <!-- Inner Shield Highlight -->
+  <path d="M 256 86 
+           C 318 86, 380 108, 394 122 
+           C 394 246, 348 360, 256 418 
+           C 164 360, 118 246, 118 122 
+           C 132 108, 194 86, 256 86 Z" 
+        fill="none" 
+        stroke="#60A5FA" 
+        stroke-width="8" 
+        opacity="0.35" />
+
+  <!-- Bold Crisp White Checkmark -->
+  <path d="M 190 255 L 235 305 L 325 195" 
+        fill="none" 
+        stroke="#FFFFFF" 
+        stroke-width="36" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+</svg>
