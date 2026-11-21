@@ -15,7 +15,7 @@ export function useStats() {
   return useQuery({
     queryKey: SCAN_KEYS.stats(),
     queryFn: () => apiClient.getStats(),
-    staleTime: 5000,
+    staleTime: 2000,
   });
 }
 
@@ -23,6 +23,7 @@ export function useScans(filter?: ScanFilter) {
   return useQuery({
     queryKey: SCAN_KEYS.list(filter),
     queryFn: () => apiClient.listScans(filter),
+    staleTime: 1000,
   });
 }
 
@@ -31,13 +32,17 @@ export function useScan(id: string, enabled = true) {
     queryKey: SCAN_KEYS.detail(id),
     queryFn: () => apiClient.getScan(id),
     enabled: Boolean(id) && enabled,
+    staleTime: 0, // Always consider scan detail fresh
     refetchInterval: (query) => {
-      const data = query.state.data;
-      if (data && data.status === 'running') {
-        return 700; // Poll while scan is progressing
+      const scan = query.state.data;
+      // If data is not yet loaded, or if scan is queued or running, poll every 500ms
+      if (!scan || scan.status === 'queued' || scan.status === 'running') {
+        return 500;
       }
+      // Stop polling immediately once terminal state (completed / failed / partial) is reached
       return false;
     },
+    refetchIntervalInBackground: true,
   });
 }
 
@@ -45,7 +50,7 @@ export function useCreateScan() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (params: CreateScanParams) => apiClient.createScan(params),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: SCAN_KEYS.all });
       queryClient.invalidateQueries({ queryKey: SCAN_KEYS.stats() });
     },

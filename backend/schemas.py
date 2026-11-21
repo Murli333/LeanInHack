@@ -28,3 +28,57 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     models_loaded: bool
+
+
+class CreateScanRequest(BaseModel):
+    type: str = Field(..., description="Scan type: 'text', 'url', 'screenshot', 'qr', 'audio'")
+    content: str = Field(..., description="Message text or URL to scan")
+
+
+class CreateScanResponse(BaseModel):
+    id: str
+    status: str = "running"
+
+
+class ScanStep(BaseModel):
+    key: str
+    label: str
+    status: str
+    detail: Optional[str] = None
+
+
+class EvidenceItem(BaseModel):
+    id: str
+    title: str
+    kind: str
+    detail: str
+    source: Optional[str] = None
+
+
+class ScanResult(BaseModel):
+    riskLevel: str
+    summary: str
+    score: Optional[int] = None
+    scoreValidated: bool = False
+    evidence: List[EvidenceItem] = Field(default_factory=list)
+    actions: List[str] = Field(default_factory=list)
+    category: Optional[str] = None
+    isPartial: Optional[bool] = False
+    providerDetails: Optional[Dict[str, Any]] = None
+
+
+class ScanResponse(BaseModel):
+    id: str
+    type: str
+    content: str
+    title: str
+    status: str
+    createdAt: str
+    steps: List[ScanStep] = Field(default_factory=list)
+    result: Optional[ScanResult] = None
+    error: Optional[str] = None
+
+
+class StatsResponse(BaseModel):
+    total: int
+    highRisk: int

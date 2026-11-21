@@ -29,11 +29,29 @@ export const ReportPage: React.FC = () => {
   const { data: scan, isLoading, isError, refetch } = useScan(id || '', Boolean(id));
   const retryStepMutation = useRetryStep();
 
+  // If scan is still running, route to progress stepper
+  if (scan && (scan.status === 'running' || scan.status === 'queued')) {
+    navigate(`/scan/${scan.id}/progress`, { replace: true });
+    return null;
+  }
+
   if (isLoading) {
     return (
       <div className="py-6 space-y-6 max-w-4xl mx-auto">
         <Skeleton className="h-64 w-full rounded-card-lg" />
         <Skeleton className="h-48 w-full rounded-card-lg" />
+      </div>
+    );
+  }
+
+  if (scan && scan.status === 'failed') {
+    return (
+      <div className="py-8 max-w-lg mx-auto">
+        <ErrorState
+          title="Analysis Failed"
+          message={scan.error || "The scan encountered an unexpected processing error."}
+          onRetry={() => navigate('/scan')}
+        />
       </div>
     );
   }

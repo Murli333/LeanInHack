@@ -162,7 +162,13 @@ export const HistoryPage: React.FC = () => {
               <div key={scan.id} className="relative group">
                 <ScanCard
                   scan={scan}
-                  onClick={() => navigate(`/report/${scan.id}`)}
+                  onClick={() =>
+                    navigate(
+                      scan.status === 'running' || scan.status === 'queued'
+                        ? `/scan/${scan.id}/progress`
+                        : `/report/${scan.id}`
+                    )
+                  }
                 />
                 <button
                   onClick={(e) => {

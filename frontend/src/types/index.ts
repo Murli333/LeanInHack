@@ -53,6 +53,7 @@ export interface Scan {
   status: ScanStatus;
   steps: ScanStep[];
   result?: ScanResult;
+  error?: string;
 }
 
 export interface ScanStats {

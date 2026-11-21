@@ -37,6 +37,15 @@ ENV/
 *.sublime-project
 *.sublime-workspace
 
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Node & Frontend
+node_modules/
+.npm/
+
 # Operating System
 .DS_Store
 Thumbs.db

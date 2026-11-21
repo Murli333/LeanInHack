@@ -119,7 +119,13 @@ export const HomePage: React.FC = () => {
               <ScanCard
                 key={scan.id}
                 scan={scan}
-                onClick={() => navigate(`/report/${scan.id}`)}
+                onClick={() =>
+                  navigate(
+                    scan.status === 'running' || scan.status === 'queued'
+                      ? `/scan/${scan.id}/progress`
+                      : `/report/${scan.id}`
+                  )
+                }
               />
             ))}
           </div>

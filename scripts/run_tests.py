@@ -21,7 +21,13 @@ def main():
     cmd2 = [sys.executable, str(ROOT_DIR / "Integration App and Report" / "tests" / "test_integration.py")]
     res2 = subprocess.run(cmd2, cwd=str(ROOT_DIR))
 
-    if res1.returncode != 0 or res2.returncode != 0:
+    print("\n==================================================")
+    print(">>> 3. RUNNING BACKEND SCAN LIFECYCLE TESTS")
+    print("==================================================")
+    cmd3 = [sys.executable, "-m", "unittest", "backend/tests/test_scan_lifecycle.py"]
+    res3 = subprocess.run(cmd3, cwd=str(ROOT_DIR))
+
+    if res1.returncode != 0 or res2.returncode != 0 or res3.returncode != 0:
         print("\n[FAIL] One or more test suites failed!")
         sys.exit(1)
     else:

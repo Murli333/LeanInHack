@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   MessageSquare,
@@ -8,7 +8,8 @@ import {
   Mic,
   Search,
   Lock,
-  Info,
+  AlertCircle,
+  Loader2,
 } from 'lucide-react';
 import { ScanType } from '../types';
 import { FEATURES } from '../config/flags';
@@ -20,6 +21,8 @@ import { ComingSoonPanel } from '../components/ComingSoonPanel';
 import { Button } from '../components/Button';
 import { useCreateScan } from '../hooks/useScans';
 
+type ScanLifecycle = 'IDLE' | 'VALIDATING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+
 export const ScanPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -30,34 +33,72 @@ export const ScanPage: React.FC = () => {
   const [urlContent, setUrlContent] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  // Robust state machine
+  const [lifecycle, setLifecycle] = useState<ScanLifecycle>('IDLE');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const isSubmittingRef = useRef(false);
+
   const createScanMutation = useCreateScan();
 
   // Validate current active input
-  const isValid = (() => {
+  const validateInput = (): { valid: boolean; error?: string } => {
     switch (activeType) {
       case 'text':
-        return textContent.trim().length > 0;
+        if (!textContent.trim()) {
+          return { valid: false, error: 'Please enter or paste a message to scan.' };
+        }
+        return { valid: true };
       case 'url':
-        if (!urlContent.trim()) return false;
+        if (!urlContent.trim()) {
+          return { valid: false, error: 'Please enter a URL to check.' };
+        }
         try {
           const u = new URL(urlContent.trim());
-          return u.protocol === 'http:' || u.protocol === 'https:';
+          if (u.protocol !== 'http:' && u.protocol !== 'https:') {
+            return { valid: false, error: 'URL must begin with http:// or https://' };
+          }
+          return { valid: true };
         } catch {
-          return false;
+          return { valid: false, error: 'Please enter a valid, complete web address.' };
         }
       case 'screenshot':
-        return Boolean(FEATURES.screenshot && selectedFile);
+        if (!FEATURES.screenshot) {
+          return { valid: false, error: 'Screenshot scanning is coming soon.' };
+        }
+        if (!selectedFile) {
+          return { valid: false, error: 'Please select an image file to upload.' };
+        }
+        return { valid: true };
       case 'qr':
-        return Boolean(FEATURES.qr);
+        return { valid: false, error: 'QR code inspection is coming soon.' };
       case 'audio':
-        return Boolean(FEATURES.audio);
+        return { valid: false, error: 'Audio scanning is coming soon.' };
       default:
-        return false;
+        return { valid: false, error: 'Unsupported scan type.' };
     }
-  })();
+  };
+
+  const isFormValid = validateInput().valid;
 
   const handleSubmit = async () => {
-    if (!isValid || createScanMutation.isPending) return;
+    // Prevent duplicate submissions from rapid repeated clicks
+    if (isSubmittingRef.current || lifecycle === 'PROCESSING' || createScanMutation.isPending) {
+      return;
+    }
+
+    setErrorMessage(null);
+    setLifecycle('VALIDATING');
+
+    const validation = validateInput();
+    if (!validation.valid) {
+      setLifecycle('IDLE');
+      setErrorMessage(validation.error || 'Please provide valid input.');
+      return;
+    }
+
+    // Set lock
+    isSubmittingRef.current = true;
+    setLifecycle('PROCESSING');
 
     let payloadContent = '';
     if (activeType === 'text') payloadContent = textContent.trim();
@@ -69,10 +110,14 @@ export const ScanPage: React.FC = () => {
         type: activeType,
         content: payloadContent,
       });
+
+      setLifecycle('COMPLETED');
       // Navigate to progress stepper
       navigate(`/scan/${res.id}/progress`);
-    } catch {
-      // Error handling
+    } catch (err: any) {
+      isSubmittingRef.current = false;
+      setLifecycle('FAILED');
+      setErrorMessage(err?.message || 'Failed to submit scan request. Please try again.');
     }
   };
 
@@ -80,7 +125,7 @@ export const ScanPage: React.FC = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        if (isValid) {
+        if (isFormValid && lifecycle !== 'PROCESSING') {
           e.preventDefault();
           handleSubmit();
         }
@@ -88,14 +133,12 @@ export const ScanPage: React.FC = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isValid, activeType, textContent, urlContent, selectedFile]);
+  }, [isFormValid, lifecycle, activeType, textContent, urlContent, selectedFile]);
 
   // Clean inputs on unmount / navigation
   useEffect(() => {
     return () => {
-      setTextContent('');
-      setUrlContent('');
-      setSelectedFile(null);
+      isSubmittingRef.current = false;
     };
   }, []);
 
@@ -134,6 +177,20 @@ export const ScanPage: React.FC = () => {
         </p>
       </div>
 
+      {/* Error banner if submission or validation failed */}
+      {errorMessage && (
+        <div
+          role="alert"
+          className="p-4 rounded-card-lg bg-danger-tint border border-danger/30 text-danger text-sm flex items-start gap-3 animate-fade-in"
+        >
+          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <span className="font-semibold block">Submission Error:</span>
+            <span>{errorMessage}</span>
+          </div>
+        </div>
+      )}
+
       {/* Horizontally Scrollable Chips with Fade Edge */}
       <div className="relative">
         <div
@@ -148,7 +205,11 @@ export const ScanPage: React.FC = () => {
               icon={c.icon}
               selected={activeType === c.type}
               soon={c.soon}
-              onClick={() => setActiveType(c.type)}
+              onClick={() => {
+                setActiveType(c.type);
+                setErrorMessage(null);
+                setLifecycle('IDLE');
+              }}
             />
           ))}
         </div>
@@ -159,11 +220,23 @@ export const ScanPage: React.FC = () => {
         {/* Left Column (Input Panel + Submit) */}
         <div className="lg:col-span-7 space-y-6">
           {activeType === 'text' && (
-            <TextPanel value={textContent} onChange={setTextContent} />
+            <TextPanel
+              value={textContent}
+              onChange={(v) => {
+                setTextContent(v);
+                if (errorMessage) setErrorMessage(null);
+              }}
+            />
           )}
 
           {activeType === 'url' && (
-            <UrlField value={urlContent} onChange={setUrlContent} />
+            <UrlField
+              value={urlContent}
+              onChange={(v) => {
+                setUrlContent(v);
+                if (errorMessage) setErrorMessage(null);
+              }}
+            />
           )}
 
           {activeType === 'screenshot' && (
@@ -192,12 +265,20 @@ export const ScanPage: React.FC = () => {
               variant="primary"
               size="lg"
               fullWidth
-              disabled={!isValid || createScanMutation.isPending}
-              icon={<Search className="w-5 h-5" />}
+              disabled={!isFormValid || lifecycle === 'PROCESSING' || createScanMutation.isPending}
+              icon={
+                lifecycle === 'PROCESSING' ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Search className="w-5 h-5" />
+                )
+              }
               onClick={handleSubmit}
               className="shadow-md shadow-primary/20"
             >
-              {createScanMutation.isPending ? 'Submitting...' : 'Check now'}
+              {lifecycle === 'PROCESSING' || createScanMutation.isPending
+                ? 'Starting scan...'
+                : 'Check now'}
             </Button>
             <p className="text-center text-[11px] text-text-muted mt-2 hidden lg:block">
               Tip: Press <kbd className="px-1.5 py-0.5 rounded bg-surface-2 border border-border text-xs">Ctrl + Enter</kbd> to submit
