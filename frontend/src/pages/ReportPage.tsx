@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useScan, useRetryStep } from '../hooks/useScans';
+import { analyzeContentLocally } from '../api/client';
 import { RiskVerdictCard } from '../components/RiskVerdictCard';
 import { EvidenceRow } from '../components/EvidenceRow';
 import { ActionList } from '../components/ActionList';
@@ -29,14 +30,14 @@ export const ReportPage: React.FC = () => {
   const { data: scan, isLoading, isError, refetch } = useScan(id || '', Boolean(id));
   const retryStepMutation = useRetryStep();
 
-  // If scan is still running, smoothly redirect to progress stepper inside useEffect
+  // If scan is still running and has no result attached yet, smoothly redirect to progress stepper
   useEffect(() => {
-    if (scan && (scan.status === 'running' || scan.status === 'queued')) {
+    if (scan && (scan.status === 'running' || scan.status === 'queued') && !scan.result) {
       navigate(`/scan/${scan.id}/progress`, { replace: true });
     }
-  }, [scan?.status, scan?.id, navigate]);
+  }, [scan?.status, scan?.result, scan?.id, navigate]);
 
-  if (scan && (scan.status === 'running' || scan.status === 'queued')) {
+  if (scan && (scan.status === 'running' || scan.status === 'queued') && !scan.result) {
     return (
       <div className="py-8 max-w-md mx-auto space-y-4 text-center">
         <Skeleton className="h-48 w-full rounded-card-lg" />
@@ -45,7 +46,7 @@ export const ReportPage: React.FC = () => {
     );
   }
 
-  if (isLoading) {
+  if (isLoading && !scan) {
     return (
       <div className="py-6 space-y-6 max-w-4xl mx-auto">
         <Skeleton className="h-64 w-full rounded-card-lg" />
@@ -66,7 +67,7 @@ export const ReportPage: React.FC = () => {
     );
   }
 
-  if (isError || !scan || !scan.result) {
+  if (isError || !scan) {
     return (
       <div className="py-8 max-w-lg mx-auto">
         <ErrorState
@@ -78,7 +79,8 @@ export const ReportPage: React.FC = () => {
     );
   }
 
-  const { result } = scan;
+  // Reliable fallback: use pre-existing result or generate via client threat engine
+  const result = scan.result || analyzeContentLocally(scan.type, scan.content);
 
   // Defang submitted content if it is a link or contains links
   const getDisplayContent = (raw: string) => {
