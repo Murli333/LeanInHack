@@ -12,21 +12,15 @@ export const StatTile: React.FC<StatTileProps> = ({ value, label, className = ''
 
   return (
     <div
-      className={`relative overflow-hidden rounded-card-lg border border-border bg-surface p-5 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-card-elevated group ${className}`}
+      className={`rounded-xl border border-border/80 bg-surface p-4 sm:p-5 transition-colors hover:border-border text-left ${className}`}
     >
-      {/* Top subtle glow highlight line */}
-      <div
-        className={`absolute top-0 left-0 right-0 h-[2px] transition-opacity ${
-          isDanger
-            ? 'bg-gradient-to-r from-transparent via-danger/60 to-transparent'
-            : 'bg-gradient-to-r from-transparent via-primary/60 to-transparent'
-        }`}
-      />
-
-      <div className="flex items-center justify-center gap-1.5 mb-1.5">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs font-medium text-text-muted capitalize">
+          {label}
+        </span>
         <div
-          className={`w-6 h-6 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110 ${
-            isDanger ? 'bg-danger/15 text-danger' : 'bg-primary/15 text-accent'
+          className={`w-6 h-6 rounded-md flex items-center justify-center ${
+            isDanger ? 'bg-danger/10 text-danger' : 'bg-primary/10 text-primary'
           }`}
         >
           {isDanger ? (
@@ -35,12 +29,9 @@ export const StatTile: React.FC<StatTileProps> = ({ value, label, className = ''
             <ShieldCheck className="w-3.5 h-3.5" />
           )}
         </div>
-        <span className="text-xs sm:text-sm font-semibold text-text-muted capitalize">
-          {label}
-        </span>
       </div>
 
-      <div className="text-3xl sm:text-4xl font-black text-text tracking-tight">
+      <div className="text-2xl sm:text-3xl font-semibold text-text tracking-tight">
         {value.toLocaleString()}
       </div>
     </div>

@@ -43,64 +43,64 @@ export const ProfilePage: React.FC = () => {
     <div className="space-y-8 max-w-2xl mx-auto py-2">
       {/* Page Header */}
       <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
-          Profile &amp; Settings
+        <h1 className="text-2xl font-semibold tracking-tight text-text">
+          Settings
         </h1>
         <p className="text-xs sm:text-sm text-text-muted">
-          Manage appearance, regional cyber helpline settings, and privacy preferences.
+          Appearance, regional cyber helpline preferences, and local storage.
         </p>
       </div>
 
       {/* 1. Appearance / Theming Section */}
-      <div className="p-6 rounded-card-lg bg-surface border border-border shadow-card-soft space-y-4">
-        <div className="flex items-center gap-2.5">
-          <Palette className="w-5 h-5 text-primary" />
-          <h2 className="text-base font-bold text-text">Appearance</h2>
+      <div className="p-5 rounded-xl bg-surface border border-border/80 space-y-3.5">
+        <div className="flex items-center gap-2">
+          <Palette className="w-4 h-4 text-text-muted" />
+          <h2 className="text-sm font-semibold text-text">Appearance</h2>
         </div>
-        <p className="text-xs sm:text-sm text-text-muted">
-          Choose whether ScamLens follows your device theme or locks to Light or Dark mode.
+        <p className="text-xs text-text-muted">
+          Choose whether ScamLens follows system preferences or locks to Light or Dark mode.
         </p>
         <ThemeToggle />
       </div>
 
       {/* 2. Region / Cyber Helpline Section */}
-      <div className="p-6 rounded-card-lg bg-surface border border-border shadow-card-soft space-y-4">
+      <div className="p-5 rounded-xl bg-surface border border-border/80 space-y-3.5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Globe className="w-5 h-5 text-accent" />
-            <h2 className="text-base font-bold text-text">Regional Cyber Helpline</h2>
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-text-muted" />
+            <h2 className="text-sm font-semibold text-text">Regional Cyber Helpline</h2>
           </div>
           {regionSavedToast && (
-            <span className="text-xs font-semibold text-safe flex items-center gap-1">
+            <span className="text-xs text-safe flex items-center gap-1 font-mono">
               <CheckCircle className="w-3.5 h-3.5" /> Saved
             </span>
           )}
         </div>
-        <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
-          Select your country to display official reporting hotlines and government fraud reporting portals on your scan results.
+        <p className="text-xs text-text-muted leading-relaxed">
+          Select your region to display official reporting hotlines and government fraud reporting portals on your scan results.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
           {Object.values(SUPPORTED_REGIONS).map((reg) => {
             const isSelected = selectedRegion === reg.code;
             return (
               <button
                 key={reg.code}
                 onClick={() => handleRegionChange(reg.code)}
-                className={`flex items-start justify-between p-3.5 rounded-card border text-left transition-all ${
+                className={`flex items-start justify-between p-3 rounded-lg border text-left transition-colors ${
                   isSelected
-                    ? 'border-primary bg-primary/10 ring-1 ring-primary'
-                    : 'border-border bg-surface-2 hover:bg-surface'
+                    ? 'border-primary/50 bg-primary/10'
+                    : 'border-border/80 bg-surface-2/40 hover:bg-surface-2'
                 }`}
               >
                 <div>
-                  <div className="text-sm font-semibold text-text">{reg.name}</div>
-                  <div className="text-xs text-text-muted mt-0.5">
+                  <div className="text-xs sm:text-sm font-medium text-text">{reg.name}</div>
+                  <div className="text-xs text-text-muted mt-0.5 font-mono">
                     {reg.helpline ? `Helpline: ${reg.helpline}` : reg.portalName}
                   </div>
                 </div>
                 {isSelected && (
-                  <span className="w-2.5 h-2.5 rounded-full bg-primary mt-1 shrink-0" />
+                  <span className="w-2 h-2 rounded-full bg-primary mt-1 shrink-0" />
                 )}
               </button>
             );
@@ -109,39 +109,39 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {/* 3. Data & Privacy Section */}
-      <div className="p-6 rounded-card-lg bg-surface border border-border shadow-card-soft space-y-4">
-        <div className="flex items-center gap-2.5">
-          <Lock className="w-5 h-5 text-safe" />
-          <h2 className="text-base font-bold text-text">Privacy &amp; Data Storage</h2>
+      <div className="p-5 rounded-xl bg-surface border border-border/80 space-y-3.5">
+        <div className="flex items-center gap-2">
+          <Lock className="w-4 h-4 text-text-muted" />
+          <h2 className="text-sm font-semibold text-text">Privacy &amp; Data Storage</h2>
         </div>
 
-        <div className="space-y-3 text-xs sm:text-sm text-text-muted leading-relaxed">
+        <div className="space-y-2 text-xs text-text-muted leading-relaxed">
           <p>
-            &bull; <strong>Local Processing:</strong> Scan history is kept strictly in your local device browser storage.
+            &bull; <strong className="text-text">Local Storage:</strong> Scan history is saved strictly in your browser&apos;s local storage.
           </p>
           <p>
-            &bull; <strong>Zero Ad Telemetry:</strong> ScamLens does not track users across websites, display ads, or sell data.
+            &bull; <strong className="text-text">Zero Telemetry:</strong> ScamLens does not track users, serve ads, or sell data.
           </p>
           <p>
-            &bull; <strong>Safe Link Handling:</strong> URLs submitted for checking are evaluated via server-side structural analysis and threat feeds; they are never opened in your browser.
+            &bull; <strong className="text-text">Safe Processing:</strong> Analyzed links are parsed in memory and never executed or loaded in your browser.
           </p>
         </div>
 
-        <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border-t border-border">
+        <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 border-t border-border/60">
           <Button
             variant="ghost"
-            size="md"
-            icon={<Trash2 className="w-4 h-4 text-danger" />}
+            size="sm"
+            icon={<Trash2 className="w-3.5 h-3.5 text-danger" />}
             onClick={() => setShowClearConfirm(true)}
-            className="text-danger hover:bg-danger-tint"
+            className="text-danger hover:bg-danger/10"
           >
-            Clear all scan history
+            Clear local history
           </Button>
 
           <Button
             variant="ghost"
-            size="md"
-            icon={<RotateCcw className="w-4 h-4" />}
+            size="sm"
+            icon={<RotateCcw className="w-3.5 h-3.5" />}
             onClick={() => resetSamplesMutation.mutate()}
           >
             Reset sample scans

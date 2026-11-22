@@ -38,39 +38,39 @@ export const RiskVerdictCard: React.FC<RiskVerdictCardProps> = ({
     }
   > = {
     high: {
-      title: '🚨 Scam Alert — High Risk',
-      icon: <ShieldAlert className="w-9 h-9" />,
-      border: 'border-danger/50',
-      cardBg: 'bg-gradient-to-b from-danger/10 via-surface to-surface',
-      shadow: 'shadow-[0_0_40px_rgba(239,68,68,0.22)]',
-      iconBg: 'bg-danger/15 border-2 border-danger/40 ring-4 ring-danger/20 shadow-lg shadow-danger/25',
+      title: 'High Risk Detected',
+      icon: <ShieldAlert className="w-6 h-6" />,
+      border: 'border-danger/30',
+      cardBg: 'bg-surface',
+      shadow: 'shadow-none',
+      iconBg: 'bg-danger/10 border border-danger/25',
       iconColor: 'text-danger',
     },
     medium: {
-      title: '⚠️ Suspicious — Be Careful',
-      icon: <AlertTriangle className="w-9 h-9" />,
-      border: 'border-warn/50',
-      cardBg: 'bg-gradient-to-b from-warn/10 via-surface to-surface',
-      shadow: 'shadow-[0_0_30px_rgba(245,158,11,0.18)]',
-      iconBg: 'bg-warn/15 border-2 border-warn/40 ring-4 ring-warn/20 shadow-lg shadow-warn/25',
+      title: 'Suspicious Indicators Found',
+      icon: <AlertTriangle className="w-6 h-6" />,
+      border: 'border-warn/30',
+      cardBg: 'bg-surface',
+      shadow: 'shadow-none',
+      iconBg: 'bg-warn/10 border border-warn/25',
       iconColor: 'text-warn',
     },
     low: {
-      title: '✅ Verified — Looks Low Risk',
-      icon: <Check className="w-9 h-9 stroke-[3]" />,
-      border: 'border-safe/50',
-      cardBg: 'bg-gradient-to-b from-safe/10 via-surface to-surface',
-      shadow: 'shadow-[0_0_30px_rgba(16,185,129,0.18)]',
-      iconBg: 'bg-safe/15 border-2 border-safe/40 ring-4 ring-safe/20 shadow-lg shadow-safe/25',
+      title: 'No Threats Detected',
+      icon: <Check className="w-6 h-6" />,
+      border: 'border-safe/30',
+      cardBg: 'bg-surface',
+      shadow: 'shadow-none',
+      iconBg: 'bg-safe/10 border border-safe/25',
       iconColor: 'text-safe',
     },
     unknown: {
-      title: "❓ Inconclusive — We Can't Tell",
-      icon: <HelpCircle className="w-9 h-9" />,
-      border: 'border-border',
+      title: 'Inconclusive Result',
+      icon: <HelpCircle className="w-6 h-6" />,
+      border: 'border-border/80',
       cardBg: 'bg-surface',
-      shadow: 'shadow-card-soft',
-      iconBg: 'bg-surface-2 border-2 border-border ring-4 ring-border/20',
+      shadow: 'shadow-none',
+      iconBg: 'bg-surface-2 border border-border/80',
       iconColor: 'text-text-muted',
     },
   };
@@ -79,29 +79,29 @@ export const RiskVerdictCard: React.FC<RiskVerdictCardProps> = ({
 
   return (
     <div
-      className={`rounded-card-lg border p-6 text-center space-y-4 transition-all ${current.cardBg} ${current.border} ${current.shadow} ${className}`}
+      className={`rounded-xl border p-5 sm:p-6 text-center space-y-3.5 transition-colors ${current.cardBg} ${current.border} ${className}`}
       role="region"
       aria-label="Scam risk assessment result"
     >
       {/* Category tag */}
       {category && (
-        <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-surface-2 text-text-muted border border-border">
+        <div className="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-mono uppercase tracking-wider bg-surface-2 text-text-muted border border-border/80">
           {category}
         </div>
       )}
 
-      {/* Central shield / status icon badge */}
+      {/* Central icon */}
       <div className="flex justify-center">
         <div
-          className={`w-16 h-16 rounded-full flex items-center justify-center transition-transform hover:scale-105 ${current.iconBg} ${current.iconColor}`}
+          className={`w-12 h-12 rounded-xl flex items-center justify-center ${current.iconBg} ${current.iconColor}`}
         >
           {current.icon}
         </div>
       </div>
 
       {/* Headline */}
-      <div className="space-y-1">
-        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-text">
+      <div className="space-y-0.5">
+        <h2 className="text-xl font-semibold tracking-tight text-text">
           {current.title}
         </h2>
       </div>
@@ -112,7 +112,7 @@ export const RiskVerdictCard: React.FC<RiskVerdictCardProps> = ({
       </div>
 
       {/* One-line finding / summary */}
-      <p className="text-sm sm:text-base text-text-muted max-w-md mx-auto pt-2 leading-relaxed">
+      <p className="text-xs sm:text-sm text-text-muted max-w-md mx-auto pt-1 leading-relaxed">
         {summary}
       </p>
 

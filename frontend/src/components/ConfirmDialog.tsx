@@ -46,41 +46,41 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     >
       <div
         ref={dialogRef}
-        className="w-full max-w-md rounded-card-lg bg-surface border border-border p-6 shadow-2xl space-y-4 animate-scale-up"
+        className="w-full max-w-sm rounded-xl bg-surface border border-border/80 p-5 shadow-2xl space-y-3.5 animate-scale-up"
       >
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                isDestructive ? 'bg-danger-tint text-danger' : 'bg-primary/20 text-primary'
+              className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                isDestructive ? 'bg-danger/10 text-danger border border-danger/20' : 'bg-primary/10 text-primary border border-primary/20'
               }`}
             >
-              <AlertCircle className="w-5 h-5" />
+              <AlertCircle className="w-4 h-4" />
             </div>
-            <h3 id="dialog-title" className="text-base sm:text-lg font-bold text-text">
+            <h3 id="dialog-title" className="text-sm font-semibold text-text">
               {title}
             </h3>
           </div>
           <button
             onClick={onCancel}
-            className="p-1 text-text-muted hover:text-text rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="p-1 text-text-muted hover:text-text rounded-md transition-colors focus-visible:outline-none"
             aria-label="Close dialog"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <p className="text-sm text-text-muted leading-relaxed">
+        <p className="text-xs text-text-muted leading-relaxed">
           {description}
         </p>
 
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-border">
-          <Button variant="ghost" size="md" onClick={onCancel}>
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/60">
+          <Button variant="ghost" size="sm" onClick={onCancel}>
             {cancelLabel}
           </Button>
           <Button
             variant={isDestructive ? 'destructive' : 'primary'}
-            size="md"
+            size="sm"
             onClick={onConfirm}
           >
             {confirmLabel}

@@ -169,11 +169,11 @@ export const ScanPage: React.FC = () => {
     <div className="space-y-6 max-w-4xl mx-auto py-2">
       {/* Title */}
       <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
-          What would you like to check?
+        <h1 className="text-2xl font-semibold tracking-tight text-text">
+          New verification
         </h1>
         <p className="text-xs sm:text-sm text-text-muted">
-          Select an input format below and submit for instant verification.
+          Select an input format below and submit for immediate verification.
         </p>
       </div>
 
@@ -181,12 +181,12 @@ export const ScanPage: React.FC = () => {
       {errorMessage && (
         <div
           role="alert"
-          className="p-4 rounded-card-lg bg-danger-tint border border-danger/30 text-danger text-sm flex items-start gap-3 animate-fade-in"
+          className="p-3.5 rounded-xl bg-danger/10 border border-danger/25 text-danger text-sm flex items-start gap-2.5 animate-fade-in"
         >
-          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
           <div className="flex-1">
-            <span className="font-semibold block">Submission Error:</span>
-            <span>{errorMessage}</span>
+            <span className="font-medium block text-xs uppercase tracking-wider">Submission Error</span>
+            <span className="text-xs sm:text-sm">{errorMessage}</span>
           </div>
         </div>
       )}
@@ -268,45 +268,44 @@ export const ScanPage: React.FC = () => {
               disabled={!isFormValid || lifecycle === 'PROCESSING' || createScanMutation.isPending}
               icon={
                 lifecycle === 'PROCESSING' ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  <Search className="w-5 h-5" />
+                  <Search className="w-4 h-4" />
                 )
               }
               onClick={handleSubmit}
-              className="shadow-md shadow-primary/20"
             >
               {lifecycle === 'PROCESSING' || createScanMutation.isPending
                 ? 'Starting scan...'
                 : 'Check now'}
             </Button>
             <p className="text-center text-[11px] text-text-muted mt-2 hidden lg:block">
-              Tip: Press <kbd className="px-1.5 py-0.5 rounded bg-surface-2 border border-border text-xs">Ctrl + Enter</kbd> to submit
+              Tip: Press <kbd className="px-1.5 py-0.5 rounded bg-surface-2 border border-border/80 text-xs font-mono">Ctrl + Enter</kbd> to submit
             </p>
           </div>
         </div>
 
         {/* Right Column on Desktop: How It Works & Privacy Notes */}
-        <div className="lg:col-span-5 space-y-5">
-          <div className="p-5 rounded-card-lg bg-surface-2 border border-border space-y-3">
-            <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">
-              HOW IT WORKS
+        <div className="lg:col-span-5 space-y-4">
+          <div className="p-4 rounded-xl bg-surface border border-border/80 space-y-3">
+            <h3 className="text-xs font-medium text-text-muted uppercase tracking-wider">
+              Verification process
             </h3>
-            <ul className="space-y-3 text-xs sm:text-sm text-text leading-relaxed">
+            <ul className="space-y-2.5 text-xs text-text leading-relaxed">
               <li className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-primary text-on-primary text-xs font-bold flex items-center justify-center shrink-0">
+                <span className="w-4 h-4 rounded-full bg-surface-2 text-text-muted text-[10px] font-mono flex items-center justify-center shrink-0 mt-0.5">
                   1
                 </span>
                 <span>Extracts text, structural links, and urgency indicators.</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-primary text-on-primary text-xs font-bold flex items-center justify-center shrink-0">
+                <span className="w-4 h-4 rounded-full bg-surface-2 text-text-muted text-[10px] font-mono flex items-center justify-center shrink-0 mt-0.5">
                   2
                 </span>
                 <span>Compares with confirmed phishing databases and calibrated models.</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-primary text-on-primary text-xs font-bold flex items-center justify-center shrink-0">
+                <span className="w-4 h-4 rounded-full bg-surface-2 text-text-muted text-[10px] font-mono flex items-center justify-center shrink-0 mt-0.5">
                   3
                 </span>
                 <span>Delivers a qualitative risk badge and actionable safety steps.</span>
@@ -314,10 +313,10 @@ export const ScanPage: React.FC = () => {
             </ul>
           </div>
 
-          <div className="p-4 rounded-card-lg bg-surface border border-border flex items-start gap-3 text-xs text-text-muted leading-relaxed">
-            <Lock className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-surface border border-border/80 flex items-start gap-2.5 text-xs text-text-muted leading-relaxed">
+            <Lock className="w-3.5 h-3.5 text-text-muted shrink-0 mt-0.5" />
             <div>
-              <strong className="text-text">Safe processing:</strong> Submitted text or URLs are inspected in volatile memory and never navigated to directly.
+              <span className="text-text font-medium">Safe processing:</span> Input is evaluated in volatile memory and never navigated to directly.
             </div>
           </div>
         </div>

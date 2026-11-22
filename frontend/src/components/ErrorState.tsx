@@ -17,26 +17,26 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
 }) => {
   return (
     <div
-      className={`rounded-card-lg border border-danger/30 bg-surface-2 p-8 text-center space-y-4 ${className}`}
+      className={`rounded-xl border border-danger/25 bg-surface p-6 text-center space-y-3.5 ${className}`}
       role="alert"
     >
-      <div className="w-16 h-16 rounded-full bg-danger-tint text-danger flex items-center justify-center mx-auto border border-danger/20">
-        <AlertTriangle className="w-8 h-8" />
+      <div className="w-10 h-10 rounded-xl bg-danger/10 text-danger flex items-center justify-center mx-auto border border-danger/20">
+        <AlertTriangle className="w-5 h-5" />
       </div>
 
-      <div className="space-y-1.5 max-w-sm mx-auto">
-        <h3 className="text-base sm:text-lg font-bold text-text">{title}</h3>
-        <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
+      <div className="space-y-1 max-w-sm mx-auto">
+        <h3 className="text-sm font-medium text-text">{title}</h3>
+        <p className="text-xs text-text-muted leading-relaxed">
           {message}
         </p>
       </div>
 
       {onRetry && (
-        <div className="pt-2">
+        <div className="pt-1">
           <Button
             variant="secondary"
-            size="md"
-            icon={<RefreshCw className="w-4 h-4" />}
+            size="sm"
+            icon={<RefreshCw className="w-3.5 h-3.5" />}
             onClick={onRetry}
           >
             Try again

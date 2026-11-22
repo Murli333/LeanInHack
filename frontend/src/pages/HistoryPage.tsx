@@ -47,11 +47,11 @@ export const HistoryPage: React.FC = () => {
       {/* Page Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
-            Scan History
+          <h1 className="text-2xl font-semibold tracking-tight text-text">
+            History
           </h1>
           <p className="text-xs sm:text-sm text-text-muted">
-            All your verified messages and links stored locally on this device.
+            All locally verified messages and URLs on this device.
           </p>
         </div>
 
@@ -59,11 +59,11 @@ export const HistoryPage: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            icon={<Trash2 className="w-4 h-4 text-danger" />}
+            icon={<Trash2 className="w-3.5 h-3.5 text-danger" />}
             onClick={() => setShowClearAll(true)}
-            className="text-danger hover:bg-danger-tint"
+            className="text-danger hover:bg-danger/10"
           >
-            Clear all history
+            Clear history
           </Button>
         )}
       </div>
@@ -73,47 +73,47 @@ export const HistoryPage: React.FC = () => {
         <label htmlFor="history-search" className="sr-only">
           Search previous scans
         </label>
-        <Search className="w-5 h-5 text-text-muted absolute left-4 top-1/2 -translate-y-1/2" />
+        <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
         <input
           id="history-search"
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by keywords, phone numbers, or links..."
-          className="w-full pl-12 pr-4 py-3.5 rounded-card-lg bg-surface border border-border text-sm text-text placeholder:text-text-muted/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/15 shadow-card-soft transition-all duration-200"
+          placeholder="Search keywords, phone numbers, or links..."
+          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface border border-border/80 text-sm text-text placeholder:text-text-muted/40 focus:outline-none focus:border-primary/50 transition-colors"
         />
       </div>
 
       {/* Filter Chips Bar */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-        <span className="font-bold text-text-muted shrink-0 flex items-center gap-1 mr-1">
-          <Filter className="w-3.5 h-3.5 text-accent" /> Type:
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+        <span className="font-medium text-text-muted shrink-0 flex items-center gap-1 mr-1">
+          <Filter className="w-3 h-3 text-text-muted" /> Type:
         </span>
         {(['all', 'text', 'url'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTypeFilter(t)}
-            className={`px-3.5 py-1.5 rounded-full capitalize font-semibold transition-all active:scale-95 ${
+            className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-colors ${
               typeFilter === t
-                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-sm shadow-blue-500/20 border border-blue-400/30'
-                : 'bg-surface text-text-muted border border-border hover:text-text hover:border-primary/30'
+                ? 'bg-primary text-white border border-primary/40'
+                : 'bg-surface text-text-muted border border-border/80 hover:text-text hover:bg-surface-2/60'
             }`}
           >
             {t}
           </button>
         ))}
 
-        <div className="h-4 w-px bg-border mx-2 shrink-0" />
+        <div className="h-3.5 w-px bg-border/60 mx-1.5 shrink-0" />
 
-        <span className="font-bold text-text-muted shrink-0 mr-1">Risk:</span>
+        <span className="font-medium text-text-muted shrink-0 mr-1">Risk:</span>
         {(['all', 'high', 'medium', 'low', 'unknown'] as const).map((r) => (
           <button
             key={r}
             onClick={() => setRiskFilter(r)}
-            className={`px-3.5 py-1.5 rounded-full capitalize font-semibold transition-all active:scale-95 ${
+            className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-colors ${
               riskFilter === r
-                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-sm shadow-blue-500/20 border border-blue-400/30'
-                : 'bg-surface text-text-muted border border-border hover:text-text hover:border-primary/30'
+                ? 'bg-primary text-white border border-primary/40'
+                : 'bg-surface text-text-muted border border-border/80 hover:text-text hover:bg-surface-2/60'
             }`}
           >
             {r}

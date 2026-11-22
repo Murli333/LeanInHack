@@ -15,26 +15,26 @@ export const ProgressStepper: React.FC<ProgressStepperProps> = ({
     switch (status) {
       case 'completed':
         return (
-          <div className="w-9 h-9 rounded-full bg-safe text-white flex items-center justify-center shrink-0 shadow-md shadow-safe/25 ring-2 ring-safe/30 transition-all duration-300">
-            <Check className="w-5 h-5 stroke-[3]" />
+          <div className="w-7 h-7 rounded-full bg-safe/15 text-safe border border-safe/30 flex items-center justify-center shrink-0">
+            <Check className="w-3.5 h-3.5" />
           </div>
         );
       case 'running':
         return (
-          <div className="w-9 h-9 rounded-full border-2 border-accent/40 bg-accent/10 flex items-center justify-center shrink-0 ring-4 ring-accent/20 animate-pulse transition-all duration-300">
-            <Loader2 className="w-5 h-5 text-accent animate-spin" />
+          <div className="w-7 h-7 rounded-full bg-primary/10 text-primary border border-primary/30 flex items-center justify-center shrink-0">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
           </div>
         );
       case 'failed':
         return (
-          <div className="w-9 h-9 rounded-full bg-danger text-white flex items-center justify-center shrink-0 shadow-md shadow-danger/25 ring-2 ring-danger/30 transition-all duration-300">
-            <X className="w-5 h-5 stroke-[3]" />
+          <div className="w-7 h-7 rounded-full bg-danger/15 text-danger border border-danger/30 flex items-center justify-center shrink-0">
+            <X className="w-3.5 h-3.5" />
           </div>
         );
       case 'waiting':
       default:
         return (
-          <div className="w-9 h-9 rounded-full border-2 border-border/80 bg-surface-2 shrink-0 transition-all duration-300" />
+          <div className="w-7 h-7 rounded-full border border-border/80 bg-surface-2 shrink-0" />
         );
     }
   };
@@ -42,20 +42,20 @@ export const ProgressStepper: React.FC<ProgressStepperProps> = ({
   const getStatusLabel = (status: StepStatus) => {
     switch (status) {
       case 'completed':
-        return <span className="text-xs font-bold text-safe tracking-wide">Completed</span>;
+        return <span className="text-xs text-safe">Done</span>;
       case 'running':
-        return <span className="text-xs font-bold text-accent tracking-wide animate-pulse">In progress</span>;
+        return <span className="text-xs text-primary">In progress</span>;
       case 'failed':
-        return <span className="text-xs font-bold text-danger tracking-wide">Failed</span>;
+        return <span className="text-xs text-danger">Failed</span>;
       case 'waiting':
       default:
-        return <span className="text-xs font-medium text-text-muted">Waiting</span>;
+        return <span className="text-xs text-text-muted">Waiting</span>;
     }
   };
 
   return (
     <div
-      className={`space-y-6 ${className}`}
+      className={`space-y-5 ${className}`}
       role="list"
       aria-label="Analysis progress steps"
       aria-live="polite"
@@ -65,24 +65,24 @@ export const ProgressStepper: React.FC<ProgressStepperProps> = ({
         const isCompleted = step.status === 'completed';
 
         return (
-          <div key={step.key || index} className="relative flex items-center gap-4" role="listitem">
+          <div key={step.key || index} className="relative flex items-center gap-3.5" role="listitem">
             {/* Connecting line to next step */}
             {!isLast && (
               <div
-                className={`absolute left-[17px] top-9 w-[2px] h-7 -mb-2 transition-colors duration-300 ${
-                  isCompleted ? 'bg-safe/60' : 'bg-border/60'
+                className={`absolute left-[13px] top-7 w-[1px] h-6 transition-colors duration-200 ${
+                  isCompleted ? 'bg-safe/40' : 'bg-border/60'
                 }`}
               />
             )}
 
             {getStepIcon(step.status)}
             <div className="flex-1 min-w-0">
-              <div className="text-base font-bold text-text leading-tight">
+              <div className="text-sm font-medium text-text leading-tight">
                 {step.label}
               </div>
               <div className="pt-0.5">{getStatusLabel(step.status)}</div>
               {step.detail && (
-                <div className="text-xs text-text-muted mt-0.5 font-medium">{step.detail}</div>
+                <div className="text-xs text-text-muted mt-0.5">{step.detail}</div>
               )}
             </div>
           </div>

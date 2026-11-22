@@ -4,52 +4,52 @@
 
 @layer base {
   :root[data-theme="dark"] {
-    --bg: #05080F;
-    --surface: #0B132B;
-    --surface-2: #111D3E;
-    --surface-card: #0E1A38;
-    --border: #1E2D4A;
-    --border-subtle: rgba(255, 255, 255, 0.08);
+    --bg: #09090B;
+    --surface: #121215;
+    --surface-2: #18181B;
+    --surface-card: #121215;
+    --border: #27272A;
+    --border-subtle: rgba(255, 255, 255, 0.06);
     --primary: #2563EB;
     --primary-hover: #1D4ED8;
     --on-primary: #FFFFFF;
     --accent: #38BDF8;
-    --text: #F8FAFC;
-    --text-muted: #94A3B8;
+    --text: #F4F4F5;
+    --text-muted: #A1A1AA;
     --danger: #EF4444;
-    --danger-tint: rgba(239, 68, 68, 0.15);
+    --danger-tint: rgba(239, 68, 68, 0.12);
     --warn: #F59E0B;
-    --warn-tint: rgba(245, 158, 11, 0.15);
+    --warn-tint: rgba(245, 158, 11, 0.12);
     --safe: #10B981;
-    --safe-tint: rgba(16, 185, 129, 0.15);
-    --unknown: #94A3B8;
-    --unknown-tint: rgba(148, 163, 184, 0.15);
-    --glow-danger: 0 0 35px rgba(239, 68, 68, 0.35);
-    --glow-blue: 0 0 30px rgba(37, 99, 235, 0.3);
+    --safe-tint: rgba(16, 185, 129, 0.12);
+    --unknown: #A1A1AA;
+    --unknown-tint: rgba(161, 161, 170, 0.12);
+    --glow-danger: none;
+    --glow-blue: none;
     color-scheme: dark;
   }
 
   :root[data-theme="light"] {
-    --bg: #F8FAFC;
+    --bg: #FAFAFA;
     --surface: #FFFFFF;
-    --surface-2: #F1F5F9;
+    --surface-2: #F4F4F5;
     --surface-card: #FFFFFF;
-    --border: #E2E8F0;
-    --border-subtle: rgba(0, 0, 0, 0.06);
-    --primary: #2563EB;
-    --primary-hover: #1D4ED8;
+    --border: #E4E4E7;
+    --border-subtle: rgba(0, 0, 0, 0.05);
+    --primary: #0F172A;
+    --primary-hover: #1E293B;
     --on-primary: #FFFFFF;
     --accent: #0284C7;
-    --text: #0F172A;
-    --text-muted: #64748B;
+    --text: #09090B;
+    --text-muted: #71717A;
     --danger: #DC2626;
-    --danger-tint: #FEE2E2;
+    --danger-tint: #FEF2F2;
     --warn: #D97706;
-    --warn-tint: #FEF3C7;
+    --warn-tint: #FFFBEB;
     --safe: #059669;
-    --safe-tint: #D1FAE5;
-    --unknown: #64748B;
-    --unknown-tint: #F1F5F9;
+    --safe-tint: #ECFDF5;
+    --unknown: #71717A;
+    --unknown-tint: #F4F4F5;
     --glow-danger: none;
     --glow-blue: none;
     color-scheme: light;
@@ -64,20 +64,12 @@
     min-height: 100%;
     min-height: 100dvh;
     overflow-x: hidden;
+    letter-spacing: -0.01em;
   }
 
-  /* Ambient light radial aura in dark mode */
-  :root[data-theme="dark"] body {
-    background-image: 
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(37, 99, 235, 0.12), transparent 70%),
-      radial-gradient(ellipse 60% 40% at 90% 20%, rgba(56, 189, 248, 0.05), transparent 60%);
-    background-attachment: fixed;
-  }
-
-  :root[data-theme="light"] body {
-    background-image: 
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(37, 99, 235, 0.05), transparent 70%);
-    background-attachment: fixed;
+  /* Clean minimal solid canvas */
+  body {
+    background-image: none !important;
   }
 
   /* Smooth 150ms theme transition on background, border, and text colors */

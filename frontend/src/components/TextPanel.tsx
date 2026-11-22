@@ -42,8 +42,8 @@ export const TextPanel: React.FC<TextPanelProps> = ({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      {/* Navy card container */}
-      <div className="relative rounded-card-lg border border-border bg-surface focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15 transition-all duration-200 p-4 sm:p-5 flex flex-col min-h-[230px] shadow-card-soft">
+      {/* Clean surface card container */}
+      <div className="relative rounded-xl border border-border/80 bg-surface focus-within:border-primary/50 transition-colors p-4 flex flex-col min-h-[220px]">
         <label htmlFor="text-scan-input" className="sr-only">
           Paste the suspicious message here
         </label>
@@ -52,24 +52,24 @@ export const TextPanel: React.FC<TextPanelProps> = ({
           ref={textareaRef}
           value={value}
           onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
-          placeholder="Paste the suspicious message here..."
-          className="w-full flex-1 bg-transparent text-text placeholder:text-text-muted/50 text-sm sm:text-base resize-none focus:outline-none min-h-[140px] leading-relaxed"
+          placeholder="Paste suspicious text or message..."
+          className="w-full flex-1 bg-transparent text-text placeholder:text-text-muted/40 text-sm resize-none focus:outline-none min-h-[140px] leading-relaxed font-sans"
           maxLength={maxLength}
         />
 
         {/* Bottom card actions */}
-        <div className="flex items-center justify-between pt-3.5 border-t border-border/60">
+        <div className="flex items-center justify-between pt-3 border-t border-border/50">
           <button
             type="button"
             onClick={handlePaste}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-primary/10 text-primary dark:text-accent border border-primary/20 hover:bg-primary/20 transition-all active:scale-95"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-surface-2 text-text border border-border/70 hover:bg-surface-2/80 transition-colors"
           >
             <Clipboard className="w-3.5 h-3.5" />
             <span>Paste</span>
           </button>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs text-text-muted font-medium">
+            <span className="text-xs text-text-muted font-mono">
               {value.length.toLocaleString()} / {maxLength.toLocaleString()}
             </span>
 
@@ -77,7 +77,7 @@ export const TextPanel: React.FC<TextPanelProps> = ({
               <button
                 type="button"
                 onClick={handleClear}
-                className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-danger transition-colors font-semibold"
+                className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-danger transition-colors font-medium"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Clear</span>

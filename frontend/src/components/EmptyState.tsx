@@ -22,33 +22,33 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   const getIcon = () => {
     switch (icon) {
       case 'search':
-        return <Search className="w-8 h-8 text-text-muted" />;
+        return <Search className="w-5 h-5 text-text-muted" />;
       case 'sparkles':
-        return <Sparkles className="w-8 h-8 text-accent" />;
+        return <Sparkles className="w-5 h-5 text-primary" />;
       case 'shield':
       default:
-        return <ShieldAlert className="w-8 h-8 text-primary" />;
+        return <ShieldAlert className="w-5 h-5 text-text-muted" />;
     }
   };
 
   return (
     <div
-      className={`rounded-card-lg border border-dashed border-border bg-surface-2 p-8 text-center space-y-4 ${className}`}
+      className={`rounded-xl border border-border/80 bg-surface p-7 text-center space-y-3.5 ${className}`}
     >
-      <div className="w-16 h-16 rounded-2xl bg-surface border border-border flex items-center justify-center mx-auto shadow-sm">
+      <div className="w-10 h-10 rounded-xl bg-surface-2 border border-border/80 flex items-center justify-center mx-auto">
         {getIcon()}
       </div>
 
-      <div className="space-y-1.5 max-w-sm mx-auto">
-        <h3 className="text-base sm:text-lg font-bold text-text">{title}</h3>
-        <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
+      <div className="space-y-1 max-w-sm mx-auto">
+        <h3 className="text-sm font-medium text-text">{title}</h3>
+        <p className="text-xs text-text-muted leading-relaxed">
           {description}
         </p>
       </div>
 
       {actionLabel && onAction && (
-        <div className="pt-2">
-          <Button variant="secondary" size="md" onClick={onAction}>
+        <div className="pt-1">
+          <Button variant="secondary" size="sm" onClick={onAction}>
             {actionLabel}
           </Button>
         </div>

@@ -43,47 +43,47 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           aria-modal="true"
           aria-labelledby="help-title"
         >
-          <div className="w-full max-w-lg rounded-card-lg bg-surface border border-border p-6 shadow-2xl space-y-5 animate-scale-up max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-border">
+          <div className="w-full max-w-lg rounded-xl bg-surface border border-border/80 p-5 shadow-2xl space-y-4 animate-scale-up max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-border/60">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-primary text-on-primary flex items-center justify-center">
-                  <ShieldCheck className="w-5 h-5" />
+                <div className="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center">
+                  <ShieldCheck className="w-4 h-4" />
                 </div>
-                <h3 id="help-title" className="text-lg font-bold text-text">
-                  ScamLens Help &amp; Safety
+                <h3 id="help-title" className="text-sm font-semibold text-text">
+                  Help &amp; Safety Guide
                 </h3>
               </div>
               <button
                 onClick={() => setHelpOpen(false)}
-                className="p-1.5 text-text-muted hover:text-text rounded-full transition-colors"
+                className="p-1 text-text-muted hover:text-text rounded-md transition-colors"
                 aria-label="Close help"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-4 text-sm text-text-muted">
+            <div className="space-y-3.5 text-xs text-text-muted">
               <div>
-                <h4 className="font-semibold text-text mb-1">How does ScamLens work?</h4>
+                <h4 className="font-medium text-text mb-1">How ScamLens works</h4>
                 <p className="leading-relaxed">
-                  ScamLens inspects messages, links, and screenshots using pattern-matching rules, threat databases (such as OpenPhish), and calibrated classification models.
+                  ScamLens inspects messages and links using pattern-matching rules, threat intelligence databases (such as OpenPhish), and calibrated risk models.
                 </p>
               </div>
 
               <div>
-                <h4 className="font-semibold text-text mb-1">What do the risk levels mean?</h4>
+                <h4 className="font-medium text-text mb-1">Risk level guide</h4>
                 <ul className="space-y-1.5 pt-1 text-xs">
                   <li>
-                    <strong className="text-danger">Scam alert — High risk:</strong> Strong signs of fraudulent manipulation, urgent demands, or known malicious links.
+                    <strong className="text-danger font-medium">High risk:</strong> Strong signs of fraudulent manipulation, urgent demands, or known phishing links.
                   </li>
                   <li>
-                    <strong className="text-warn">Be careful:</strong> Suspicious wording or unverified links that warrant caution.
+                    <strong className="text-warn font-medium">Medium risk:</strong> Suspicious wording or unverified domains that warrant caution.
                   </li>
                   <li>
-                    <strong className="text-safe">Looks low risk:</strong> No typical threat patterns detected. Does not constitute an absolute guarantee.
+                    <strong className="text-safe font-medium">Low risk:</strong> No typical threat patterns detected. Does not constitute an absolute guarantee.
                   </li>
                   <li>
-                    <strong className="text-unknown">We can&apos;t tell:</strong> Inconclusive data. Treat with standard everyday caution.
+                    <strong className="text-text-muted font-medium">Inconclusive:</strong> Insufficient verifiable information. Maintain standard caution.
                   </li>
                 </ul>
               </div>
@@ -92,8 +92,8 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             </div>
 
             <div className="pt-2 text-right">
-              <Button variant="primary" size="md" onClick={() => setHelpOpen(false)}>
-                Got it
+              <Button variant="primary" size="sm" onClick={() => setHelpOpen(false)}>
+                Dismiss
               </Button>
             </div>
           </div>

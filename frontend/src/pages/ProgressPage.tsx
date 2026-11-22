@@ -103,23 +103,23 @@ export const ProgressPage: React.FC = () => {
     : (scan?.steps && scan.steps.length > 0 ? scan.steps : defaultRunningSteps);
 
   return (
-    <div className="py-4 sm:py-8 max-w-md mx-auto space-y-8">
+    <div className="py-4 sm:py-8 max-w-md mx-auto space-y-6">
       {/* Header */}
-      <div className="space-y-1.5 text-left">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary dark:text-accent border border-primary/20 shadow-sm mb-1">
-          <span className="w-2 h-2 rounded-full bg-accent animate-ping" />
-          <span>Multimodal Threat Verification</span>
+      <div className="space-y-1 text-left">
+        <div className="inline-flex items-center gap-2 text-xs font-medium text-text-muted mb-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          <span>Threat Verification</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-text">
-          {isComplete ? 'Analysis complete' : 'Analyzing your submission'}
+        <h1 className="text-2xl font-semibold tracking-tight text-text">
+          {isComplete ? 'Verification complete' : 'Evaluating submission'}
         </h1>
-        <p className="text-sm text-text-muted">
-          {isComplete ? 'Verification finished. Preparing your security report...' : 'This may take a few moments.'}
+        <p className="text-xs sm:text-sm text-text-muted">
+          {isComplete ? 'All checks completed. Preparing report...' : 'Verifying content across reputation and pattern models.'}
         </p>
       </div>
 
       {/* Stepper Card */}
-      <div className="p-6 sm:p-7 rounded-card-lg bg-surface border border-border shadow-card-elevated space-y-6">
+      <div className="p-5 sm:p-6 rounded-xl bg-surface border border-border/80 space-y-5">
         {isLoading && !scan ? (
           <div className="space-y-6">
             <Skeleton className="h-10 w-full" />

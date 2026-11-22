@@ -19,7 +19,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '' }) => {
   return (
     <div className={`space-y-2 ${className}`}>
       <div
-        className="inline-flex p-1 rounded-full bg-surface-2 border border-border"
+        className="inline-flex p-0.5 rounded-lg bg-surface-2 border border-border/80"
         role="radiogroup"
         aria-label="Theme mode"
       >
@@ -32,10 +32,10 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '' }) => {
               role="radio"
               aria-checked={isSelected}
               onClick={() => setTheme(opt.id)}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                 isSelected
-                  ? 'bg-primary text-on-primary shadow-sm'
-                  : 'text-text-muted hover:text-text hover:bg-surface/50'
+                  ? 'bg-surface text-text border border-border/80'
+                  : 'text-text-muted hover:text-text'
               }`}
             >
               {opt.icon}

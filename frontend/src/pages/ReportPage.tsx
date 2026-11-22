@@ -134,17 +134,17 @@ export const ReportPage: React.FC = () => {
           />
 
           {/* Reference Card: "Why it was flagged" */}
-          <div className="p-5 rounded-card-lg bg-surface border border-border space-y-4 shadow-card-soft">
+          <div className="p-4 sm:p-5 rounded-xl bg-surface border border-border/80 space-y-3.5">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-text">
-                Why it was flagged
+              <h3 className="text-sm font-semibold text-text">
+                Evidence breakdown
               </h3>
-              <span className="text-xs text-text-muted">
-                {result.evidence.length} evidence indicators
+              <span className="text-xs text-text-muted font-mono">
+                {result.evidence.length} indicators
               </span>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {result.evidence.map((ev) => (
                 <EvidenceRow key={ev.id} evidence={ev} />
               ))}
@@ -152,15 +152,15 @@ export const ReportPage: React.FC = () => {
           </div>
 
           {/* Submitted content preview (Defanged & Plaintext for security) */}
-          <div className="p-4 rounded-card-lg bg-surface-2 border border-border space-y-2">
+          <div className="p-3.5 rounded-xl bg-surface border border-border/80 space-y-2">
             <div className="flex items-center justify-between text-xs text-text-muted">
-              <span className="font-semibold uppercase tracking-wider">
-                Submitted Content
+              <span className="font-mono uppercase tracking-wider text-[11px]">
+                Submitted Input
               </span>
               <button
                 type="button"
                 onClick={() => setDefang(!defang)}
-                className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
+                className="inline-flex items-center gap-1 text-primary hover:underline font-medium text-xs"
               >
                 {defang ? (
                   <>
@@ -175,31 +175,30 @@ export const ReportPage: React.FC = () => {
                 )}
               </button>
             </div>
-            <div className="p-3 rounded-card bg-surface border border-border text-xs sm:text-sm font-mono text-text break-words select-all">
+            <div className="p-3 rounded-lg bg-surface-2 border border-border/70 text-xs font-mono text-text break-words select-all">
               {getDisplayContent(scan.content)}
             </div>
             <p className="text-[11px] text-text-muted">
-              Rendered as plain text. ScamLens never executes code or navigates to external links.
+              Evaluated as isolated plain text. ScamLens never executes script or visits untrusted destinations.
             </p>
           </div>
         </div>
 
         {/* Right Column: "Stay safe" Actions & Buttons */}
-        <div className="lg:col-span-5 space-y-5">
+        <div className="lg:col-span-5 space-y-4">
           {/* Reference Card: "Stay safe" */}
           <ActionList actions={result.actions} />
 
           {/* Bottom Actions */}
-          <div className="space-y-3 pt-1">
+          <div className="space-y-2.5 pt-1">
             <Button
               variant="primary"
               size="lg"
               fullWidth
-              icon={<RotateCcw className="w-5 h-5" />}
+              icon={<RotateCcw className="w-4 h-4" />}
               onClick={() => navigate('/scan')}
-              className="shadow-md shadow-primary/20"
             >
-              Check another
+              Verify another item
             </Button>
 
             {/* Later Release screen behind FEATURES.investigation flag */}
