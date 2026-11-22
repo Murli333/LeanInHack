@@ -12,19 +12,19 @@ export const EvidenceRow: React.FC<EvidenceRowProps> = ({ evidence, className = 
     switch (kind) {
       case 'confirmed':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-safe-tint text-safe border border-safe/30 shrink-0">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-safe/15 text-safe border border-safe/30 shadow-[0_0_10px_rgba(16,185,129,0.15)] shrink-0">
             CONFIRMED
           </span>
         );
       case 'warning':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-warn-tint text-warn border border-warn/30 shrink-0">
-            WARNING SIGN
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-warn/15 text-warn border border-warn/30 shadow-[0_0_10px_rgba(245,158,11,0.15)] shrink-0">
+            WARNING
           </span>
         );
       case 'not_run':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-unknown-tint text-unknown border border-unknown/30 shrink-0">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-2 text-text-muted border border-border shrink-0">
             NOT RUN
           </span>
         );
@@ -34,33 +34,47 @@ export const EvidenceRow: React.FC<EvidenceRowProps> = ({ evidence, className = 
   const getIcon = (kind: EvidenceKind) => {
     switch (kind) {
       case 'confirmed':
-        return <ShieldCheck className="w-5 h-5 text-safe shrink-0 mt-0.5" />;
+        return (
+          <div className="w-8 h-8 rounded-xl bg-safe/15 border border-safe/30 flex items-center justify-center shrink-0 text-safe shadow-sm">
+            <ShieldCheck className="w-4 h-4 stroke-[2.5]" />
+          </div>
+        );
       case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-warn shrink-0 mt-0.5" />;
+        return (
+          <div className="w-8 h-8 rounded-xl bg-warn/15 border border-warn/30 flex items-center justify-center shrink-0 text-warn shadow-sm">
+            <AlertTriangle className="w-4 h-4" />
+          </div>
+        );
       case 'not_run':
-        return <HelpCircle className="w-5 h-5 text-text-muted shrink-0 mt-0.5" />;
+        return (
+          <div className="w-8 h-8 rounded-xl bg-surface-2 border border-border flex items-center justify-center shrink-0 text-text-muted shadow-sm">
+            <HelpCircle className="w-4 h-4" />
+          </div>
+        );
     }
   };
 
   return (
     <div
-      className={`flex items-start gap-3 p-3.5 rounded-card bg-surface-2 border border-border transition-colors hover:border-text-muted/30 ${className}`}
+      className={`flex items-start gap-3.5 p-4 rounded-card-lg bg-surface border border-border transition-all duration-200 hover:border-primary/40 hover:shadow-card-soft ${className}`}
     >
       {getIcon(evidence.kind)}
       <div className="flex-1 min-w-0 space-y-1">
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <h4 className="text-sm font-semibold text-text leading-tight">
+          <h4 className="text-sm font-bold text-text leading-tight">
             {evidence.title}
           </h4>
           {getKindBadge(evidence.kind)}
         </div>
-        <p className="text-xs text-text-muted leading-relaxed">
+        <p className="text-xs text-text-muted leading-relaxed font-normal">
           {evidence.detail}
         </p>
         {evidence.source && (
-          <p className="text-[11px] text-text-muted/80 pt-0.5 font-mono">
-            Source: {evidence.source}
-          </p>
+          <div className="pt-1">
+            <span className="inline-block text-[10px] text-text-muted font-medium bg-surface-2 px-2 py-0.5 rounded-md border border-border/80">
+              Source: {evidence.source}
+            </span>
+          </div>
         )}
       </div>
     </div>

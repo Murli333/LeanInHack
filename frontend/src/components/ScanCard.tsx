@@ -13,16 +13,36 @@ export const ScanCard: React.FC<ScanCardProps> = ({ scan, onClick, className = '
   const getTypeIcon = (type: ScanType) => {
     switch (type) {
       case 'url':
-        return <Link2 className="w-5 h-5 text-accent" />;
+        return (
+          <div className="w-11 h-11 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0 shadow-sm text-accent group-hover:scale-105 transition-transform">
+            <Link2 className="w-5 h-5" />
+          </div>
+        );
       case 'screenshot':
-        return <Image className="w-5 h-5 text-warn" />;
+        return (
+          <div className="w-11 h-11 rounded-2xl bg-warn/10 border border-warn/20 flex items-center justify-center shrink-0 shadow-sm text-warn group-hover:scale-105 transition-transform">
+            <Image className="w-5 h-5" />
+          </div>
+        );
       case 'qr':
-        return <QrCode className="w-5 h-5 text-safe" />;
+        return (
+          <div className="w-11 h-11 rounded-2xl bg-safe/10 border border-safe/20 flex items-center justify-center shrink-0 shadow-sm text-safe group-hover:scale-105 transition-transform">
+            <QrCode className="w-5 h-5" />
+          </div>
+        );
       case 'audio':
-        return <Mic className="w-5 h-5 text-danger" />;
+        return (
+          <div className="w-11 h-11 rounded-2xl bg-danger/10 border border-danger/20 flex items-center justify-center shrink-0 shadow-sm text-danger group-hover:scale-105 transition-transform">
+            <Mic className="w-5 h-5" />
+          </div>
+        );
       case 'text':
       default:
-        return <MessageSquare className="w-5 h-5 text-primary" />;
+        return (
+          <div className="w-11 h-11 rounded-2xl bg-primary/15 border border-primary/25 flex items-center justify-center shrink-0 shadow-sm text-accent group-hover:scale-105 transition-transform">
+            <MessageSquare className="w-5 h-5" />
+          </div>
+        );
     }
   };
 
@@ -48,15 +68,13 @@ export const ScanCard: React.FC<ScanCardProps> = ({ scan, onClick, className = '
           onClick?.();
         }
       }}
-      className={`flex items-center justify-between gap-3 p-4 rounded-card-lg bg-surface-2 border border-border transition-all hover:bg-surface hover:border-text-muted/30 hover:shadow-card-soft cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${className}`}
+      className={`group flex items-center justify-between gap-3 p-4 rounded-card-lg bg-surface border border-border transition-all duration-200 hover:border-primary/40 hover:shadow-card-elevated hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${className}`}
     >
       {/* Icon tile + text */}
       <div className="flex items-center gap-3.5 min-w-0">
-        <div className="w-11 h-11 rounded-2xl bg-surface border border-border flex items-center justify-center shrink-0 shadow-sm">
-          {getTypeIcon(scan.type)}
-        </div>
+        {getTypeIcon(scan.type)}
         <div className="min-w-0">
-          <h4 className="text-sm sm:text-base font-semibold text-text truncate">
+          <h4 className="text-sm sm:text-base font-semibold text-text group-hover:text-primary dark:group-hover:text-accent transition-colors truncate">
             {scan.title}
           </h4>
           <p className="text-xs text-text-muted font-medium mt-0.5">
@@ -68,7 +86,7 @@ export const ScanCard: React.FC<ScanCardProps> = ({ scan, onClick, className = '
       {/* Right side status pill + chevron */}
       <div className="flex items-center gap-2 shrink-0">
         <RiskBadge level={riskLevel} size="sm" />
-        <ChevronRight className="w-4 h-4 text-text-muted hidden sm:block" />
+        <ChevronRight className="w-4 h-4 text-text-muted transition-transform group-hover:translate-x-0.5" />
       </div>
     </div>
   );

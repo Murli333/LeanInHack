@@ -80,23 +80,23 @@ export const HistoryPage: React.FC = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by keywords, phone numbers, or links..."
-          className="w-full pl-12 pr-4 py-3 rounded-card-lg bg-surface-2 border border-border text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent"
+          className="w-full pl-12 pr-4 py-3.5 rounded-card-lg bg-surface border border-border text-sm text-text placeholder:text-text-muted/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/15 shadow-card-soft transition-all duration-200"
         />
       </div>
 
       {/* Filter Chips Bar */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-        <span className="font-semibold text-text-muted shrink-0 flex items-center gap-1 mr-1">
-          <Filter className="w-3.5 h-3.5" /> Type:
+        <span className="font-bold text-text-muted shrink-0 flex items-center gap-1 mr-1">
+          <Filter className="w-3.5 h-3.5 text-accent" /> Type:
         </span>
         {(['all', 'text', 'url'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTypeFilter(t)}
-            className={`px-3 py-1.5 rounded-full capitalize font-medium transition-all ${
+            className={`px-3.5 py-1.5 rounded-full capitalize font-semibold transition-all active:scale-95 ${
               typeFilter === t
-                ? 'bg-primary text-on-primary'
-                : 'bg-surface-2 text-text border border-border hover:bg-surface'
+                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-sm shadow-blue-500/20 border border-blue-400/30'
+                : 'bg-surface text-text-muted border border-border hover:text-text hover:border-primary/30'
             }`}
           >
             {t}
@@ -105,15 +105,15 @@ export const HistoryPage: React.FC = () => {
 
         <div className="h-4 w-px bg-border mx-2 shrink-0" />
 
-        <span className="font-semibold text-text-muted shrink-0 mr-1">Risk:</span>
+        <span className="font-bold text-text-muted shrink-0 mr-1">Risk:</span>
         {(['all', 'high', 'medium', 'low', 'unknown'] as const).map((r) => (
           <button
             key={r}
             onClick={() => setRiskFilter(r)}
-            className={`px-3 py-1.5 rounded-full capitalize font-medium transition-all ${
+            className={`px-3.5 py-1.5 rounded-full capitalize font-semibold transition-all active:scale-95 ${
               riskFilter === r
-                ? 'bg-primary text-on-primary'
-                : 'bg-surface-2 text-text border border-border hover:bg-surface'
+                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-sm shadow-blue-500/20 border border-blue-400/30'
+                : 'bg-surface text-text-muted border border-border hover:text-text hover:border-primary/30'
             }`}
           >
             {r}

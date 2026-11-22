@@ -45,14 +45,14 @@ export const SideNav: React.FC<SideNavProps> = ({ onOpenHelp }) => {
             if (e.key === 'Enter') navigate('/home');
           }}
         >
-          <div className="w-10 h-10 rounded-2xl bg-primary text-on-primary flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center shadow-md shadow-blue-500/20 ring-1 ring-white/20 group-hover:scale-105 transition-all">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight text-text leading-tight">
+            <h1 className="text-xl font-black tracking-tight text-text leading-tight">
               ScamLens
             </h1>
-            <p className="text-[11px] text-text-muted font-medium">Digital Safety</p>
+            <p className="text-[11px] text-accent font-semibold tracking-wide uppercase">AI Threat Defense</p>
           </div>
         </div>
 
@@ -68,14 +68,14 @@ export const SideNav: React.FC<SideNavProps> = ({ onOpenHelp }) => {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-sm font-medium transition-all text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-full text-sm font-semibold transition-all duration-200 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   isActive
-                    ? 'bg-primary text-on-primary shadow-sm'
+                    ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/25 border border-white/20'
                     : 'text-text-muted hover:text-text hover:bg-surface-2'
                 }`}
                 aria-current={isActive ? 'page' : undefined}
               >
-                <Icon className="w-4 h-4 shrink-0" />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-text-muted'}`} />
                 <span>{item.label}</span>
               </button>
             );
@@ -83,9 +83,9 @@ export const SideNav: React.FC<SideNavProps> = ({ onOpenHelp }) => {
 
           <button
             onClick={() => onOpenHelp?.()}
-            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-sm font-medium text-text-muted hover:text-text hover:bg-surface-2 transition-all text-left"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-full text-sm font-semibold text-text-muted hover:text-text hover:bg-surface-2 transition-all duration-200 text-left"
           >
-            <HelpCircle className="w-4 h-4 shrink-0" />
+            <HelpCircle className="w-4 h-4 shrink-0 text-accent" />
             <span>Help &amp; FAQ</span>
           </button>
         </nav>

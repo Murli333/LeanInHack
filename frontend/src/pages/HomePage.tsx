@@ -18,28 +18,31 @@ export const HomePage: React.FC = () => {
   return (
     <div className="space-y-8 max-w-2xl lg:max-w-4xl mx-auto py-2">
       {/* Reference Greeting */}
-      <div className="space-y-1">
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text flex items-center gap-2">
+      <div className="space-y-2">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary dark:text-accent border border-primary/20 shadow-sm">
+          <Sparkles className="w-3.5 h-3.5 text-accent" />
+          <span>AI Protection Ready</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-text flex items-center gap-2">
           <span>Hello!</span>
-          <span className="text-2xl sm:text-3xl" role="img" aria-label="Waving hand">👋</span>
+          <span className="text-2xl sm:text-3xl animate-bounce-subtle" role="img" aria-label="Waving hand">👋</span>
         </h1>
-        <p className="text-sm text-text-muted">
+        <p className="text-sm sm:text-base text-text-muted">
           Check suspicious messages, delivery notices, or payment links.
         </p>
       </div>
 
       {/* Reference Huge Pill Button: "Tap here to check" */}
       <div>
-        <Button
-          variant="primary"
-          size="huge"
-          fullWidth
-          icon={<Search className="w-5 h-5 sm:w-6 sm:h-6" />}
+        <button
           onClick={() => navigate('/scan')}
-          className="shadow-lg shadow-primary/20 text-base sm:text-lg"
+          className="w-full py-4 sm:py-5 px-6 rounded-pill bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-base sm:text-lg flex items-center justify-center gap-3 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/35 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 group border border-white/20"
         >
-          Tap here to check
-        </Button>
+          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <Search className="w-4 h-4 sm:w-5 sm:h-5 text-white stroke-[2.5]" />
+          </div>
+          <span className="tracking-wide">Tap here to check</span>
+        </button>
       </div>
 
       {/* Two Big Stats Side-by-Side (Honesty Rule 5: From Real Stored Data Only!) */}
@@ -55,31 +58,45 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* Quick-scan shortcuts */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
         <button
           onClick={() => navigate('/scan?type=text')}
-          className="flex items-center gap-3 p-3.5 rounded-card bg-surface-2 border border-border hover:bg-surface hover:border-text-muted/30 transition-all text-left"
+          className="group flex items-center justify-between p-4 rounded-card-lg bg-surface border border-border hover:border-primary/40 hover:shadow-card-elevated hover:-translate-y-0.5 transition-all duration-200 text-left"
         >
-          <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-            <MessageSquare className="w-5 h-5" />
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 text-accent flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <MessageSquare className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-sm font-bold text-text group-hover:text-primary dark:group-hover:text-accent transition-colors">
+                Check a Text / SMS
+              </div>
+              <div className="text-xs text-text-muted truncate mt-0.5">
+                Paste copied WhatsApp or bank text
+              </div>
+            </div>
           </div>
-          <div className="min-w-0">
-            <div className="text-sm font-semibold text-text">Check a Text / SMS</div>
-            <div className="text-xs text-text-muted truncate">Paste copied WhatsApp or bank text</div>
-          </div>
+          <PlusCircle className="w-4 h-4 text-text-muted group-hover:text-primary dark:group-hover:text-accent transition-colors shrink-0" />
         </button>
 
         <button
           onClick={() => navigate('/scan?type=url')}
-          className="flex items-center gap-3 p-3.5 rounded-card bg-surface-2 border border-border hover:bg-surface hover:border-text-muted/30 transition-all text-left"
+          className="group flex items-center justify-between p-4 rounded-card-lg bg-surface border border-border hover:border-primary/40 hover:shadow-card-elevated hover:-translate-y-0.5 transition-all duration-200 text-left"
         >
-          <div className="w-9 h-9 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
-            <Link2 className="w-5 h-5" />
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-10 h-10 rounded-2xl bg-accent/10 border border-accent/20 text-accent flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Link2 className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-sm font-bold text-text group-hover:text-primary dark:group-hover:text-accent transition-colors">
+                Check a Web Link
+              </div>
+              <div className="text-xs text-text-muted truncate mt-0.5">
+                Inspect link domain without opening
+              </div>
+            </div>
           </div>
-          <div className="min-w-0">
-            <div className="text-sm font-semibold text-text">Check a Web Link</div>
-            <div className="text-xs text-text-muted truncate">Inspect link domain without opening</div>
-          </div>
+          <PlusCircle className="w-4 h-4 text-text-muted group-hover:text-primary dark:group-hover:text-accent transition-colors shrink-0" />
         </button>
       </div>
 
