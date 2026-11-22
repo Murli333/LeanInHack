@@ -1,10 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MessageSquare, Link2 } from 'lucide-react';
+import { Search, MessageSquare, Link2, ArrowRight } from 'lucide-react';
 import { useStats, useScans } from '../hooks/useScans';
 import { StatTile } from '../components/StatTile';
 import { ScanCard } from '../components/ScanCard';
-import { Button } from '../components/Button';
 import { EmptyState } from '../components/EmptyState';
 import { CardSkeleton } from '../components/Skeleton';
 
@@ -13,21 +12,21 @@ export const HomePage: React.FC = () => {
   const { data: stats, isLoading: statsLoading } = useStats();
   const { data: scans, isLoading: scansLoading } = useScans();
 
-  const recentScans = scans ? scans.slice(0, 5) : [];
+  const recentScans = scans ? scans.slice(0, 4) : [];
 
   return (
-    <div className="space-y-8 max-w-2xl lg:max-w-4xl mx-auto py-2">
+    <div className="space-y-6 max-w-2xl lg:max-w-4xl mx-auto py-2">
       {/* Minimal Header */}
       <div className="space-y-1.5">
         <div className="inline-flex items-center gap-2 text-xs font-medium text-text-muted">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-          <span>Engine active</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-safe" />
+          <span className="font-mono text-2xs uppercase tracking-wider">Engine Ready</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text">
-          Verify suspicious content
+        <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-text">
+          Threat verification
         </h1>
-        <p className="text-sm text-text-muted">
-          Inspect SMS alerts, payment notices, or unfamiliar URLs for fraud indicators.
+        <p className="text-xs sm:text-sm text-text-secondary">
+          Inspect SMS alerts, payment notices, or suspicious links for phishing signatures.
         </p>
       </div>
 
@@ -35,21 +34,23 @@ export const HomePage: React.FC = () => {
       <div>
         <button
           onClick={() => navigate('/scan')}
-          className="w-full py-3.5 px-5 rounded-xl bg-primary hover:bg-blue-600 text-white font-medium text-sm sm:text-base flex items-center justify-between transition-colors border border-primary/30 active:scale-[0.99]"
+          className="w-full py-3.5 px-4 rounded-card bg-accent hover:bg-accent-hover text-white font-medium text-sm flex items-center justify-between transition-colors shadow-none"
         >
           <div className="flex items-center gap-2.5">
-            <Search className="w-4 h-4 text-white/90" />
-            <span>Start a new verification</span>
+            <Search className="w-4 h-4 text-white" />
+            <span>Verify suspicious message or link</span>
           </div>
-          <span className="text-xs text-white/80 bg-white/15 px-2.5 py-1 rounded-md font-normal">Check now →</span>
+          <span className="inline-flex items-center gap-1 text-xs text-white/90 bg-white/10 px-2.5 py-1 rounded-button">
+            New scan <ArrowRight className="w-3.5 h-3.5" />
+          </span>
         </button>
       </div>
 
-      {/* Two Big Stats Side-by-Side (Honesty Rule 5: From Real Stored Data Only!) */}
+      {/* Stats from real local/API storage */}
       <div className="grid grid-cols-2 gap-3">
         <StatTile
           value={statsLoading ? 0 : stats?.total ?? 0}
-          label="checks done"
+          label="verifications completed"
         />
         <StatTile
           value={statsLoading ? 0 : stats?.highRisk ?? 0}
@@ -61,17 +62,17 @@ export const HomePage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <button
           onClick={() => navigate('/scan?type=text')}
-          className="group flex items-center justify-between p-3.5 rounded-xl bg-surface border border-border/80 hover:border-border hover:bg-surface-2/40 transition-colors text-left"
+          className="group flex items-center justify-between p-3.5 rounded-card bg-surface border border-border hover:bg-surface-raised transition-colors text-left"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-lg bg-surface-2 border border-border/80 text-text-muted flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-button bg-surface-raised border border-border text-text-muted flex items-center justify-center shrink-0">
               <MessageSquare className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <div className="text-sm font-medium text-text">
+              <div className="text-xs font-medium text-text">
                 Check message or SMS
               </div>
-              <div className="text-xs text-text-muted truncate mt-0.5">
+              <div className="text-2xs text-text-muted truncate mt-0.5">
                 Paste copied text or bank alert
               </div>
             </div>
@@ -81,17 +82,17 @@ export const HomePage: React.FC = () => {
 
         <button
           onClick={() => navigate('/scan?type=url')}
-          className="group flex items-center justify-between p-3.5 rounded-xl bg-surface border border-border/80 hover:border-border hover:bg-surface-2/40 transition-colors text-left"
+          className="group flex items-center justify-between p-3.5 rounded-card bg-surface border border-border hover:bg-surface-raised transition-colors text-left"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-lg bg-surface-2 border border-border/80 text-text-muted flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-button bg-surface-raised border border-border text-text-muted flex items-center justify-center shrink-0">
               <Link2 className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <div className="text-sm font-medium text-text">
+              <div className="text-xs font-medium text-text">
                 Check web link
               </div>
-              <div className="text-xs text-text-muted truncate mt-0.5">
+              <div className="text-2xs text-text-muted truncate mt-0.5">
                 Inspect URL domain safely
               </div>
             </div>
@@ -100,25 +101,24 @@ export const HomePage: React.FC = () => {
         </button>
       </div>
 
-      {/* YOUR RECENT CHECKS List */}
+      {/* Recent Scans */}
       <div className="space-y-3 pt-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs font-bold text-text-muted uppercase tracking-wider">
-            YOUR RECENT CHECKS
+          <h2 className="text-2xs font-mono text-text-muted uppercase tracking-wider">
+            Recent verifications
           </h2>
           {recentScans.length > 0 && (
             <button
               onClick={() => navigate('/history')}
-              className="text-xs font-semibold text-primary hover:underline"
+              className="text-xs text-accent hover:underline font-mono"
             >
-              View all
+              View all ({scans?.length || 0})
             </button>
           )}
         </div>
 
         {scansLoading ? (
           <div className="space-y-3">
-            <CardSkeleton />
             <CardSkeleton />
             <CardSkeleton />
           </div>

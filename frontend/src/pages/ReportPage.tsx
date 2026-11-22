@@ -136,9 +136,9 @@ export const ReportPage: React.FC = () => {
           />
 
           {/* Reference Card: "Why it was flagged" */}
-          <div className="p-4 sm:p-5 rounded-xl bg-surface border border-border/80 space-y-3.5">
+          <div className="p-5 rounded-card bg-surface border border-border space-y-3.5">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-text">
+              <h3 className="text-sm font-medium text-text">
                 Evidence breakdown
               </h3>
               <span className="text-xs text-text-muted font-mono">
@@ -146,7 +146,7 @@ export const ReportPage: React.FC = () => {
               </span>
             </div>
 
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {result.evidence.map((ev) => (
                 <EvidenceRow key={ev.id} evidence={ev} />
               ))}
@@ -154,7 +154,7 @@ export const ReportPage: React.FC = () => {
           </div>
 
           {/* Submitted content preview (Defanged & Plaintext for security) */}
-          <div className="p-3.5 rounded-xl bg-surface border border-border/80 space-y-2">
+          <div className="p-4 rounded-card bg-surface border border-border space-y-2">
             <div className="flex items-center justify-between text-xs text-text-muted">
               <span className="font-mono uppercase tracking-wider text-[11px]">
                 Submitted Input
@@ -162,7 +162,7 @@ export const ReportPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setDefang(!defang)}
-                className="inline-flex items-center gap-1 text-primary hover:underline font-medium text-xs"
+                className="inline-flex items-center gap-1 text-accent hover:underline font-medium text-xs"
               >
                 {defang ? (
                   <>
@@ -177,10 +177,10 @@ export const ReportPage: React.FC = () => {
                 )}
               </button>
             </div>
-            <div className="p-3 rounded-lg bg-surface-2 border border-border/70 text-xs font-mono text-text break-words select-all">
+            <div className="p-3 rounded-[8px] bg-surface-raised border border-border text-xs font-mono text-text-secondary break-words select-all leading-relaxed">
               {getDisplayContent(scan.content)}
             </div>
-            <p className="text-[11px] text-text-muted">
+            <p className="text-xs text-text-muted leading-relaxed">
               Evaluated as isolated plain text. ScamLens never executes script or visits untrusted destinations.
             </p>
           </div>
@@ -192,7 +192,7 @@ export const ReportPage: React.FC = () => {
           <ActionList actions={result.actions} />
 
           {/* Bottom Actions */}
-          <div className="space-y-2.5 pt-1">
+          <div className="space-y-2 pt-1">
             <Button
               variant="primary"
               size="lg"

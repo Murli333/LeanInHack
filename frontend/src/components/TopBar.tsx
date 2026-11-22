@@ -47,10 +47,10 @@ export const TopBar: React.FC<TopBarProps> = ({ onOpenHelp, className = '' }) =>
               if (e.key === 'Enter') navigate('/home');
             }}
           >
-            <div className="w-7 h-7 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text group-hover:border-text-muted/60 transition-colors">
-              <ShieldCheck className="w-4 h-4 text-blue-500" />
+            <div className="w-7 h-7 rounded-[8px] bg-surface-raised border border-border flex items-center justify-center text-text transition-colors">
+              <ShieldCheck className="w-4 h-4 text-accent" />
             </div>
-            <span className="text-base font-semibold tracking-tight text-text">
+            <span className="text-sm sm:text-base font-medium tracking-tight text-text">
               ScamLens
             </span>
           </div>

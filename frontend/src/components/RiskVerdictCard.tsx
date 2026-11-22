@@ -31,47 +31,37 @@ export const RiskVerdictCard: React.FC<RiskVerdictCardProps> = ({
       title: string;
       icon: React.ReactNode;
       border: string;
-      cardBg: string;
-      shadow: string;
       iconBg: string;
       iconColor: string;
     }
   > = {
     high: {
       title: 'High Risk Detected',
-      icon: <ShieldAlert className="w-6 h-6" />,
-      border: 'border-danger/30',
-      cardBg: 'bg-surface',
-      shadow: 'shadow-none',
-      iconBg: 'bg-danger/10 border border-danger/25',
+      icon: <ShieldAlert className="w-5 h-5" />,
+      border: 'border-danger/20',
+      iconBg: 'bg-danger/10 border border-danger/20',
       iconColor: 'text-danger',
     },
     medium: {
       title: 'Suspicious Indicators Found',
-      icon: <AlertTriangle className="w-6 h-6" />,
-      border: 'border-warn/30',
-      cardBg: 'bg-surface',
-      shadow: 'shadow-none',
-      iconBg: 'bg-warn/10 border border-warn/25',
+      icon: <AlertTriangle className="w-5 h-5" />,
+      border: 'border-warn/20',
+      iconBg: 'bg-warn/10 border border-warn/20',
       iconColor: 'text-warn',
     },
     low: {
       title: 'No Threats Detected',
-      icon: <Check className="w-6 h-6" />,
-      border: 'border-safe/30',
-      cardBg: 'bg-surface',
-      shadow: 'shadow-none',
-      iconBg: 'bg-safe/10 border border-safe/25',
+      icon: <Check className="w-5 h-5" />,
+      border: 'border-safe/20',
+      iconBg: 'bg-safe/10 border border-safe/20',
       iconColor: 'text-safe',
     },
     unknown: {
       title: 'Inconclusive Result',
-      icon: <HelpCircle className="w-6 h-6" />,
-      border: 'border-border/80',
-      cardBg: 'bg-surface',
-      shadow: 'shadow-none',
-      iconBg: 'bg-surface-2 border border-border/80',
-      iconColor: 'text-text-muted',
+      icon: <HelpCircle className="w-5 h-5" />,
+      border: 'border-border',
+      iconBg: 'bg-surface-raised border border-border',
+      iconColor: 'text-text-secondary',
     },
   };
 
@@ -79,13 +69,13 @@ export const RiskVerdictCard: React.FC<RiskVerdictCardProps> = ({
 
   return (
     <div
-      className={`rounded-xl border p-5 sm:p-6 text-center space-y-3.5 transition-colors ${current.cardBg} ${current.border} ${className}`}
+      className={`rounded-card border p-6 text-center space-y-4 bg-surface ${current.border} ${className}`}
       role="region"
       aria-label="Scam risk assessment result"
     >
       {/* Category tag */}
       {category && (
-        <div className="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-mono uppercase tracking-wider bg-surface-2 text-text-muted border border-border/80">
+        <div className="inline-block px-2.5 py-0.5 rounded-[6px] text-xs font-mono uppercase tracking-wider bg-surface-raised text-text-secondary border border-border">
           {category}
         </div>
       )}
@@ -93,15 +83,15 @@ export const RiskVerdictCard: React.FC<RiskVerdictCardProps> = ({
       {/* Central icon */}
       <div className="flex justify-center">
         <div
-          className={`w-12 h-12 rounded-xl flex items-center justify-center ${current.iconBg} ${current.iconColor}`}
+          className={`w-11 h-11 rounded-[10px] flex items-center justify-center ${current.iconBg} ${current.iconColor}`}
         >
           {current.icon}
         </div>
       </div>
 
       {/* Headline */}
-      <div className="space-y-0.5">
-        <h2 className="text-xl font-semibold tracking-tight text-text">
+      <div className="space-y-1">
+        <h2 className="text-xl font-medium tracking-tight text-text">
           {current.title}
         </h2>
       </div>
@@ -112,14 +102,14 @@ export const RiskVerdictCard: React.FC<RiskVerdictCardProps> = ({
       </div>
 
       {/* One-line finding / summary */}
-      <p className="text-xs sm:text-sm text-text-muted max-w-md mx-auto pt-1 leading-relaxed">
+      <p className="text-sm text-text-secondary max-w-md mx-auto pt-1 leading-relaxed">
         {summary}
       </p>
 
       {/* Honesty Rule 3 clarification for unknown */}
       {isUnknown && (
-        <div className="text-xs text-text-muted bg-surface-2 p-3 rounded-card border border-border text-left">
-          <strong>Note:</strong> &quot;We can&apos;t tell&quot; means there wasn&apos;t enough verifiable information in your submission. An unknown status is <strong>not</strong> a confirmation that the message is safe, nor that it is malicious. Always stay cautious.
+        <div className="text-xs text-text-muted bg-surface-raised p-3 rounded-[8px] border border-border text-left leading-relaxed">
+          <span className="text-text font-medium">Note:</span> &quot;We can&apos;t tell&quot; means there was not enough verifiable context in your submission. An unknown status is neither a confirmation of safety nor of malicious intent. Always practice caution.
         </div>
       )}
     </div>

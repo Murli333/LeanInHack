@@ -30,19 +30,19 @@ export const BottomTabBar: React.FC = () => {
             <button
               key={tab.path}
               onClick={() => navigate(tab.path)}
-              className={`flex flex-col items-center justify-center gap-1 w-14 h-11 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-text-muted active:scale-95 ${
+              className={`flex flex-col items-center justify-center gap-1 w-14 h-11 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent active:scale-95 ${
                 isActive
-                  ? 'text-text'
-                  : 'text-text-muted/70 hover:text-text'
+                  ? 'text-accent'
+                  : 'text-text-muted hover:text-text'
               }`}
               aria-current={isActive ? 'page' : undefined}
             >
               <Icon
-                className={`w-5 h-5 transition-transform ${
+                className={`w-4 h-4 transition-transform ${
                   isActive ? 'stroke-[2.2]' : 'stroke-[1.6]'
                 }`}
               />
-              <span className={`text-[10px] tracking-tight ${isActive ? 'font-semibold text-text' : 'font-medium'}`}>
+              <span className={`text-[10px] tracking-tight ${isActive ? 'font-medium text-text' : 'text-text-muted'}`}>
                 {tab.label}
               </span>
             </button>

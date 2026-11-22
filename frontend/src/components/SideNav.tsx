@@ -45,11 +45,11 @@ export const SideNav: React.FC<SideNavProps> = ({ onOpenHelp }) => {
             if (e.key === 'Enter') navigate('/home');
           }}
         >
-          <div className="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center shrink-0">
-            <ShieldCheck className="w-4 h-4" />
+          <div className="w-7 h-7 rounded-[8px] bg-surface-raised border border-border text-accent flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-4 h-4 text-accent" />
           </div>
           <div>
-            <h1 className="text-sm font-semibold tracking-tight text-text leading-tight">
+            <h1 className="text-sm font-medium tracking-tight text-text leading-tight">
               ScamLens
             </h1>
             <p className="text-[10px] text-text-muted font-mono tracking-tight uppercase">Threat Defense</p>
@@ -68,14 +68,14 @@ export const SideNav: React.FC<SideNavProps> = ({ onOpenHelp }) => {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors text-left focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border ${
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-[8px] text-xs sm:text-sm font-medium transition-colors text-left focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent ${
                   isActive
-                    ? 'bg-surface-2 text-text border border-border/70'
-                    : 'text-text-muted hover:text-text hover:bg-surface-2/60 border border-transparent'
+                    ? 'bg-surface-raised text-text border border-border'
+                    : 'text-text-secondary hover:text-text hover:bg-surface-raised border border-transparent'
                 }`}
                 aria-current={isActive ? 'page' : undefined}
               >
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-text' : 'text-text-muted'}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-accent' : 'text-text-muted'}`} />
                 <span>{item.label}</span>
               </button>
             );

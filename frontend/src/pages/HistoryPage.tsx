@@ -47,10 +47,10 @@ export const HistoryPage: React.FC = () => {
       {/* Page Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-text">
+          <h1 className="text-2xl font-medium tracking-tight text-text">
             History
           </h1>
-          <p className="text-xs sm:text-sm text-text-muted">
+          <p className="text-xs sm:text-sm text-text-secondary">
             All locally verified messages and URLs on this device.
           </p>
         </div>
@@ -80,7 +80,7 @@ export const HistoryPage: React.FC = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search keywords, phone numbers, or links..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface border border-border/80 text-sm text-text placeholder:text-text-muted/40 focus:outline-none focus:border-primary/50 transition-colors"
+          className="w-full pl-10 pr-4 py-2.5 rounded-button bg-surface-raised border border-border text-xs sm:text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-accent/80 transition-colors"
         />
       </div>
 
@@ -93,27 +93,27 @@ export const HistoryPage: React.FC = () => {
           <button
             key={t}
             onClick={() => setTypeFilter(t)}
-            className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-colors ${
+            className={`px-2.5 py-1 rounded-button capitalize text-xs font-medium transition-colors border ${
               typeFilter === t
-                ? 'bg-primary text-white border border-primary/40'
-                : 'bg-surface text-text-muted border border-border/80 hover:text-text hover:bg-surface-2/60'
+                ? 'bg-accent text-white border-accent'
+                : 'bg-surface text-text-secondary border-border hover:text-text hover:bg-surface-raised'
             }`}
           >
             {t}
           </button>
         ))}
 
-        <div className="h-3.5 w-px bg-border/60 mx-1.5 shrink-0" />
+        <div className="h-3.5 w-px bg-border mx-1.5 shrink-0" />
 
         <span className="font-medium text-text-muted shrink-0 mr-1">Risk:</span>
         {(['all', 'high', 'medium', 'low', 'unknown'] as const).map((r) => (
           <button
             key={r}
             onClick={() => setRiskFilter(r)}
-            className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-colors ${
+            className={`px-2.5 py-1 rounded-button capitalize text-xs font-medium transition-colors border ${
               riskFilter === r
-                ? 'bg-primary text-white border border-primary/40'
-                : 'bg-surface text-text-muted border border-border/80 hover:text-text hover:bg-surface-2/60'
+                ? 'bg-accent text-white border-accent'
+                : 'bg-surface text-text-secondary border-border hover:text-text hover:bg-surface-raised'
             }`}
           >
             {r}
@@ -125,7 +125,6 @@ export const HistoryPage: React.FC = () => {
       <div className="space-y-3">
         {isLoading ? (
           <div className="space-y-3">
-            <CardSkeleton />
             <CardSkeleton />
             <CardSkeleton />
           </div>
@@ -175,7 +174,7 @@ export const HistoryPage: React.FC = () => {
                     e.stopPropagation();
                     setDeleteId(scan.id);
                   }}
-                  className="absolute right-3 top-3 p-1.5 rounded-full bg-surface-2 text-text-muted hover:text-danger hover:bg-surface border border-border opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+                  className="absolute right-3 top-3 p-1.5 rounded-full bg-surface-raised text-text-muted hover:text-danger hover:bg-surface border border-border opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
                   aria-label={`Delete scan: ${scan.title}`}
                   title="Delete scan"
                 >

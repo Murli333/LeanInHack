@@ -12,19 +12,19 @@ export const EvidenceRow: React.FC<EvidenceRowProps> = ({ evidence, className = 
     switch (kind) {
       case 'confirmed':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider bg-safe/10 text-safe border border-safe/25 shrink-0">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[5px] text-[10px] font-mono uppercase tracking-wider bg-safe/10 text-safe border border-safe/20 shrink-0">
             CONFIRMED
           </span>
         );
       case 'warning':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider bg-warn/10 text-warn border border-warn/25 shrink-0">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[5px] text-[10px] font-mono uppercase tracking-wider bg-warn/10 text-warn border border-warn/20 shrink-0">
             WARNING
           </span>
         );
       case 'not_run':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider bg-surface-2 text-text-muted border border-border/80 shrink-0">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[5px] text-[10px] font-mono uppercase tracking-wider bg-surface text-text-muted border border-border shrink-0">
             NOT RUN
           </span>
         );
@@ -35,19 +35,19 @@ export const EvidenceRow: React.FC<EvidenceRowProps> = ({ evidence, className = 
     switch (kind) {
       case 'confirmed':
         return (
-          <div className="w-7 h-7 rounded-lg bg-safe/10 border border-safe/25 flex items-center justify-center shrink-0 text-safe">
+          <div className="w-7 h-7 rounded-[7px] bg-safe/10 border border-safe/20 flex items-center justify-center shrink-0 text-safe">
             <ShieldCheck className="w-3.5 h-3.5" />
           </div>
         );
       case 'warning':
         return (
-          <div className="w-7 h-7 rounded-lg bg-warn/10 border border-warn/25 flex items-center justify-center shrink-0 text-warn">
+          <div className="w-7 h-7 rounded-[7px] bg-warn/10 border border-warn/20 flex items-center justify-center shrink-0 text-warn">
             <AlertTriangle className="w-3.5 h-3.5" />
           </div>
         );
       case 'not_run':
         return (
-          <div className="w-7 h-7 rounded-lg bg-surface-2 border border-border/80 flex items-center justify-center shrink-0 text-text-muted">
+          <div className="w-7 h-7 rounded-[7px] bg-surface border border-border flex items-center justify-center shrink-0 text-text-muted">
             <HelpCircle className="w-3.5 h-3.5" />
           </div>
         );
@@ -56,7 +56,7 @@ export const EvidenceRow: React.FC<EvidenceRowProps> = ({ evidence, className = 
 
   return (
     <div
-      className={`flex items-start gap-3 p-3.5 rounded-xl bg-surface border border-border/80 transition-colors ${className}`}
+      className={`flex items-start gap-3 p-3.5 rounded-[10px] bg-surface-raised border border-border transition-colors ${className}`}
     >
       {getIcon(evidence.kind)}
       <div className="flex-1 min-w-0 space-y-1">
@@ -66,12 +66,12 @@ export const EvidenceRow: React.FC<EvidenceRowProps> = ({ evidence, className = 
           </h4>
           {getKindBadge(evidence.kind)}
         </div>
-        <p className="text-xs text-text-muted leading-relaxed font-normal">
+        <p className="text-xs text-text-secondary leading-relaxed font-normal">
           {evidence.detail}
         </p>
         {evidence.source && (
           <div className="pt-1">
-            <span className="inline-block text-[10px] text-text-muted font-medium bg-surface-2 px-2 py-0.5 rounded-md border border-border/80">
+            <span className="inline-block text-[10px] text-text-muted font-mono bg-surface px-2 py-0.5 rounded-[4px] border border-border">
               Source: {evidence.source}
             </span>
           </div>

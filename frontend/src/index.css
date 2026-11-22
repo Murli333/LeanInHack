@@ -3,55 +3,72 @@
 @tailwind utilities;
 
 @layer base {
-  :root[data-theme="dark"] {
-    --bg: #09090B;
-    --surface: #121215;
-    --surface-2: #18181B;
-    --surface-card: #121215;
-    --border: #27272A;
-    --border-subtle: rgba(255, 255, 255, 0.06);
-    --primary: #2563EB;
-    --primary-hover: #1D4ED8;
-    --on-primary: #FFFFFF;
-    --accent: #38BDF8;
-    --text: #F4F4F5;
-    --text-muted: #A1A1AA;
-    --danger: #EF4444;
-    --danger-tint: rgba(239, 68, 68, 0.12);
-    --warn: #F59E0B;
-    --warn-tint: rgba(245, 158, 11, 0.12);
-    --safe: #10B981;
-    --safe-tint: rgba(16, 185, 129, 0.12);
-    --unknown: #A1A1AA;
-    --unknown-tint: rgba(161, 161, 170, 0.12);
-    --glow-danger: none;
-    --glow-blue: none;
+  /* ==========================================================================
+     DESIGN TOKENS — DARK MODE (DEFAULT)
+     Palette: Layered near-black surfaces, single indigo accent, soft contrast.
+     ========================================================================== */
+  :root[data-theme="dark"], :root:not([data-theme="light"]) {
+    /* Layered near-black surfaces */
+    --bg: #0E0F12;
+    --surface: #15171B;
+    --surface-raised: #1C1F24;
+    
+    /* Hairline borders (6-8% opacity) */
+    --border: rgba(255, 255, 255, 0.07);
+    --border-subtle: rgba(255, 255, 255, 0.04);
+    
+    /* Single calm indigo accent */
+    --accent: #7C83FF;
+    --accent-hover: #6C73F0;
+    --on-accent: #FFFFFF;
+    
+    /* Soft typography contrast */
+    --text: #E6E8EB;
+    --text-secondary: #9AA0A8;
+    --text-muted: #5F656D;
+    
+    /* Desaturated supporting semantic colors for risk data */
+    --danger: #F87171;
+    --danger-tint: rgba(248, 113, 113, 0.08);
+    --warn: #FBBF24;
+    --warn-tint: rgba(251, 191, 36, 0.08);
+    --safe: #34D399;
+    --safe-tint: rgba(52, 211, 153, 0.08);
+    --unknown: #9AA0A8;
+    --unknown-tint: rgba(154, 160, 168, 0.08);
+
     color-scheme: dark;
   }
 
+  /* ==========================================================================
+     DESIGN TOKENS — LIGHT MODE
+     Palette: Clean paper surfaces, high-legibility indigo accent, soft neutrals.
+     ========================================================================== */
   :root[data-theme="light"] {
-    --bg: #FAFAFA;
+    --bg: #F8F9FA;
     --surface: #FFFFFF;
-    --surface-2: #F4F4F5;
-    --surface-card: #FFFFFF;
-    --border: #E4E4E7;
-    --border-subtle: rgba(0, 0, 0, 0.05);
-    --primary: #0F172A;
-    --primary-hover: #1E293B;
-    --on-primary: #FFFFFF;
-    --accent: #0284C7;
-    --text: #09090B;
-    --text-muted: #71717A;
-    --danger: #DC2626;
-    --danger-tint: #FEF2F2;
+    --surface-raised: #F1F3F5;
+    
+    --border: rgba(0, 0, 0, 0.08);
+    --border-subtle: rgba(0, 0, 0, 0.04);
+    
+    --accent: #5D64E6;
+    --accent-hover: #4F56E2;
+    --on-accent: #FFFFFF;
+    
+    --text: #1A1D20;
+    --text-secondary: #5F656D;
+    --text-muted: #8C939E;
+    
+    --danger: #EF4444;
+    --danger-tint: rgba(239, 68, 68, 0.08);
     --warn: #D97706;
-    --warn-tint: #FFFBEB;
+    --warn-tint: rgba(217, 119, 6, 0.08);
     --safe: #059669;
-    --safe-tint: #ECFDF5;
+    --safe-tint: rgba(5, 150, 105, 0.08);
     --unknown: #71717A;
-    --unknown-tint: #F4F4F5;
-    --glow-danger: none;
-    --glow-blue: none;
+    --unknown-tint: rgba(113, 113, 122, 0.08);
+
     color-scheme: light;
   }
 
@@ -64,20 +81,24 @@
     min-height: 100%;
     min-height: 100dvh;
     overflow-x: hidden;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.012em;
+    line-height: 1.6;
   }
 
-  /* Clean minimal solid canvas */
-  body {
-    background-image: none !important;
+  /* Accessible accent focus ring */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
-  /* Smooth 150ms theme transition on background, border, and text colors */
+  /* Smooth 150ms transitions */
   *, *::before, *::after {
-    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+    transition-property: background-color, border-color, color, opacity;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Disable transitions if user prefers reduced motion */
+  /* Respect reduced motion preference */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       transition: none !important;
@@ -85,42 +106,23 @@
       animation-iteration-count: 1 !important;
     }
   }
-
-  /* Accessible focus ring */
-  :focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
 }
 
-/* Custom scrollbar matching active theme */
+/* Subtle scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
+
 ::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
-}
-
-/* Mobile viewport utilities */
-.h-dvh {
-  height: 100vh;
-  height: 100dvh;
-}
-.min-h-dvh {
-  min-height: 100vh;
-  min-height: 100dvh;
-}
-.safe-bottom {
-  padding-bottom: max(1rem, env(safe-area-inset-bottom));
-}
-.safe-top {
-  padding-top: max(1rem, env(safe-area-inset-top));
 }

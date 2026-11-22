@@ -21,23 +21,23 @@ export const Chip: React.FC<ChipProps> = ({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-colors shrink-0 select-none min-h-[36px] border active:scale-[0.99] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border ${
+      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-button text-xs font-medium transition-colors shrink-0 select-none border ${
         selected
-          ? 'bg-primary text-white border-primary/40 shadow-none'
-          : 'bg-surface text-text-muted border-border/80 hover:text-text hover:bg-surface-2/60'
+          ? 'bg-accent text-white border-accent'
+          : 'bg-surface text-text-secondary border-border hover:text-text hover:bg-surface-raised'
       } ${className}`}
     >
       {icon && <span className="shrink-0">{icon}</span>}
       <span>{label}</span>
       {soon && (
         <span
-          className={`ml-1 px-1.5 py-0.2 rounded text-[10px] uppercase font-mono tracking-wider ${
+          className={`ml-1 px-1.5 py-0.5 rounded text-[10px] font-mono tracking-wider ${
             selected
               ? 'bg-white/20 text-white'
-              : 'bg-surface-2 text-text-muted'
+              : 'bg-surface-raised text-text-muted'
           }`}
         >
-          Soon
+          SOON
         </span>
       )}
     </button>

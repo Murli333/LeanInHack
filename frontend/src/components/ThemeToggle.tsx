@@ -11,15 +11,15 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '' }) => {
   const { themeChoice, resolvedTheme, setTheme } = useTheme();
 
   const options: { id: ThemeChoice; label: string; icon: React.ReactNode }[] = [
-    { id: 'system', label: 'System', icon: <Monitor className="w-4 h-4" /> },
-    { id: 'light', label: 'Light', icon: <Sun className="w-4 h-4" /> },
-    { id: 'dark', label: 'Dark', icon: <Moon className="w-4 h-4" /> },
+    { id: 'system', label: 'System', icon: <Monitor className="w-3.5 h-3.5" /> },
+    { id: 'light', label: 'Light', icon: <Sun className="w-3.5 h-3.5" /> },
+    { id: 'dark', label: 'Dark', icon: <Moon className="w-3.5 h-3.5" /> },
   ];
 
   return (
     <div className={`space-y-2 ${className}`}>
       <div
-        className="inline-flex p-0.5 rounded-lg bg-surface-2 border border-border/80"
+        className="inline-flex p-0.5 rounded-button bg-surface-raised border border-border"
         role="radiogroup"
         aria-label="Theme mode"
       >
@@ -32,9 +32,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '' }) => {
               role="radio"
               aria-checked={isSelected}
               onClick={() => setTheme(opt.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-button text-xs font-medium transition-colors ${
                 isSelected
-                  ? 'bg-surface text-text border border-border/80'
+                  ? 'bg-surface text-text border border-border'
                   : 'text-text-muted hover:text-text'
               }`}
             >
@@ -44,9 +44,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '' }) => {
           );
         })}
       </div>
-      <p className="text-xs text-text-muted">
-        Currently displaying {resolvedTheme === 'dark' ? 'Dark' : 'Light'} mode{' '}
-        {themeChoice === 'system' ? '(matching system preference)' : ''}.
+      <p className="text-2xs text-text-muted font-mono">
+        Active theme: {resolvedTheme === 'dark' ? 'Dark' : 'Light'}{' '}
+        {themeChoice === 'system' ? '(System synced)' : ''}
       </p>
     </div>
   );

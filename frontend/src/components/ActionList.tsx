@@ -28,13 +28,13 @@ export const ActionList: React.FC<ActionListProps> = ({ actions, className = '' 
     }
     if (lower.includes('call') || lower.includes('helpline') || lower.includes('1930')) {
       return (
-        <div className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/25 flex items-center justify-center shrink-0 text-primary">
+        <div className="w-7 h-7 rounded-[7px] bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0 text-accent">
           <PhoneCall className="w-3.5 h-3.5" />
         </div>
       );
     }
     return (
-      <div className="w-7 h-7 rounded-lg bg-safe/10 border border-safe/25 flex items-center justify-center shrink-0 text-safe">
+      <div className="w-7 h-7 rounded-[7px] bg-safe/10 border border-safe/20 flex items-center justify-center shrink-0 text-safe">
         <ShieldCheck className="w-3.5 h-3.5" />
       </div>
     );
@@ -42,28 +42,28 @@ export const ActionList: React.FC<ActionListProps> = ({ actions, className = '' 
 
   return (
     <div
-      className={`rounded-xl border border-border/80 bg-surface p-4 sm:p-5 space-y-4 ${className}`}
+      className={`rounded-card border border-border bg-surface p-5 space-y-4 ${className}`}
     >
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-text flex items-center gap-2">
+        <h3 className="text-sm font-medium text-text flex items-center gap-2">
           <span>Recommended actions</span>
         </h3>
-        <span className="text-[11px] font-mono text-text-muted uppercase tracking-wider">
+        <span className="text-xs font-mono text-text-muted uppercase tracking-wider">
           Safety protocol
         </span>
       </div>
 
       <div className="space-y-3">
         {actions.map((act, index) => (
-          <div key={index} className="flex items-start gap-3 text-xs sm:text-sm text-text">
+          <div key={index} className="flex items-start gap-3 text-xs sm:text-sm text-text-secondary">
             {getActionIcon(act)}
-            <span className="leading-snug pt-1">{act}</span>
+            <span className="leading-relaxed pt-0.5">{act}</span>
           </div>
         ))}
 
         {/* Region helpline item */}
-        <div className="flex items-start gap-3 text-xs sm:text-sm text-text pt-3 border-t border-border/60">
-          <div className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/25 flex items-center justify-center shrink-0 text-primary">
+        <div className="flex items-start gap-3 text-xs sm:text-sm text-text pt-3 border-t border-border">
+          <div className="w-7 h-7 rounded-[7px] bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0 text-accent">
             <PhoneCall className="w-3.5 h-3.5" />
           </div>
           <div className="space-y-2 flex-1">
@@ -80,7 +80,7 @@ export const ActionList: React.FC<ActionListProps> = ({ actions, className = '' 
               {region.helpline && (
                 <a
                   href={`tel:${region.helpline}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary text-white border border-primary/40 hover:bg-blue-600 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-xs font-medium bg-accent text-white hover:bg-accent-hover transition-colors"
                 >
                   <PhoneCall className="w-3.5 h-3.5" />
                   <span>Call {region.helpline}</span>
@@ -91,7 +91,7 @@ export const ActionList: React.FC<ActionListProps> = ({ actions, className = '' 
                   href={region.portalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 border border-border/80 text-text hover:bg-surface-2/80 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-xs font-medium bg-surface-raised border border-border text-text hover:bg-surface transition-colors"
                 >
                   <span>{region.portalName}</span>
                 </a>

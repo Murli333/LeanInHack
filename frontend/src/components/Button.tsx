@@ -19,23 +19,24 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 select-none cursor-pointer tracking-tight';
+    'inline-flex items-center justify-center font-medium rounded-[9px] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 active:scale-[0.99] disabled:opacity-40 disabled:pointer-events-none select-none cursor-pointer tracking-tight';
 
   const sizeStyles = {
-    sm: 'text-xs px-3 py-1.5 min-h-[34px] gap-1.5',
-    md: 'text-sm px-4 py-2 min-h-[40px] gap-2',
-    lg: 'text-sm sm:text-base px-5 py-2.5 min-h-[44px] gap-2.5 font-medium',
-    huge: 'text-base px-6 py-3.5 min-h-[50px] gap-3 font-medium',
+    sm: 'text-xs px-3 py-1.5 min-h-[32px] gap-1.5',
+    md: 'text-sm px-4 py-2 min-h-[38px] gap-2',
+    lg: 'text-sm sm:text-base px-5 py-2.5 min-h-[42px] gap-2.5',
+    huge: 'text-base px-6 py-3 min-h-[48px] gap-3',
   };
 
   const variantStyles = {
     primary:
-      'bg-primary hover:bg-blue-600 text-white border border-primary/30 shadow-sm active:bg-blue-700',
+      'bg-accent hover:bg-accent-hover text-white border border-accent/20 active:opacity-95 shadow-none',
     secondary:
-      'bg-surface hover:bg-surface-2 text-text border border-border/80 shadow-none',
-    ghost: 'bg-transparent text-text-muted hover:text-text hover:bg-surface-2 border border-transparent',
+      'bg-surface-raised hover:bg-surface text-text border border-border shadow-none',
+    ghost:
+      'bg-transparent text-text-secondary hover:text-text hover:bg-surface-raised border border-transparent',
     destructive:
-      'bg-danger text-white hover:bg-rose-600 border border-danger/30 shadow-sm',
+      'bg-danger/10 hover:bg-danger/15 text-danger border border-danger/25 shadow-none',
   };
 
   return (

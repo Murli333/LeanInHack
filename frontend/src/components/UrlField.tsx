@@ -45,10 +45,10 @@ export const UrlField: React.FC<UrlFieldProps> = ({ value, onChange, className =
   return (
     <div className={`space-y-2 ${className}`}>
       <div
-        className={`rounded-xl border bg-surface p-4 transition-colors ${
+        className={`rounded-card border bg-surface-raised p-4 transition-colors ${
           hasError
             ? 'border-danger focus-within:border-danger'
-            : 'border-border/80 focus-within:border-primary/50'
+            : 'border-border focus-within:border-accent/80'
         }`}
       >
         <div className="flex items-center gap-3">
@@ -66,18 +66,18 @@ export const UrlField: React.FC<UrlFieldProps> = ({ value, onChange, className =
               setTouched(true);
             }}
             placeholder="https://example.com/login"
-            className="w-full bg-transparent text-text placeholder:text-text-muted/40 text-sm focus:outline-none font-mono"
+            className="w-full bg-transparent text-text placeholder:text-text-muted text-sm focus:outline-none font-mono"
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck="false"
           />
         </div>
 
-        <div className="flex items-center justify-between pt-3 mt-3 border-t border-border/50">
+        <div className="flex items-center justify-between pt-3 mt-3 border-t border-border">
           <button
             type="button"
             onClick={handlePaste}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-surface-2 text-text border border-border/70 hover:bg-surface-2/80 transition-colors"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-button text-xs font-medium bg-surface text-text-secondary border border-border hover:text-text hover:bg-surface-raised transition-colors"
           >
             <Clipboard className="w-3.5 h-3.5 text-text-muted" />
             <span>Paste Link</span>
@@ -97,13 +97,13 @@ export const UrlField: React.FC<UrlFieldProps> = ({ value, onChange, className =
       </div>
 
       {hasError ? (
-        <p className="text-xs text-danger flex items-center gap-1 px-1">
+        <p className="text-xs text-danger flex items-center gap-1.5 px-1">
           <AlertCircle className="w-3.5 h-3.5 shrink-0" />
           <span>Please enter a complete URL starting with http:// or https://</span>
         </p>
       ) : (
         <p className="text-xs text-text-muted px-1">
-          Paste the full link. We will not open it or connect to it from your browser.
+          Paste the full link. We will inspect its structure without connecting or opening it.
         </p>
       )}
     </div>

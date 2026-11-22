@@ -20,54 +20,54 @@ export const RiskMeter: React.FC<RiskMeterProps> = ({
   const isHighActive = level === 'high';
 
   return (
-    <div className={`space-y-2 ${className}`}>
+    <div className={`space-y-2.5 ${className}`}>
       {/* 3-segment qualitative bar */}
       <div
-        className="grid grid-cols-3 gap-1.5 h-2 w-full"
+        className="grid grid-cols-3 gap-2 h-[3px] w-full"
         role="meter"
         aria-label="Qualitative risk level meter"
         aria-valuetext={level}
       >
         {/* Segment 1: Low */}
         <div
-          className={`h-full rounded-full transition-colors duration-200 ${
+          className={`h-full rounded-full transition-colors duration-150 ${
             level === 'unknown'
-              ? 'bg-border/40'
+              ? 'bg-border'
               : isLowActive
               ? level === 'low'
-                ? 'bg-emerald-500'
-                : 'bg-emerald-500/40'
-              : 'bg-border/40'
+                ? 'bg-safe'
+                : 'bg-safe/40'
+              : 'bg-border'
           }`}
         />
 
         {/* Segment 2: Medium */}
         <div
-          className={`h-full rounded-full transition-colors duration-200 ${
+          className={`h-full rounded-full transition-colors duration-150 ${
             level === 'unknown'
-              ? 'bg-border/40'
+              ? 'bg-border'
               : isMediumActive
               ? level === 'medium'
-                ? 'bg-amber-500'
-                : 'bg-amber-500/40'
-              : 'bg-border/40'
+                ? 'bg-warn'
+                : 'bg-warn/40'
+              : 'bg-border'
           }`}
         />
 
         {/* Segment 3: High */}
         <div
-          className={`h-full rounded-full transition-colors duration-200 ${
+          className={`h-full rounded-full transition-colors duration-150 ${
             level === 'unknown'
-              ? 'bg-border/40'
+              ? 'bg-border'
               : isHighActive
-              ? 'bg-rose-500'
-              : 'bg-border/40'
+              ? 'bg-danger'
+              : 'bg-border'
           }`}
         />
       </div>
 
       {/* Segment labels + Optional validated numeric score */}
-      <div className="flex items-center justify-between text-[11px] text-text-muted font-medium">
+      <div className="flex items-center justify-between text-xs text-text-muted font-mono uppercase tracking-wider">
         <span className={level === 'low' ? 'text-safe font-medium' : ''}>Low</span>
         <span className={level === 'medium' ? 'text-warn font-medium' : ''}>Medium</span>
         <span className={level === 'high' ? 'text-danger font-medium' : ''}>High</span>
@@ -75,8 +75,8 @@ export const RiskMeter: React.FC<RiskMeterProps> = ({
 
       {/* HONESTY RULE 2: Show numeric score ONLY if scoreValidated is true */}
       {scoreValidated && typeof score === 'number' && level !== 'unknown' && (
-        <div className="text-center pt-1">
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-surface-2 border border-border/80 text-text-muted">
+        <div className="text-center pt-0.5">
+          <span className="text-xs font-mono px-2.5 py-0.5 rounded-[6px] bg-surface-raised border border-border text-text-secondary">
             Calibrated Index: {score} / 100
           </span>
         </div>

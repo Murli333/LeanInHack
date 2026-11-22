@@ -3,7 +3,7 @@ import { TopBar } from './TopBar';
 import { BottomTabBar } from './BottomTabBar';
 import { SideNav } from './SideNav';
 import { HelplineCard } from './HelplineCard';
-import { X, ShieldCheck, HelpCircle } from 'lucide-react';
+import { X, ShieldCheck } from 'lucide-react';
 import { Button } from './Button';
 
 export interface AppShellProps {
@@ -38,35 +38,35 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       {/* Accessible Help Sheet / Modal */}
       {helpOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 animate-fade-in"
           role="dialog"
           aria-modal="true"
           aria-labelledby="help-title"
         >
-          <div className="w-full max-w-lg rounded-xl bg-surface border border-border/80 p-5 shadow-2xl space-y-4 animate-scale-up max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-border/60">
+          <div className="w-full max-w-lg rounded-card-lg bg-surface border border-border p-5 shadow-menu space-y-4 animate-scale-up max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center">
-                  <ShieldCheck className="w-4 h-4" />
+                <div className="w-6 h-6 rounded-button bg-accent text-white flex items-center justify-center">
+                  <ShieldCheck className="w-3.5 h-3.5" />
                 </div>
-                <h3 id="help-title" className="text-sm font-semibold text-text">
+                <h3 id="help-title" className="text-sm font-medium text-text">
                   Help &amp; Safety Guide
                 </h3>
               </div>
               <button
                 onClick={() => setHelpOpen(false)}
-                className="p-1 text-text-muted hover:text-text rounded-md transition-colors"
+                className="p-1 text-text-muted hover:text-text rounded-button transition-colors"
                 aria-label="Close help"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-3.5 text-xs text-text-muted">
+            <div className="space-y-3.5 text-xs text-text-secondary">
               <div>
                 <h4 className="font-medium text-text mb-1">How ScamLens works</h4>
                 <p className="leading-relaxed">
-                  ScamLens inspects messages and links using pattern-matching rules, threat intelligence databases (such as OpenPhish), and calibrated risk models.
+                  ScamLens inspects messages and links using pattern-matching rules, threat intelligence indicators, and calibrated risk models.
                 </p>
               </div>
 

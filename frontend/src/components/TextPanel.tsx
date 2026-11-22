@@ -26,7 +26,6 @@ export const TextPanel: React.FC<TextPanelProps> = ({
         }
       }
     } catch {
-      // If clipboard access is blocked, focus textarea so user can Ctrl+V
       if (textareaRef.current) {
         textareaRef.current.focus();
       }
@@ -42,34 +41,34 @@ export const TextPanel: React.FC<TextPanelProps> = ({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      {/* Clean surface card container */}
-      <div className="relative rounded-xl border border-border/80 bg-surface focus-within:border-primary/50 transition-colors p-4 flex flex-col min-h-[220px]">
+      {/* Filled input container with hairline border */}
+      <div className="relative rounded-card border border-border bg-surface-raised focus-within:border-accent/80 transition-colors p-4 flex flex-col min-h-[220px]">
         <label htmlFor="text-scan-input" className="sr-only">
-          Paste the suspicious message here
+          Paste the message here
         </label>
         <textarea
           id="text-scan-input"
           ref={textareaRef}
           value={value}
           onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
-          placeholder="Paste suspicious text or message..."
-          className="w-full flex-1 bg-transparent text-text placeholder:text-text-muted/40 text-sm resize-none focus:outline-none min-h-[140px] leading-relaxed font-sans"
+          placeholder="Paste suspicious SMS, WhatsApp message, email, or text to verify..."
+          className="w-full flex-1 bg-transparent text-text placeholder:text-text-muted text-sm resize-none focus:outline-none min-h-[140px] leading-relaxed font-sans"
           maxLength={maxLength}
         />
 
         {/* Bottom card actions */}
-        <div className="flex items-center justify-between pt-3 border-t border-border/50">
+        <div className="flex items-center justify-between pt-3 border-t border-border">
           <button
             type="button"
             onClick={handlePaste}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-surface-2 text-text border border-border/70 hover:bg-surface-2/80 transition-colors"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-button text-xs font-medium bg-surface text-text-secondary border border-border hover:text-text hover:bg-surface-raised transition-colors"
           >
             <Clipboard className="w-3.5 h-3.5" />
             <span>Paste</span>
           </button>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs text-text-muted font-mono">
+            <span className="text-xs text-text-muted font-mono tabular-nums">
               {value.length.toLocaleString()} / {maxLength.toLocaleString()}
             </span>
 
@@ -87,10 +86,10 @@ export const TextPanel: React.FC<TextPanelProps> = ({
         </div>
       </div>
 
-      {/* Helper line below card */}
+      {/* Security note */}
       <div className="flex items-center gap-1.5 text-xs text-text-muted px-1">
-        <Lock className="w-3.5 h-3.5 text-accent shrink-0" />
-        <span>Private &amp; secure on-device analysis. Do not share passwords or PINs.</span>
+        <Lock className="w-3.5 h-3.5 text-text-muted shrink-0" />
+        <span>Private verification. Passwords and personal PINs are never requested or stored.</span>
       </div>
     </div>
   );

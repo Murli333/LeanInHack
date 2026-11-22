@@ -5,7 +5,7 @@ import { ProgressStepper } from '../components/ProgressStepper';
 import { ErrorState } from '../components/ErrorState';
 import { Skeleton } from '../components/Skeleton';
 import { Button } from '../components/Button';
-import { AlertCircle, RotateCcw, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, RotateCcw, ArrowRight } from 'lucide-react';
 
 export const ProgressPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,10 +20,10 @@ export const ProgressPage: React.FC = () => {
   useEffect(() => {
     if (!id || isComplete || status === 'failed') return;
 
-    // Actively poll every 400ms while running
+    // Actively poll every 350ms while running
     const pollTimer = setInterval(() => {
       refetch();
-    }, 400);
+    }, 350);
 
     return () => clearInterval(pollTimer);
   }, [id, isComplete, status, refetch]);
@@ -32,10 +32,10 @@ export const ProgressPage: React.FC = () => {
   useEffect(() => {
     if (!scan || !isComplete) return;
 
-    // Redirect after brief visual confirmation (500ms)
+    // Redirect after brief visual confirmation (400ms)
     const timer = setTimeout(() => {
       navigate(`/report/${scan.id}`, { replace: true });
-    }, 500);
+    }, 400);
 
     return () => clearTimeout(timer);
   }, [isComplete, scan?.id, navigate]);
@@ -44,13 +44,13 @@ export const ProgressPage: React.FC = () => {
   if (status === 'failed') {
     return (
       <div className="py-8 max-w-md mx-auto space-y-5">
-        <div className="p-6 rounded-card-lg bg-surface border border-danger/40 text-center space-y-4 shadow-card-soft">
-          <div className="w-14 h-14 rounded-full bg-danger-tint text-danger flex items-center justify-center mx-auto">
-            <AlertCircle className="w-8 h-8" />
+        <div className="p-6 rounded-card bg-surface border border-danger/30 text-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-danger/10 text-danger flex items-center justify-center mx-auto">
+            <AlertCircle className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-xl font-bold text-text">Scan Processing Failed</h2>
-            <p className="text-sm text-text-muted leading-relaxed">
+            <h2 className="text-lg font-medium text-text">Scan Processing Interrupted</h2>
+            <p className="text-xs text-text-secondary leading-relaxed">
               {scan?.error || 'An unexpected error occurred during threat verification. Please check the content and try again.'}
             </p>
           </div>
@@ -62,7 +62,7 @@ export const ProgressPage: React.FC = () => {
               icon={<RotateCcw className="w-4 h-4" />}
               onClick={() => navigate('/scan')}
             >
-              Start a new scan
+              Start new verification
             </Button>
           </div>
         </div>
@@ -107,26 +107,26 @@ export const ProgressPage: React.FC = () => {
       {/* Header */}
       <div className="space-y-1 text-left">
         <div className="inline-flex items-center gap-2 text-xs font-medium text-text-muted mb-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          <span>Threat Verification</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+          <span className="font-mono text-2xs uppercase tracking-wider text-accent">Analysis Pipeline</span>
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight text-text">
+        <h1 className="text-2xl font-medium tracking-tight text-text">
           {isComplete ? 'Verification complete' : 'Evaluating submission'}
         </h1>
-        <p className="text-xs sm:text-sm text-text-muted">
+        <p className="text-xs sm:text-sm text-text-secondary">
           {isComplete ? 'All checks completed. Preparing report...' : 'Verifying content across reputation and pattern models.'}
         </p>
       </div>
 
       {/* Stepper Card */}
-      <div className="p-5 sm:p-6 rounded-xl bg-surface border border-border/80 space-y-5">
+      <div className="p-5 sm:p-6 rounded-card bg-surface border border-border space-y-5">
         {isLoading && !scan ? (
-          <div className="space-y-6">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-full" />
           </div>
         ) : (
           <ProgressStepper steps={steps} />
@@ -134,15 +134,15 @@ export const ProgressPage: React.FC = () => {
 
         {/* Immediate navigation action when scan is completed */}
         {isComplete && scan && (
-          <div className="pt-2 animate-in fade-in duration-300">
+          <div className="pt-2 animate-fade-in">
             <Button
               variant="primary"
-              size="lg"
+              size="md"
               fullWidth
-              icon={<ArrowRight className="w-5 h-5" />}
+              icon={<ArrowRight className="w-4 h-4" />}
               onClick={() => navigate(`/report/${scan.id}`, { replace: true })}
             >
-              View Full Report
+              View Report
             </Button>
           </div>
         )}

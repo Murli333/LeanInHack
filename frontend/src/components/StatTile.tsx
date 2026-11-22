@@ -12,15 +12,15 @@ export const StatTile: React.FC<StatTileProps> = ({ value, label, className = ''
 
   return (
     <div
-      className={`rounded-xl border border-border/80 bg-surface p-4 sm:p-5 transition-colors hover:border-border text-left ${className}`}
+      className={`rounded-card border border-border bg-surface p-4 sm:p-5 transition-colors hover:bg-surface-raised text-left ${className}`}
     >
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-text-muted capitalize">
+        <span className="text-xs font-mono text-text-muted capitalize">
           {label}
         </span>
         <div
-          className={`w-6 h-6 rounded-md flex items-center justify-center ${
-            isDanger ? 'bg-danger/10 text-danger' : 'bg-primary/10 text-primary'
+          className={`w-6 h-6 rounded-[6px] flex items-center justify-center ${
+            isDanger ? 'bg-danger/10 text-danger border border-danger/20' : 'bg-surface-raised text-accent border border-border'
           }`}
         >
           {isDanger ? (
@@ -31,7 +31,7 @@ export const StatTile: React.FC<StatTileProps> = ({ value, label, className = ''
         </div>
       </div>
 
-      <div className="text-2xl sm:text-3xl font-semibold text-text tracking-tight">
+      <div className="text-2xl sm:text-3xl font-medium font-mono text-text tracking-tight">
         {value.toLocaleString()}
       </div>
     </div>
