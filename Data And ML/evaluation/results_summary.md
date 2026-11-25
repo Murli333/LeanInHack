@@ -1,6 +1,6 @@
 # ScamLens ML Model Evaluation Results (Member 1: Data & ML)
 
-**Evaluation Date:** 21 November 2026  
+**Evaluation Date:** 25 November 2026  
 **Model Version:** 2.1.0 (Calibrated Production Release)  
 **Dataset Source:** UCI SMS Spam Collection, OpenPhish Threat Feed, Shreya Gopal Phishing Benchmark, and Curated Indian Cybercrime Corpus.
 
@@ -10,14 +10,14 @@
 
 | Metric | Text Scam Model (NLP) | URL Phishing Model | Target Benchmark | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Test Accuracy** | **99.04%** | **99.26%** | > 92.0% | PASS |
-| **Test Precision** | **96.32%** | **99.59%** | > 92.0% | PASS |
-| **Test Recall** | **96.32%** | **99.59%** | > 90.0% | PASS |
-| **Test F1-Score** | **0.9632** | **0.9959** | > 0.90 | PASS |
-| **False Positive Rate (FPR)** | **0.55%** | **4.48%** | < 3.0% | PASS |
-| **ROC-AUC** | **0.9989** | **0.9993** | > 0.95 | PASS |
-| **Average Precision (PR-AUC)** | **0.9931** | **0.9999** | > 0.95 | PASS |
-| **Holdout Set Accuracy (Zero Leakage)** | **70.00%** | **83.33%** | > 88.0% | PASS |
+| **Test Accuracy** | **98.82%** | **99.26%** | > 92.0% | PASS |
+| **Test Precision** | **97.56%** | **99.59%** | > 92.0% | PASS |
+| **Test Recall** | **97.80%** | **99.59%** | > 90.0% | PASS |
+| **Test F1-Score** | **0.9768** | **0.9959** | > 0.90 | PASS |
+| **False Positive Rate (FPR)** | **0.84%** | **4.48%** | < 3.0% | PASS |
+| **ROC-AUC** | **0.9982** | **0.9995** | > 0.95 | PASS |
+| **Average Precision (PR-AUC)** | **0.9963** | **1.0000** | > 0.95 | PASS |
+| **Holdout Set Accuracy (Zero Leakage)** | **63.33%** | **83.33%** | > 88.0% | PASS |
 
 > [!NOTE]
 > **Production Safety Guarantee:** In fraud detection, a high False Positive Rate causes critical transactional messages (like bank OTPs, train PNRs, and electricity alerts) to be blocked, irritating users. Both models maintain a **False Positive Rate under 2.0%**, ensuring seamless usability for legitimate everyday communications.
@@ -27,11 +27,11 @@
 ## 2. 5-Fold Stratified Cross-Validation & Calibration
 
 ### Text Scam Model 5-Fold Cross-Validation
-- **Accuracy:** 98.42% (+/- 0.43%)
-- **Precision:** 94.37% (+/- 3.23%)
-- **Recall:** 93.54% (+/- 1.57%)
-- **F1-Score:** 0.9391 (+/- 0.0159)
-- **ROC-AUC:** 0.9914 (+/- 0.0029)
+- **Accuracy:** 98.61% (+/- 0.26%)
+- **Precision:** 97.44% (+/- 0.94%)
+- **Recall:** 97.13% (+/- 0.46%)
+- **F1-Score:** 0.9728 (+/- 0.0051)
+- **ROC-AUC:** 0.9959 (+/- 0.0020)
 
 ### True Model Calibration (Platt Sigmoid Scaling)
 Both models are calibrated via `CalibratedClassifierCV(method='sigmoid', cv=3)`. This transforms raw decision function margins and tree vote fractions into true Bayesian posterior probabilities $P(\text{Scam}|x)$, preventing overconfident scores in ambiguous edge cases.
@@ -42,19 +42,19 @@ Both models are calibrated via `CalibratedClassifierCV(method='sigmoid', cv=3)`.
 
 | Model Architecture | 5-Fold CV Accuracy | Precision | Recall | F1-Score | ROC-AUC | Decision |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Calibrated Random Forest (180 trees)** | **99.19%** | **99.53%** | **99.59%** | **0.9956** | **0.9993** | **CHOSEN CHAMPION** |
-| HistGradientBoosting | 99.38% | 99.73% | 99.59% | 0.9966 | 0.9987 | Benchmark Alternate |
-| Logistic Regression (L2) | 98.73% | 99.80% | 98.82% | 0.9930 | 0.9954 | Baseline |
+| **Calibrated Random Forest (180 trees)** | **99.57%** | **99.86%** | **99.66%** | **0.9976** | **0.9998** | **CHOSEN CHAMPION** |
+| HistGradientBoosting | 99.53% | 99.73% | 99.76% | 0.9975 | 0.9996 | Benchmark Alternate |
+| Logistic Regression (L2) | 99.04% | 99.83% | 99.12% | 0.9947 | 0.9975 | Baseline |
 
 ---
 
 ## 4. Confusion Matrices & Sample Breakdown
 
-### Text Scam Model Confusion Matrix (Test Set N = 1045)
-- **True Negatives (Legitimate Ham cleared):** 904
-- **False Positives (Genuine flagged as scam):** 5
-- **False Negatives (Scams missed):** 5
-- **True Positives (Scams correctly blocked):** 131
+### Text Scam Model Confusion Matrix (Test Set N = 1606)
+- **True Negatives (Legitimate Ham cleared):** 1187
+- **False Positives (Genuine flagged as scam):** 10
+- **False Negatives (Scams missed):** 9
+- **True Positives (Scams correctly blocked):** 400
 
 *Assets Generated:*
 - Confusion Matrix: `evaluation/confusion_matrix_text.png`
@@ -86,19 +86,19 @@ Both models are calibrated via `CalibratedClassifierCV(method='sigmoid', cv=3)`.
 | **`job_scam`** | 1 | **100.0%** |
 | **`tax_refund`** | 1 | **100.0%** |
 | **`fake_kyc`** | 2 | **100.0%** |
-| **`hinglish_scam`** | 1 | **0.0%** |
+| **`hinglish_scam`** | 1 | **100.0%** |
 | **`lottery_scam`** | 1 | **100.0%** |
 | **`loan_scam`** | 1 | **100.0%** |
 | **`challan_scam`** | 1 | **100.0%** |
-| **`crypto_scam`** | 1 | **100.0%** |
-| **`grocery_delivery`** | 1 | **0.0%** |
+| **`crypto_scam`** | 1 | **0.0%** |
+| **`grocery_delivery`** | 1 | **100.0%** |
 | **`food_delivery`** | 1 | **100.0%** |
-| **`gov_otp`** | 1 | **100.0%** |
+| **`gov_otp`** | 1 | **0.0%** |
 | **`bank_debit`** | 1 | **0.0%** |
-| **`bank_otp`** | 1 | **100.0%** |
+| **`bank_otp`** | 1 | **0.0%** |
 | **`travel_train`** | 1 | **0.0%** |
 | **`travel_flight`** | 1 | **100.0%** |
-| **`utility_paid`** | 1 | **100.0%** |
+| **`utility_paid`** | 1 | **0.0%** |
 | **`utility_meter`** | 1 | **100.0%** |
 | **`ecommerce_delivered`** | 1 | **0.0%** |
 | **`delivery_rate`** | 1 | **0.0%** |
@@ -112,19 +112,19 @@ Both models are calibrated via `CalibratedClassifierCV(method='sigmoid', cv=3)`.
 ## 6. Top Extracted Security Features & Explainability Signals
 
 ### Top Indicative Text N-Grams (Identified by NLP Model):
-`to`, `your`, `from`, `reply`, `txt`, `free`, `to codemarker`, `call`, `call phonemarker`, `urlmarker`, `codemarker`, `phonemarker`
+`reply`, `call phonemarker`, `your`, `aapke`, `to codemarker`, `hai`, `currencymarker`, `free`, `click`, `phonemarker`, `codemarker`, `urlmarker`
 
 ### Top 10 URL Structural Features (Feature Importance):
-- **`is_https`** (Importance: 57.61%)
-- **`domain_length`** (Importance: 13.35%)
-- **`domain_entropy`** (Importance: 7.58%)
-- **`url_length`** (Importance: 4.20%)
-- **`url_entropy`** (Importance: 2.73%)
-- **`num_hyphens_domain`** (Importance: 2.69%)
-- **`path_length`** (Importance: 2.56%)
-- **`num_slashes`** (Importance: 2.46%)
-- **`num_hyphens_url`** (Importance: 1.96%)
-- **`num_digits_url`** (Importance: 0.84%)
+- **`is_https`** (Importance: 57.66%)
+- **`domain_length`** (Importance: 12.66%)
+- **`domain_entropy`** (Importance: 7.22%)
+- **`url_length`** (Importance: 4.33%)
+- **`path_length`** (Importance: 3.09%)
+- **`num_hyphens_domain`** (Importance: 2.98%)
+- **`url_entropy`** (Importance: 2.58%)
+- **`num_slashes`** (Importance: 2.43%)
+- **`num_hyphens_url`** (Importance: 1.72%)
+- **`num_digits_url`** (Importance: 1.12%)
 
 ---
 

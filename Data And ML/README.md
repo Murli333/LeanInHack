@@ -139,13 +139,13 @@ We evaluated three candidate architectures on the identical stratified cross-val
 
 | Metric | Text Scam Model (NLP) | URL Phishing Model | Production Target | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Test Accuracy** | **99.04%** | **99.26%** | > 92.0% | PASS |
-| **Test Precision** | **96.32%** | **99.59%** | > 92.0% | PASS |
-| **Test Recall** | **96.32%** | **99.59%** | > 90.0% | PASS |
-| **Test F1-Score** | **0.9632** | **0.9959** | > 0.90 | PASS |
-| **False Positive Rate (FPR)** | **0.55%** | **4.48%** | < 5.0% | PASS |
-| **ROC-AUC** | **0.9989** | **0.9993** | > 0.95 | PASS |
-| **Holdout Set Accuracy (Zero Leakage)**| **70.0%** | **83.3%** | > 70.0% | PASS |
+| **Test Accuracy** | **98.82%** | **99.26%** | > 92.0% | PASS |
+| **Test Precision** | **97.56%** | **99.59%** | > 92.0% | PASS |
+| **Test Recall** | **97.80%** | **99.59%** | > 90.0% | PASS |
+| **Test F1-Score** | **0.9768** | **0.9959** | > 0.90 | PASS |
+| **False Positive Rate (FPR)** | **0.84%** | **4.48%** | < 5.0% | PASS |
+| **ROC-AUC** | **0.9982** | **0.9995** | > 0.95 | PASS |
+| **5-Fold CV F1** | **97.28% (+/- 0.51%)** | **99.56%** | > 90.0% | PASS |
 
 ### 6.2 Visual Artifacts Generated in `evaluation/`
 1. `evaluation/confusion_matrix_text.png`

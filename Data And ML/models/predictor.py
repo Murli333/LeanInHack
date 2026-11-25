@@ -42,7 +42,9 @@ BENIGN_TRANSACTION_PATTERNS = [
     re.compile(r'\bdo not (?:disclose|share) (?:to anyone|with anyone)\b', re.IGNORECASE),
     re.compile(r'\bdelivered\. thank you for shopping\b', re.IGNORECASE),
     re.compile(r'\bacct?\s*(?:ending|xx|\.\.\.)\s*\d+\b', re.IGNORECASE),
-    re.compile(r'\bbill\s*(?:of|amount)\s*(?:rs|inr|₹)\s*\d+.*due\s*(?:on|date)\b', re.IGNORECASE)
+    re.compile(r'\bbill\b.*?(?:rs|inr|₹)\s*\d+.*?\bdue\s*(?:on|date|by)\b', re.IGNORECASE),
+    re.compile(r'\b(?:unique identification authority of india|uidai)\b', re.IGNORECASE),
+    re.compile(r'\botp\b.*?\bvalid for \d+ (?:mins?|minutes?)\b', re.IGNORECASE)
 ]
 
 # High-threat Indian fraud patterns

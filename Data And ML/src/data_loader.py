@@ -425,7 +425,59 @@ def load_sms_dataset(data_dir: str = "data") -> pd.DataFrame:
                 })
         print(f"[+] Loaded {len(records)} messages from UCI dataset.")
 
-    # 2. Augment with Indian scam cases (single copies; balanced class weighting used in model training)
+    # 2. Ingest India Cyber Scam Hinglish Dataset (10,000 samples: 5,000 scam, 5,000 ham)
+    india_cyber_path = os.path.join(raw_dir, "india_cyber_scam_hinglish.csv")
+    if os.path.exists(india_cyber_path):
+        try:
+            df_cyber = pd.read_csv(india_cyber_path)
+            cyber_count = 0
+            for _, row in df_cyber.iterrows():
+                txt = str(row.get("text", "")).strip()
+                if not txt:
+                    continue
+                label_val = row.get("label", 0)
+                is_scam = 1 if int(label_val) == 1 else 0
+                lbl = "spam" if is_scam == 1 else "ham"
+                cat = str(row.get("scam_category", "cyber_scam" if is_scam else "conversation_hinglish"))
+                records.append({
+                    "label": lbl,
+                    "text": txt,
+                    "is_scam": is_scam,
+                    "source": "india_cyber_scam_hinglish",
+                    "category": cat
+                })
+                cyber_count += 1
+            print(f"[+] Loaded {cyber_count} records from India Cyber Scam Hinglish dataset.")
+        except Exception as e:
+            print(f"[!] Warning loading india_cyber_scam_hinglish.csv: {e}")
+
+    # 3. Ingest India Telecom SMS dataset (2,267 samples: 745 spam, 1,522 ham)
+    india_telecom_path = os.path.join(raw_dir, "india_telecom_sms.csv")
+    if os.path.exists(india_telecom_path):
+        try:
+            df_telecom = pd.read_csv(india_telecom_path)
+            telecom_count = 0
+            for _, row in df_telecom.iterrows():
+                txt = str(row.get("Msg", "")).strip()
+                if not txt:
+                    continue
+                lbl_raw = str(row.get("Label", "ham")).strip().lower()
+                is_scam = 1 if lbl_raw == "spam" else 0
+                lbl = "spam" if is_scam == 1 else "ham"
+                cat = "telecom_promo" if is_scam else "telecom_transactional"
+                records.append({
+                    "label": lbl,
+                    "text": txt,
+                    "is_scam": is_scam,
+                    "source": "india_telecom_sms",
+                    "category": cat
+                })
+                telecom_count += 1
+            print(f"[+] Loaded {telecom_count} records from India Telecom SMS dataset.")
+        except Exception as e:
+            print(f"[!] Warning loading india_telecom_sms.csv: {e}")
+
+    # 4. Augment with Indian scam cases (curated high-impact FIR patterns)
     for lbl, msg, category in INDIAN_SCAM_SAMPLES:
         records.append({
             "label": lbl,
@@ -435,7 +487,7 @@ def load_sms_dataset(data_dir: str = "data") -> pd.DataFrame:
             "category": category
         })
 
-    # 3. Augment with legitimate Indian transactional & informational messages
+    # 5. Augment with legitimate Indian transactional & informational messages
     for lbl, msg, category in INDIAN_HAM_SAMPLES:
         records.append({
             "label": lbl,
@@ -444,6 +496,13 @@ def load_sms_dataset(data_dir: str = "data") -> pd.DataFrame:
             "source": "indian_ham_curated",
             "category": category
         })
+
+    # Filter out any holdout texts to guarantee zero train/test leakage
+    holdout_texts = set(
+        [msg.lower().strip() for _, msg, _ in HOLDOUT_SCAM_MESSAGES] +
+        [msg.lower().strip() for _, msg, _ in HOLDOUT_HAM_MESSAGES]
+    )
+    records = [r for r in records if r["text"].lower().strip() not in holdout_texts]
 
     # Remove exact duplicate texts
     df = pd.DataFrame(records).drop_duplicates(subset=["text"]).reset_index(drop=True)

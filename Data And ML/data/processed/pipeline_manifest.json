@@ -1,14 +1,16 @@
 {
     "dataset_version": "2.1.0",
-    "generated_timestamp": "2026-11-21T18:02:23.062786+00:00",
+    "generated_timestamp": "2026-11-25T10:40:31.462350+00:00",
     "random_seed": 42,
     "text_dataset": {
-        "total_records": 5225,
-        "scam_records": 678,
-        "ham_records": 4547,
-        "scam_ratio": 0.1298,
+        "total_records": 8030,
+        "scam_records": 2047,
+        "ham_records": 5983,
+        "scam_ratio": 0.2549,
         "sources_breakdown": {
             "uci_sms": 5160,
+            "india_telecom_sms": 2062,
+            "india_cyber_scam_hinglish": 743,
             "indian_scam_curated": 36,
             "indian_ham_curated": 29
         }

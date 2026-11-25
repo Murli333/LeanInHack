@@ -14,7 +14,21 @@ This document tracks all external feeds, benchmark repositories, and hand-curate
 - **Format:** Tab-separated text (`label \t text`), 5,574 messages (4,827 ham, 747 spam).
 - **Usage:** Serves as the international baseline for standard SMS vocabulary, legitimate short conversational text, and generic commercial spam.
 
-### B. OpenPhish Live Phishing Threat Feed
+### B. India Cyber Scam Hinglish Dataset (HuggingFace)
+- **Source:** [HuggingFace - DatasetNewUser / ysangam: Indian_Cyber_Scam_PhoneCall_Hinglish_Dataset](https://huggingface.co/datasets/DatasetNewUser/Indian_Cyber_Scam_PhoneCall_Hinglish_Dataset)
+- **Version:** 1.0 (November 2026)
+- **License:** Open Access / Research Apache-2.0
+- **Format:** CSV, 10,000 records (5,000 scam, 5,000 ham).
+- **Usage:** Transcripts and message communications covering localized Indian fraud vectors: Digital Arrest, Police Blackmail/Remand, Bank KYC freezes, Aadhaar deactivation, Amazon/FedEx parcel customs hold, and KBC lottery scams across Hindi, English, and Hinglish.
+
+### C. India Telecom Spam & Transactional SMS Dataset (junioralive / GitHub)
+- **Source:** [junioralive/india-spam-sms-classification](https://github.com/junioralive/india-spam-sms-classification) (`dataset/spam_ham_india.csv`)
+- **Version:** 1.0 (November 2026)
+- **License:** Open Source
+- **Format:** CSV, 2,267 records (745 spam, 1,522 ham).
+- **Usage:** Authentic real-world Indian telecom sector SMS messages, carrier promotional spam (Airtel, Vi, Jio), CERT-In security advisories, and transactional non-spam communications.
+
+### D. OpenPhish Live Phishing Threat Feed
 - **Source:** [OpenPhish Community Feed](https://openphish.com/feed.txt)
 - **Version:** Dynamic Live Feed Snapshot (November 2026 snapshot archived in `data/raw/openphish_snapshot.txt`)
 - **License:** OpenPhish Free Community Agreement (for security defense and academic research)

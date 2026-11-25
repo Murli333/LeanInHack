@@ -1,43 +1,43 @@
 {
-    "evaluation_timestamp": "2026-11-21T18:02:45.215850+00:00",
+    "evaluation_timestamp": "2026-11-25T10:40:45.673752+00:00",
     "text_model": {
         "test_metrics": {
-            "accuracy": 0.9904,
-            "precision": 0.9632,
-            "recall": 0.9632,
-            "f1_score": 0.9632,
-            "false_positive_rate": 0.0055,
-            "false_negative_rate": 0.0368,
-            "roc_auc": 0.9989,
-            "average_precision": 0.9931,
-            "true_negatives": 904,
-            "false_positives": 5,
-            "false_negatives": 5,
-            "true_positives": 131,
+            "accuracy": 0.9882,
+            "precision": 0.9756,
+            "recall": 0.978,
+            "f1_score": 0.9768,
+            "false_positive_rate": 0.0084,
+            "false_negative_rate": 0.022,
+            "roc_auc": 0.9982,
+            "average_precision": 0.9963,
+            "true_negatives": 1187,
+            "false_positives": 10,
+            "false_negatives": 9,
+            "true_positives": 400,
             "cross_validation_5fold": {
-                "accuracy_mean": 0.9842,
-                "accuracy_std": 0.0043,
-                "precision_mean": 0.9437,
-                "precision_std": 0.0323,
-                "recall_mean": 0.9354,
-                "recall_std": 0.0157,
-                "f1_mean": 0.9391,
-                "f1_std": 0.0159,
-                "roc_auc_mean": 0.9914,
-                "roc_auc_std": 0.0029
+                "accuracy_mean": 0.9861,
+                "accuracy_std": 0.0026,
+                "precision_mean": 0.9744,
+                "precision_std": 0.0094,
+                "recall_mean": 0.9713,
+                "recall_std": 0.0046,
+                "f1_mean": 0.9728,
+                "f1_std": 0.0051,
+                "roc_auc_mean": 0.9959,
+                "roc_auc_std": 0.002
             }
         },
         "holdout_metrics": {
-            "accuracy": 0.7,
-            "precision": 0.65,
+            "accuracy": 0.6333,
+            "precision": 0.5909,
             "recall": 0.8667,
-            "f1_score": 0.7429,
-            "false_positive_rate": 0.4667,
+            "f1_score": 0.7027,
+            "false_positive_rate": 0.6,
             "false_negative_rate": 0.1333,
-            "roc_auc": 0.8311,
-            "average_precision": 0.8435,
-            "true_negatives": 8,
-            "false_positives": 7,
+            "roc_auc": 0.7689,
+            "average_precision": 0.755,
+            "true_negatives": 6,
+            "false_positives": 9,
             "false_negatives": 2,
             "true_positives": 13
         },
@@ -76,7 +76,7 @@
             },
             "hinglish_scam": {
                 "total": 1,
-                "accuracy": 0.0
+                "accuracy": 1.0
             },
             "lottery_scam": {
                 "total": 1,
@@ -92,11 +92,11 @@
             },
             "crypto_scam": {
                 "total": 1,
-                "accuracy": 1.0
+                "accuracy": 0.0
             },
             "grocery_delivery": {
                 "total": 1,
-                "accuracy": 0.0
+                "accuracy": 1.0
             },
             "food_delivery": {
                 "total": 1,
@@ -104,7 +104,7 @@
             },
             "gov_otp": {
                 "total": 1,
-                "accuracy": 1.0
+                "accuracy": 0.0
             },
             "bank_debit": {
                 "total": 1,
@@ -112,7 +112,7 @@
             },
             "bank_otp": {
                 "total": 1,
-                "accuracy": 1.0
+                "accuracy": 0.0
             },
             "travel_train": {
                 "total": 1,
@@ -124,7 +124,7 @@
             },
             "utility_paid": {
                 "total": 1,
-                "accuracy": 1.0
+                "accuracy": 0.0
             },
             "utility_meter": {
                 "total": 1,
@@ -160,16 +160,16 @@
             "version": "2.1.0",
             "calibrated": true,
             "calibration_method": "sigmoid (Platt scaling, 3-fold)",
-            "training_timestamp": "2026-11-21T18:02:31.879937+00:00",
+            "training_timestamp": "2026-11-25T10:40:35.911828+00:00",
             "ngram_range": [
                 1,
                 2
             ],
             "max_features": 15000,
-            "test_sample_size": 1045,
+            "test_sample_size": 1606,
             "class_distribution_test": {
-                "genuine": 909,
-                "scam": 136
+                "genuine": 1197,
+                "scam": 409
             },
             "holdout_sample_size": 30
         }
@@ -182,33 +182,33 @@
             "f1_score": 0.9959,
             "false_positive_rate": 0.0448,
             "false_negative_rate": 0.0041,
-            "roc_auc": 0.9993,
-            "average_precision": 0.9999,
+            "roc_auc": 0.9995,
+            "average_precision": 1.0,
             "true_negatives": 64,
             "false_positives": 3,
             "false_negatives": 3,
             "true_positives": 737,
             "model_comparison": {
                 "RandomForest": {
-                    "accuracy": 0.9919,
-                    "precision": 0.9953,
-                    "recall": 0.9959,
-                    "f1_score": 0.9956,
-                    "roc_auc": 0.9993
+                    "accuracy": 0.9957,
+                    "precision": 0.9986,
+                    "recall": 0.9966,
+                    "f1_score": 0.9976,
+                    "roc_auc": 0.9998
                 },
                 "HistGradientBoosting": {
-                    "accuracy": 0.9938,
+                    "accuracy": 0.9953,
                     "precision": 0.9973,
-                    "recall": 0.9959,
-                    "f1_score": 0.9966,
-                    "roc_auc": 0.9987
+                    "recall": 0.9976,
+                    "f1_score": 0.9975,
+                    "roc_auc": 0.9996
                 },
                 "LogisticRegression": {
-                    "accuracy": 0.9873,
-                    "precision": 0.998,
-                    "recall": 0.9882,
-                    "f1_score": 0.993,
-                    "roc_auc": 0.9954
+                    "accuracy": 0.9904,
+                    "precision": 0.9983,
+                    "recall": 0.9912,
+                    "f1_score": 0.9947,
+                    "roc_auc": 0.9975
                 }
             }
         },
@@ -219,8 +219,8 @@
             "f1_score": 0.8333,
             "false_positive_rate": 0.1667,
             "false_negative_rate": 0.1667,
-            "roc_auc": 0.9583,
-            "average_precision": 0.9629,
+            "roc_auc": 0.9653,
+            "average_precision": 0.9705,
             "true_negatives": 10,
             "false_positives": 2,
             "false_negatives": 2,
@@ -231,7 +231,7 @@
             "version": "2.1.0",
             "calibrated": true,
             "calibration_method": "sigmoid (Platt scaling, 3-fold)",
-            "training_timestamp": "2026-11-21T18:02:45.010948+00:00",
+            "training_timestamp": "2026-11-25T10:40:45.601750+00:00",
             "n_estimators": 180,
             "max_depth": 16,
             "num_features": 28,
@@ -245,71 +245,71 @@
         "top_features": [
             {
                 "feature": "is_https",
-                "importance": 0.5761
+                "importance": 0.5766
             },
             {
                 "feature": "domain_length",
-                "importance": 0.1335
+                "importance": 0.1266
             },
             {
                 "feature": "domain_entropy",
-                "importance": 0.0758
+                "importance": 0.0722
             },
             {
                 "feature": "url_length",
-                "importance": 0.042
-            },
-            {
-                "feature": "url_entropy",
-                "importance": 0.0273
-            },
-            {
-                "feature": "num_hyphens_domain",
-                "importance": 0.0269
+                "importance": 0.0433
             },
             {
                 "feature": "path_length",
-                "importance": 0.0256
+                "importance": 0.0309
+            },
+            {
+                "feature": "num_hyphens_domain",
+                "importance": 0.0298
+            },
+            {
+                "feature": "url_entropy",
+                "importance": 0.0258
             },
             {
                 "feature": "num_slashes",
-                "importance": 0.0246
+                "importance": 0.0243
             },
             {
                 "feature": "num_hyphens_url",
-                "importance": 0.0196
+                "importance": 0.0172
             },
             {
                 "feature": "num_digits_url",
-                "importance": 0.0084
+                "importance": 0.0112
             }
         ]
     },
     "top_text_scam_signals": [
-        "or",
-        "for",
-        "new",
-        "stop",
-        "sexy",
-        "tones",
-        "150p",
-        "text",
-        "service",
-        "won",
-        "ringtone",
+        "click urlmarker",
         "claim",
-        "mobile",
-        "to",
-        "your",
-        "from",
-        "reply",
-        "txt",
-        "free",
-        "to codemarker",
+        "offer",
+        "on",
+        "50",
+        "150p",
+        "stop",
+        "se",
+        "ly",
+        "bit ly",
         "call",
+        "txt",
+        "text",
+        "reply",
         "call phonemarker",
-        "urlmarker",
+        "your",
+        "aapke",
+        "to codemarker",
+        "hai",
+        "currencymarker",
+        "free",
+        "click",
+        "phonemarker",
         "codemarker",
-        "phonemarker"
+        "urlmarker"
     ]
 }
